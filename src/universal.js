@@ -1,9 +1,10 @@
 let Service, Characteristic;
 
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
-/*
-const ContactService = require('./accessories/contact');
+
+//const ContactService = require('./accessories/contact');
 const SwitchService = require('./accessories/switch');
+/*
 const LightService = require('./accessories/light');
 const MotionService = require('./accessories/motion');
 const TemperatureService = require('./accessories/temperature');
@@ -30,7 +31,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
 	setService(config, subtype)
 	{
-        /*
 		var name = this.name;
 		var type = config;
 
@@ -61,16 +61,16 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype, requests : config.requests };
-
+        /*
 		if(type == 'contact')
 		{
 			service = new ContactService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'switch')
+		else */if(type == 'switch')
 		{
 			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'light')
+		/*else if(type == 'light')
 		{
 			service = new LightService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
@@ -130,12 +130,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, AutomationSystem : this.manager.AutomationSystem });
 		}
-
+        */
 		if(service != null)
 		{
 			this.service.push(service);
 		}
-        */
 	}
 	
 	getModel()

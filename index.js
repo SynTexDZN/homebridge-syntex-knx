@@ -1,4 +1,4 @@
-let AutomationSystem = require('syntex-automation');
+let DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
@@ -17,6 +17,9 @@ class SynTexWebHookPlatform extends DynamicPlatform
 		super(config, api, pluginID, pluginName, pluginVersion);
 
 		this.devices = config['accessories'] || [];
+
+		DeviceManager = new DeviceManager(this.logger);
+		AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 	
 		this.loadAccessories();
 		this.initWebServer();
@@ -42,7 +45,7 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 			device.manufacturer = pluginName;
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, AutomationSystem : AutomationSystem, ContextManager : ContextManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, ContextManager : ContextManager }));
 		}
 	}
 }
