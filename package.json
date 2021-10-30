@@ -1,0 +1,38 @@
+{
+	"name": "homebridge-syntex-knx",
+	"version": "1.0.0-b1",
+	"description": "A KNX interface for an ip gateway",
+	"main": "index.js",
+	"author": {
+		"name": "SynTexDZN"
+	},
+	"engines": {
+		"homebridge": ">=0.3.0",
+		"node": ">=9.11.2"
+	},
+	"dependencies": {
+		"homebridge-syntex-dynamic-platform": "1.0.6-b44",
+		"knx": "^2.4.1"
+	},
+	"keywords": [
+		"syntex",
+		"syntex-knx",
+		"homebridge-plugin",
+		"homebridge",
+		"plugin",
+		"knx",
+		"eib",
+		"homekit",
+		"smarthome",
+		"siri"
+	],
+	"homepage": "https://github.com/SynTexDZN/homebridge-syntex-knx#readme",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/SynTexDZN/homebridge-syntex-knx.git"
+	},
+	"bugs": {
+		"url": "https://github.com/SynTexDZN/homebridge-syntex-knx/issues"
+	},
+	"license": "ISC"
+}
