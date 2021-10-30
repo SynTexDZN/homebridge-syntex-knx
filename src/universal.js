@@ -126,11 +126,12 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
+        */
 		else
 		{
 			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, AutomationSystem : this.manager.AutomationSystem });
 		}
-        */
+        
 		if(service != null)
 		{
 			this.service.push(service);
