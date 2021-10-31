@@ -8,22 +8,28 @@ const pluginID = 'homebridge-syntex-knx';
 const pluginName = 'SynTexKNX';
 const pluginVersion = require('./package.json').version;
 
-module.exports = (homebridge) => homebridge.registerPlatform(pluginID, pluginName, SynTexWebHookPlatform, true);
+module.exports = (homebridge) => homebridge.registerPlatform(pluginID, pluginName, SynTexKNXPlatform, true);
 
-class SynTexWebHookPlatform extends DynamicPlatform
+class SynTexKNXPlatform extends DynamicPlatform
 {
 	constructor(log, config, api)
 	{
 		super(config, api, pluginID, pluginName, pluginVersion);
 
 		this.devices = config['accessories'] || [];
-
-		KNXInterface = new KNXInterface();
-		DeviceManager = new DeviceManager(this.logger, KNXInterface);
-		AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 	
-		this.loadAccessories();
-		this.initWebServer();
+		if(this.api && this.logger)
+		{
+			this.api.on('didFinishLaunching', () => {
+
+				KNXInterface = new KNXInterface(api.hap.Characteristic, this.accessories);
+				DeviceManager = new DeviceManager(this.logger, KNXInterface);
+				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
+
+				this.loadAccessories();
+				this.initWebServer();
+			});
+		}
 	}
 
 	initWebServer()
