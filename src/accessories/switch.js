@@ -13,6 +13,8 @@ module.exports = class SynTexSwitchService extends SwitchService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.address = serviceConfig['address'];
+
 		super.getState((power) => {
 
 			this.power = power || false;
@@ -46,6 +48,9 @@ module.exports = class SynTexSwitchService extends SwitchService
 	
 	setState(value, callback)
 	{
+        DeviceManager.updateDevice(this.address, value);
+
+        callback(null);
         /*
 		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
 

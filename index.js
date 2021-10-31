@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
+let KNXInterface = require('./knx'), DeviceManager = require('./device-manager'), AutomationSystem = require('syntex-automation');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
@@ -18,7 +18,8 @@ class SynTexWebHookPlatform extends DynamicPlatform
 
 		this.devices = config['accessories'] || [];
 
-		DeviceManager = new DeviceManager(this.logger);
+		KNXInterface = new KNXInterface();
+		DeviceManager = new DeviceManager(this.logger, KNXInterface);
 		AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 	
 		this.loadAccessories();
