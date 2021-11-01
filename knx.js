@@ -2,12 +2,13 @@ const knx = require('knx');
 
 module.exports = class KNXInterface
 {
-	constructor()
+	constructor(accessories)
 	{
+		this.accessories = accessories;
+
 		this.connection = knx.Connection({
 			ipAddr : '192.168.188.88', ipPort : 3671,
-			loglevel: 'info',
-			//physAddr: '15.15.16',
+			loglevel: 'debug',
 			handlers: {
 				connected : () => this.connectionSuccess(),
 				event : (evt, src, dest, value) => this.handleEvent(evt, src, dest, value),
@@ -19,12 +20,10 @@ module.exports = class KNXInterface
 	connectionSuccess()
 	{
 		console.log('Connected!');
-		// WRITE an arbitrary boolean request to a DPT1 group address
-		//connection.write("1/0/0", 1);
-		// you also WRITE to an explicit datapoint type, eg. DPT9.001 is temperature Celcius
+
 		//connection.write("2/1/0", 22.5, "DPT9.001");
-		// you can also issue a READ request and pass a callback to capture the response
-		//connection.read("1/0/222", (src, responsevalue) => console.log(src, responsevalue));
+
+		this.connected = true;
 
 		setTimeout(() => {
 		
@@ -44,6 +43,20 @@ module.exports = class KNXInterface
 			values.push(value[i]);
 		}
 
-		console.log("GET %j --> %j", dest, values);
+		for(const accessory of this.accessories)
+		{
+			for(const i in accessory[1].service)
+			{
+				if(accessory[1].service[i].address == dest)
+				{
+					accessory[1].service[i].updateState({ power : values[0] == 1 });
+				}
+			}
+		}
+	}
+
+	getConnectionStatus()
+	{
+		return this.connected;
 	}
 }

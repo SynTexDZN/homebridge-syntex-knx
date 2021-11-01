@@ -22,7 +22,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				KNXInterface = new KNXInterface(api.hap.Characteristic, this.accessories);
+				KNXInterface = new KNXInterface(this.accessories);
 				DeviceManager = new DeviceManager(this.logger, KNXInterface);
 				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
