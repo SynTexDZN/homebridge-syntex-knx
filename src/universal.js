@@ -1,31 +1,25 @@
-let Service, Characteristic;
-
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
-//const ContactService = require('./accessories/contact');
+// const ContactService = require('./accessories/contact');
 const SwitchService = require('./accessories/switch');
-/*
-const LightService = require('./accessories/light');
-const MotionService = require('./accessories/motion');
-const TemperatureService = require('./accessories/temperature');
-const HumidityService = require('./accessories/humidity');
+// const LightService = require('./accessories/light');
+// const MotionService = require('./accessories/motion');
+// const TemperatureService = require('./accessories/temperature');
+// const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
-const DimmedBulbService = require('./accessories/dimmedBulb');
-const ColoredBulbService = require('./accessories/coloredBulb');
-const LeakService = require('./accessories/leak');
+// const DimmedBulbService = require('./accessories/dimmedBulb');
+// const ColoredBulbService = require('./accessories/coloredBulb');
+// const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
-const OccupancyService = require('./accessories/occupancy');
-const StatelessSwitchService = require('./accessories/statelessswitch');
-const SmokeService = require('./accessories/smoke');
-const AirQualityService = require('./accessories/airquality');
-*/
+// const OccupancyService = require('./accessories/occupancy');
+// const StatelessSwitchService = require('./accessories/statelessswitch');
+// const SmokeService = require('./accessories/smoke');
+// const AirQualityService = require('./accessories/airquality');
+
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
 	constructor(homebridgeAccessory, deviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
-		Characteristic = manager.platform.api.hap.Characteristic;
-
 		super(homebridgeAccessory, deviceConfig, manager);
 	}
 	
@@ -69,8 +63,8 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else */if(type == 'switch')
 		{
 			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		/*else if(type == 'light')
+		}/*
+		else if(type == 'light')
 		{
 			service = new LightService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
@@ -89,11 +83,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'humidity')
 		{
 			service = new HumidityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}*/
 		else if(type == 'led')
 		{
 			service = new LightBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}/*
 		else if(type == 'dimmer')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
@@ -107,11 +101,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'rain')
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}*/
 		else if(type == 'outlet' || type == 'relais')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}/*
 		else if(type == 'statelessswitch')
 		{
 			serviceConfig.buttons = config.buttons;
@@ -127,11 +121,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
         */
-		else
-		{
-			//service = new SynTexAccessory(this.deviceConfig, { Service, Characteristic, logger : this.logger, TypeManager : this.manager.TypeManager, DeviceManager : this.manager.DeviceManager, AutomationSystem : this.manager.AutomationSystem });
-		}
-        
 		if(service != null)
 		{
 			this.service.push(service);
