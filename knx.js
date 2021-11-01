@@ -2,14 +2,14 @@ const knx = require('knx');
 
 module.exports = class KNXInterface
 {
-	constructor(logger, accessories, TypeManager)
+	constructor(logger, accessories, gatewayIP, TypeManager)
 	{
 		this.logger = logger;
 		this.accessories = accessories;
 		this.TypeManager = TypeManager;
 
 		this.connection = knx.Connection({
-			ipAddr : '192.168.188.88', ipPort : 3671,
+			ipAddr : gatewayIP, ipPort : 3671,
 			loglevel: 'info',
 			handlers: {
 				connected : () => this.connectionSuccess(),

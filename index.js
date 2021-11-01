@@ -17,13 +17,15 @@ class SynTexKNXPlatform extends DynamicPlatform
 		super(config, api, pluginID, pluginName, pluginVersion);
 
 		this.devices = config['accessories'] || [];
+
+		this.gatewayIP = config['ip'];
 	
 		if(this.api && this.logger)
 		{
 			this.api.on('didFinishLaunching', () => {
 
 				TypeManager = new TypeManager(this.logger);
-				KNXInterface = new KNXInterface(this.logger, this.accessories, TypeManager);
+				KNXInterface = new KNXInterface(this.logger, this.accessories, this.gatewayIP, TypeManager);
 				DeviceManager = new DeviceManager(this.logger, KNXInterface);
 				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
