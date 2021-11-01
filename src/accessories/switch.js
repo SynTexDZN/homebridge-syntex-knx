@@ -1,4 +1,4 @@
-let Service, Characteristic, DeviceManager, AutomationSystem;
+let Characteristic, DeviceManager, AutomationSystem;
 
 const { SwitchService } = require('homebridge-syntex-dynamic-platform');
 
@@ -6,14 +6,13 @@ module.exports = class SynTexSwitchService extends SwitchService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Service = manager.platform.api.hap.Service;
 		Characteristic = manager.platform.api.hap.Characteristic;
 		AutomationSystem = manager.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
-		
+
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.address = serviceConfig['address'];
+		this.address = serviceConfig.address;
 
 		super.getState((power) => {
 
@@ -48,10 +47,19 @@ module.exports = class SynTexSwitchService extends SwitchService
 	
 	setState(value, callback)
 	{
-        DeviceManager.updateDevice(this.address, value);
+		DeviceManager.setState(this.address, { power : value }).then((success) => {
 
-        callback(null);
-        /*
+			if(success)
+			{
+				this.power = value;
+
+				super.setState(this.power, 
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
+			}
+
+			callback(null);
+		});
+		/*
 		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
 
 			if(result == null)
@@ -64,7 +72,21 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 			callback(result);
 		});
-        */
+		*/
 		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
+	}
+
+	updateState(state)
+	{
+		if(state.power != null && !isNaN(state.power) && this.power != state.power)
+		{
+			this.power = state.power;
+
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
+
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
+		}
+		
+		super.setState(state.power, () => {});
 	}
 };
