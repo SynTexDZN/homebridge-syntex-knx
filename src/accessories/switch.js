@@ -56,6 +56,8 @@ module.exports = class SynTexSwitchService extends SwitchService
 				super.setState(this.power, 
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			
+				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+
 				callback();	
 			}
 			else
@@ -63,21 +65,6 @@ module.exports = class SynTexSwitchService extends SwitchService
 				callback(new Error('Not Connected'));
 			}
 		});
-		/*
-		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
-
-			if(result == null)
-			{
-				this.power = value;
-
-				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
-			}
-
-			callback(result);
-		});
-		*/
-		AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : value });
 	}
 
 	updateState(state)
@@ -88,9 +75,10 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )');
-		}
+			super.setState(state.power,
+				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 		
-		super.setState(state.power, () => {});
+			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.power });
+		}
 	}
 };
