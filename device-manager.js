@@ -10,27 +10,21 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			if(this.KNXInterface.getConnectionStatus())
-			{
-				this.KNXInterface.connection.read(address, (src, responsevalue) => console.log(src, responsevalue));
-			}
+			this.logger.debug('GET [' + address + '] --> [?]');
 
-			console.log('GET ' + address + ' --> ' + this.KNXInterface.getConnectionStatus());
+			this.KNXInterface.readState(address);
 
 			resolve(true);
 		});
 	}
 
-	setState(address, value)
+	setState(address, state)
 	{
 		return new Promise((resolve) => {
 
-			if(this.KNXInterface.getConnectionStatus())
-			{
-				this.KNXInterface.connection.write(address, value.power ? 0 : 1);
-			}
-
-			console.log('SET ' + address + ' --> [' + value.power ? 1 : 0 + ']');
+			this.logger.debug('SET [' + address + '] --> [' + (state.power ? 1 : 0) + ']');
+			
+			this.KNXInterface.writeState(address, state);
 
 			resolve(true);
 		});

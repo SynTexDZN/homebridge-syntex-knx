@@ -2,24 +2,26 @@ const knx = require('knx');
 
 module.exports = class KNXInterface
 {
-	constructor(accessories)
+	constructor(logger, accessories, TypeManager)
 	{
+		this.logger = logger;
 		this.accessories = accessories;
+		this.TypeManager = TypeManager;
 
 		this.connection = knx.Connection({
 			ipAddr : '192.168.188.88', ipPort : 3671,
-			loglevel: 'debug',
+			loglevel: 'info',
 			handlers: {
 				connected : () => this.connectionSuccess(),
 				event : (evt, src, dest, value) => this.handleEvent(evt, src, dest, value),
-				error : (connstatus) => console.log("**** ERROR: %j", connstatus)
+				error : (connstatus) => this.logger.log('error', 'bridge', 'Bridge', '**** ERROR: %j' + connstatus)
 			}
 		});
 	}
 
 	connectionSuccess()
 	{
-		console.log('Connected!');
+		this.logger.log('success', 'bridge', 'Bridge', 'KNX IP Gateway verbunden!');
 
 		//connection.write("2/1/0", 22.5, "DPT9.001");
 
@@ -28,8 +30,6 @@ module.exports = class KNXInterface
 		setTimeout(() => {
 		
 			//this.connection.Disconnect();
-
-			//console.log('Disconnected!');
 		
 		}, 60000);
 	}
@@ -43,20 +43,40 @@ module.exports = class KNXInterface
 			values.push(value[i]);
 		}
 
+		this.logger.debug('GET [' + dest + '] --> [' + values[0] + ']');
+
 		for(const accessory of this.accessories)
 		{
 			for(const i in accessory[1].service)
 			{
 				if(accessory[1].service[i].address == dest)
 				{
-					accessory[1].service[i].updateState({ power : values[0] == 1 });
+					if(this.TypeManager.letterToType(accessory[1].service[i].letters[0]) == 'switch')
+					{
+						accessory[1].service[i].updateState({ power : values[0] == 1 });
+					}
+					else
+					{
+						accessory[1].service[i].updateState({ value : values[0] });
+					}
 				}
 			}
 		}
 	}
 
-	getConnectionStatus()
+	readState(address)
 	{
-		return this.connected;
+		if(this.connected)
+		{
+			this.connection.read(address, (src, responsevalue) => this.logger.debug(src + ' -----> ' + responsevalue));
+		}
+	}
+
+	writeState(address, state)
+	{
+		if(this.connected)
+		{
+			this.connection.write(address, state.power ? 0 : 1);
+		}
 	}
 }
