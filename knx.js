@@ -51,9 +51,18 @@ module.exports = class KNXInterface
 			{
 				if(accessory[1].service[i].address == dest)
 				{
-					if(this.TypeManager.letterToType(accessory[1].service[i].letters[0]) == 'switch' || this.TypeManager.letterToType(accessory[1].service[i].letters[0]) == 'outlet' || this.TypeManager.letterToType(accessory[1].service[i].letters[0]) == 'led')
+					var type = this.TypeManager.letterToType(accessory[1].service[i].letters[0]), dataType = this.TypeManager.getDataType(type);
+
+					if(dataType == 'boolean')
 					{
-						accessory[1].service[i].updateState({ power : values[0] == 1 });
+						if(type == 'switch' || type == 'outlet' || type == 'relais' || type == 'led')
+						{
+							accessory[1].service[i].updateState({ power : values[0] == 1 });
+						}
+						else
+						{
+							accessory[1].service[i].updateState({ value : values[0] == 1 });
+						}
 					}
 					else
 					{
