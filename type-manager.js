@@ -4,23 +4,7 @@ module.exports = class TypeManager
 	{
 		this.logger = logger;
 
-		this.types = ['contact', 'motion', 'temperature', 'humidity', 'rain', 'light', 'occupancy', 'smoke', 'airquality', 'rgb', 'switch', 'relais', 'statelessswitch', 'outlet', 'led', 'dimmer'];
-		this.letters = ['A', 'B', 'C', 'D', 'E', 'F', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-	}
-
-	letterToType(letter)
-	{
-		return this.types[this.letters.indexOf(letter.toUpperCase())];
-	}
-
-	typeToLetter(type)
-	{
-		return this.letters[this.types.indexOf(type.toLowerCase())];
-	}
-	
-	validateUpdate(id, letters, state)
-	{
-		var data = {
+		this.data = {
 			A : { type : 'contact', format : 'boolean' },
 			B : { type : 'motion', format : 'boolean' },
 			C : { type : 'temperature', format : 'number', min : -270, max : 100 },
@@ -38,7 +22,31 @@ module.exports = class TypeManager
 			8 : { type : 'led', format : 'boolean' },
 			9 : { type : 'dimmer', format : { value : 'boolean', brightness : 'number' }, min : { brightness : 0 }, max : { brightness : 100 } }
 		};
+	}
 
+	typeToLetter(type)
+	{
+		for(const letter in this.data)
+		{
+			if(this.data[letter].type == type.toLowerCase())
+			{
+				return letter;
+			}
+		}
+	}
+
+	letterToType(letter)
+	{
+		return this.data[letter.toUpperCase()].type;
+	}
+
+	getDataType(type)
+	{
+		return this.data[this.typeToLetter(type)].format;
+	}
+	
+	validateUpdate(id, letters, state)
+	{
 		for(const i in state)
 		{
 			try
@@ -52,7 +60,7 @@ module.exports = class TypeManager
 				return null;
 			}
 			
-			var format = data[letters[0].toUpperCase()].format;
+			var format = this.data[letters[0].toUpperCase()].format;
 
 			if(format instanceof Object)
 			{
@@ -68,7 +76,7 @@ module.exports = class TypeManager
 			
 			if(format == 'number')
 			{
-				var min = data[letters[0].toUpperCase()].min, max = data[letters[0].toUpperCase()].max;
+				var min = this.data[letters[0].toUpperCase()].min, max = this.data[letters[0].toUpperCase()].max;
 
 				if(min instanceof Object)
 				{
