@@ -24,7 +24,7 @@ module.exports = class SynTexContactService extends ContactService
 		{
 			if(state.value != null)
 			{
-				DeviceManager.setState(this.address, state).then((success) => {
+				DeviceManager.setState(this.id, this.address, state).then((success) => {
 
 					if(success)
 					{
