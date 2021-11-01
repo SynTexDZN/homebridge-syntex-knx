@@ -1,6 +1,6 @@
 const { UniversalAccessory } = require('homebridge-syntex-dynamic-platform');
 
-// const ContactService = require('./accessories/contact');
+const ContactService = require('./accessories/contact');
 const SwitchService = require('./accessories/switch');
 // const LightService = require('./accessories/light');
 // const MotionService = require('./accessories/motion');
@@ -55,12 +55,12 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 
 		var service = null;
 		var serviceConfig = { name : name, type : type, subtype : subtype, requests : config.requests, address : config.address };
-        /*
+        
 		if(type == 'contact')
 		{
 			service = new ContactService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else */if(type == 'switch')
+		else if(type == 'switch')
 		{
 			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}/*
