@@ -12,9 +12,7 @@ module.exports = class DeviceManager
 
 			this.logger.debug('GET [' + address + '] --> [?]');
 
-			this.KNXInterface.readState(address);
-
-			resolve(true);
+			resolve(this.KNXInterface.readState(address));
 		});
 	}
 
@@ -23,10 +21,8 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			this.logger.debug('SET [' + address + '] --> [' + (state.power ? 1 : 0) + ']');
-			
-			this.KNXInterface.writeState(address, state);
 
-			resolve(true);
+			resolve(this.KNXInterface.writeState(address, state));
 		});
 	}
 }

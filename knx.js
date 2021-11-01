@@ -69,7 +69,11 @@ module.exports = class KNXInterface
 		if(this.connected)
 		{
 			this.connection.read(address, (src, responsevalue) => this.logger.debug(src + ' -----> ' + responsevalue));
+
+			return true;
 		}
+
+		return false;
 	}
 
 	writeState(address, state)
@@ -77,6 +81,10 @@ module.exports = class KNXInterface
 		if(this.connected)
 		{
 			this.connection.write(address, state.power ? 0 : 1);
+			
+			return true;
 		}
+
+		return false;
 	}
 }

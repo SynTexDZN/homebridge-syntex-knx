@@ -55,9 +55,13 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 				super.setState(this.power, 
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
+			
+				callback();	
 			}
-
-			callback(null);
+			else
+			{
+				callback(new Error('Not Connected'));
+			}
 		});
 		/*
 		DeviceManager.fetchRequests({ power : value }, this).then((result) => {
