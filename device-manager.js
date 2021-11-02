@@ -7,12 +7,10 @@ class KNXInterface
 		this.DeviceManager = DeviceManager;
 		this.logger = DeviceManager.logger;
 
-		this.connection = knx.Connection({
-			ipAddr : gatewayIP, ipPort : 3671,
-			loglevel: 'info',
+		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
 				connected : () => this.connectionSuccess(),
-				event : (evt, src, dest, value) => this.handleEvent(evt, src, dest, value),
+				event : (evt, src, dest, value) => this.readState(dest, value),
 				error : (connstatus) => this.logger.log('error', 'bridge', 'Bridge', '**** ERROR: %j' + connstatus)
 			}
 		});
@@ -33,7 +31,7 @@ class KNXInterface
 		}, 60000);
 	}
 
-	handleEvent(evt, src, dest, value)
+	readState(address, value)
 	{
 		var values = [];
 
@@ -42,21 +40,9 @@ class KNXInterface
 			values.push(value[i]);
 		}
 
-		this.logger.debug('GET [' + dest + '] --> [' + values[0] + ']');
+		this.logger.debug('GET [' + address + '] --> [' + values[0] + ']');
 
-		this.DeviceManager.updateState(null, dest, values[0]);
-	}
-
-	readState(address)
-	{
-		if(this.connected)
-		{
-			this.connection.read(address, (src, responsevalue) => this.logger.debug(src + ' -----> ' + responsevalue));
-
-			return true;
-		}
-
-		return false;
+		this.DeviceManager.updateState(null, address, values[0]);
 	}
 
 	writeState(address, state)
@@ -83,23 +69,25 @@ module.exports = class DeviceManager
 		this.KNXInterface = new KNXInterface(gatewayIP, this);
 	}
 
-	getState(id, address)
-	{
-		return new Promise((resolve) => {
-
-			this.logger.debug('GET [' + address + '] --> [?]');
-
-			resolve(this.KNXInterface.readState(address));
-		});
-	}
-
-	setState(id, address, state)
+	setState(address, state)
 	{
 		return new Promise((resolve) => {
 
 			this.logger.debug('SET [' + address + '] --> [' + (state.power ? 1 : 0) + ']');
 
-			resolve(this.KNXInterface.writeState(address, state));
+			if(Array.isArray(address))
+			{
+				for(const i in address)
+				{
+					this.KNXInterface.writeState(address[i], state)
+				}
+			}
+			else
+			{
+				this.KNXInterface.writeState(address, state)
+			}
+
+			resolve(this.KNXInterface.connected);
 		});
 	}
 
