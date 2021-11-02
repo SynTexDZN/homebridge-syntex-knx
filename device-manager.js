@@ -100,11 +100,6 @@ module.exports = class DeviceManager
 			this.logger.debug('SET [' + address + '] --> [' + (state.power ? 1 : 0) + ']');
 
 			resolve(this.KNXInterface.writeState(address, state));
-
-			if(this.KNXInterface.connected)
-			{
-				this.updateState(id, address, state.power ? 1 : 0);
-			}
 		});
 	}
 

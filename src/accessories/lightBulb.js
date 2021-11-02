@@ -56,6 +56,11 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 				super.setState(this.power, 
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			
+				if(DeviceManager.KNXInterface.connected)
+				{
+					DeviceManager.updateState(this.id, this.address, value ? 1 : 0);
+				}
+
 				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
 				callback();	
