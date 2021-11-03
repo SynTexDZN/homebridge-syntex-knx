@@ -12,7 +12,8 @@ module.exports = class SynTexContactService extends ContactService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.address = serviceConfig.address;
+		this.controlAddress = serviceConfig.address.control;
+		this.statusAddress = serviceConfig.address.status;
 
 		super.getState((value) => {
 
@@ -24,7 +25,7 @@ module.exports = class SynTexContactService extends ContactService
 		{
 			if(state.value != null)
 			{
-				DeviceManager.setState(this.address, state).then((success) => {
+				DeviceManager.setState(this.controlAddress, state).then((success) => {
 
 					if(success)
 					{

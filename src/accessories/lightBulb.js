@@ -12,7 +12,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.address = serviceConfig.address;
+		this.controlAddress = serviceConfig.address.control;
+		this.statusAddress = serviceConfig.address.status;
 
 		super.getState((power) => {
 
@@ -47,7 +48,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 	
 	setState(value, callback)
 	{
-		DeviceManager.setState(this.address, { power : value }).then((success) => {
+		DeviceManager.setState(this.controlAddress, { power : value }).then((success) => {
 
 			if(success)
 			{
@@ -58,7 +59,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			
 				if(DeviceManager.KNXInterface.connected)
 				{
-					DeviceManager.updateState(this.id, this.address, value ? 1 : 0);
+					DeviceManager.updateState(this.id, this.statusAddress, value ? 1 : 0);
 				}
 
 				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });

@@ -7,7 +7,7 @@ class KNXInterface
 		this.DeviceManager = DeviceManager;
 		this.logger = DeviceManager.logger;
 
-		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
+		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'debug',
 			handlers: {
 				connected : () => this.connectionSuccess(),
 				event : (evt, src, dest, value) => this.readState(dest, value),
@@ -31,7 +31,7 @@ class KNXInterface
 		}, 60000);
 	}
 
-	readState(address, value)
+	readState(statusAddress, value)
 	{
 		var values = [];
 
@@ -40,16 +40,16 @@ class KNXInterface
 			values.push(value[i]);
 		}
 
-		this.logger.debug('GET [' + address + '] --> [' + values[0] + ']');
+		this.logger.debug('GET [' + statusAddress + '] --> [' + values[0] + ']');
 
-		this.DeviceManager.updateState(null, address, values[0]);
+		this.DeviceManager.updateState(null, statusAddress, values[0]);
 	}
 
-	writeState(address, state)
+	writeState(controlAddress, state)
 	{
 		if(this.connected)
 		{
-			this.connection.write(address, state.power ? 0 : 1);
+			this.connection.write(controlAddress, state.power ? 0 : 1);
 			
 			return true;
 		}
@@ -69,35 +69,35 @@ module.exports = class DeviceManager
 		this.KNXInterface = new KNXInterface(gatewayIP, this);
 	}
 
-	setState(address, state)
+	setState(controlAddress, state)
 	{
 		return new Promise((resolve) => {
 
-			this.logger.debug('SET [' + address + '] --> [' + (state.power ? 1 : 0) + ']');
+			this.logger.debug('SET [' + controlAddress + '] --> [' + (state.power ? 1 : 0) + ']');
 
-			if(Array.isArray(address))
+			if(Array.isArray(controlAddress))
 			{
-				for(const i in address)
+				for(const i in controlAddress)
 				{
-					this.KNXInterface.writeState(address[i], state)
+					this.KNXInterface.writeState(controlAddress[i], state)
 				}
 			}
 			else
 			{
-				this.KNXInterface.writeState(address, state)
+				this.KNXInterface.writeState(controlAddress, state)
 			}
 
 			resolve(this.KNXInterface.connected);
 		});
 	}
 
-	updateState(id, address, value)
+	updateState(id, statusAddress, value)
 	{
 		for(const accessory of this.accessories)
 		{
 			for(const i in accessory[1].service)
 			{
-				if(accessory[1].service[i].address == address && accessory[1].id != id)
+				if((Array.isArray(statusAddress) && statusAddress.includes(accessory[1].service[i].statusAddress)) || (accessory[1].service[i].statusAddress == statusAddress) && accessory[1].id != id)
 				{
 					var type = this.TypeManager.letterToType(accessory[1].service[i].letters[0]), dataType = this.TypeManager.getDataType(type);
 
