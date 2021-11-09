@@ -5,6 +5,8 @@ module.exports = class EventManager extends EventEmitter
 	constructor(logger)
 	{
 		super();
+
+		super.setMaxListeners(256);
     
         this.logger = logger;
     }

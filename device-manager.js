@@ -9,6 +9,7 @@ class KNXInterface
 		this.EventManager = DeviceManager.EventManager;
 
 		this.requests = { status : [], control : [] };
+		this.dataPoints = { status : {}, control : {} };
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
@@ -43,31 +44,27 @@ class KNXInterface
 		{
 			if(services[i].statusAddress != null)
 			{
-				if(services[i].statusDataPoints == null)
-				{
-					services[i].statusDataPoints = {};
-				}
-
 				if(Array.isArray(services[i].statusAddress))
 				{
 					for(const j in services[i].statusAddress)
 					{
-						services[i].statusDataPoints[services[i].statusAddress[j]] = new knx.Datapoint({ ga : services[i].statusAddress[j], dpt : services[i].dataPoint }, this.connection);
-					
-						services[i].statusDataPoints[services[i].statusAddress[j]].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue));
+						if(this.dataPoints.status[services[i].statusAddress[j]] == null)
+						{
+							this.dataPoints.status[services[i].statusAddress[j]] = new knx.Datapoint({ ga : services[i].statusAddress[j], dpt : services[i].dataPoint }, this.connection);
 
-						services[i].statusDataPoints[services[i].statusAddress[j]].read((src, value) => {
-
-							this._clearRequests('status', services[i].statusAddress[j]);
-			
-							this.DeviceManager.updateState(services[i], value);
-						});
+							this.dataPoints.status[services[i].statusAddress[j]].on('change', (oldValue, newValue) => {
+							
+								this._clearRequests('status', services[i].statusAddress[j]);
+								
+								this.EventManager.setOutputStream('SynTexKNX', null, services[i].statusAddress[j], newValue);
+							});
+						}
 
 						this.EventManager.setInputStream('SynTexKNX', services[i], services[i].statusAddress[j], (value) => {
 
-							if(services[i].statusDataPoints != null && services[i].statusDataPoints[services[i].statusAddress[j]] != null)
+							if(this.dataPoints.status[services[i].statusAddress[j]] != null)
 							{
-								services[i].statusDataPoints[receiver].current_value = value;
+								this.dataPoints.status[services[i].statusAddress[j]].current_value = value;
 
 								services[i].updateState({ power : value });
 							}
@@ -76,22 +73,23 @@ class KNXInterface
 				}
 				else
 				{
-					services[i].statusDataPoints[services[i].statusAddress] = new knx.Datapoint({ ga : services[i].statusAddress, dpt : services[i].dataPoint }, this.connection);
+					if(this.dataPoints.status[services[i].statusAddress] == null)
+					{
+						this.dataPoints.status[services[i].statusAddress] = new knx.Datapoint({ ga : services[i].statusAddress, dpt : services[i].dataPoint }, this.connection);
 
-					services[i].statusDataPoints[services[i].statusAddress].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue));
-
-					services[i].statusDataPoints[services[i].statusAddress].read((src, value) => {
-
-						this._clearRequests('status', services[i].statusAddress);
-		
-						this.DeviceManager.updateState(services[i], value);
-					});
+						this.dataPoints.status[services[i].statusAddress].on('change', (oldValue, newValue) => {
+						
+							this._clearRequests('status', services[i].statusAddress);
+							
+							this.EventManager.setOutputStream('SynTexKNX', null, services[i].statusAddress, newValue);
+						});
+					}
 
 					this.EventManager.setInputStream('SynTexKNX', services[i], services[i].statusAddress, (value) => {
 
-						if(services[i].statusDataPoints != null && services[i].statusDataPoints[services[i].statusAddress] != null)
+						if(this.dataPoints.status[services[i].statusAddress] != null)
 						{
-							services[i].statusDataPoints[services[i].statusAddress].current_value = value;
+							this.dataPoints.status[services[i].statusAddress].current_value = value;
 
 							services[i].updateState({ power : value });
 						}
@@ -101,24 +99,21 @@ class KNXInterface
 
 			if(services[i].controlAddress != null)
 			{
-				if(services[i].controlDataPoints == null)
-				{
-					services[i].controlDataPoints = {};
-				}
-
 				if(Array.isArray(services[i].controlAddress))
 				{
 					for(const j in services[i].controlAddress)
 					{
-						services[i].controlDataPoints[services[i].controlAddress[j]] = new knx.Datapoint({ ga : services[i].constolAddress[j], dpt : services[i].dataPoint }, this.connection);
+						this.dataPoints.control[services[i].controlAddress[j]] = new knx.Datapoint({ ga : services[i].controlAddress[j], dpt : services[i].dataPoint }, this.connection);
 					}
 				}
 				else
 				{
-					services[i].controlDataPoints[services[i].controlAddress] = new knx.Datapoint({ ga : services[i].controlAddress, dpt : services[i].dataPoint }, this.connection);
+					this.dataPoints.control[services[i].controlAddress] = new knx.Datapoint({ ga : services[i].controlAddress, dpt : services[i].dataPoint }, this.connection);
 				}
 			}
 		}
+
+		this.updateStates();
 
 		this.logger.log('success', 'bridge', 'Bridge', 'KNX IP Gateway verbunden!');
 	}
@@ -127,15 +122,15 @@ class KNXInterface
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service.statusAddress != null && service.statusDataPoints != null)
+			if(this.connected && service.statusAddress != null)
 			{
 				if(Array.isArray(service.statusAddress))
 				{
 					for(const i in service.statusAddress)
 					{
-						if(service.statusDataPoints[service.statusAddress[i]] != null)
+						if(this.dataPoints.status[service.statusAddress[i]] != null)
 						{
-							service.statusDataPoints[service.statusAddress[i]].read((src, value) => {
+							this.dataPoints.status[service.statusAddress[i]].read((src, value) => {
 
 								this._clearRequests('status', service.statusAddress[i]);
 			
@@ -146,9 +141,9 @@ class KNXInterface
 				}
 				else
 				{
-					if(service.statusDataPoints[service.statusAddress] != null)
+					if(this.dataPoints.status[service.statusAddress] != null)
 					{
-						service.statusDataPoints[service.statusAddress].read((src, value) => {
+						this.dataPoints.status[service.statusAddress].read((src, value) => {
 
 							this._clearRequests('status', service.statusAddress);
 		
@@ -168,15 +163,15 @@ class KNXInterface
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service.controlAddress != null && service.controlDataPoints != null)
+			if(this.connected && service.controlAddress != null)
 			{
 				if(Array.isArray(service.controlAddress))
 				{
 					for(const i in service.controlAddress)
 					{
-						if(service.controlDataPoints[service.controlAddress[i]] != null)
+						if(this.dataPoints.control[service.controlAddress[i]] != null)
 						{
-							service.controlDataPoints[service.controlAddress[i]].write(value);
+							this.dataPoints.control[service.controlAddress[i]].write(value);
 						}
 
 						this.EventManager.setOutputStream('SynTexKNX', service, service.controlAddress[i], value);
@@ -184,9 +179,9 @@ class KNXInterface
 				}
 				else
 				{
-					if(service.controlDataPoints[service.controlAddress] != null)
+					if(this.dataPoints.control[service.controlAddress] != null)
 					{
-						service.controlDataPoints[service.controlAddress].write(value);
+						this.dataPoints.control[service.controlAddress].write(value);
 					}
 
 					this.EventManager.setOutputStream('SynTexKNX', service, service.controlAddress, value);
@@ -197,6 +192,19 @@ class KNXInterface
 				resolve(false);
 			}
 		});
+	}
+
+	updateStates()
+	{
+		for(const address in this.dataPoints.status)
+		{
+			this.dataPoints.status[address].read((src, value) => {
+
+				this._clearRequests('status', address);
+
+				this.EventManager.setOutputStream('SynTexKNX', null, address, value);
+			});
+		}
 	}
 
 	_addRequest(type, address, callback)
