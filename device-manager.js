@@ -6,6 +6,7 @@ class KNXInterface
 	{
 		this.DeviceManager = DeviceManager;
 		this.logger = DeviceManager.logger;
+		this.EventManager = DeviceManager.EventManager;
 
 		this.requests = { status : [], control : [] };
 
@@ -53,13 +54,23 @@ class KNXInterface
 					{
 						services[i].statusDataPoints[services[i].statusAddress[j]] = new knx.Datapoint({ ga : services[i].statusAddress[j], dpt : services[i].dataPoint }, this.connection);
 					
-						services[i].statusDataPoints[services[i].statusAddress[j]].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue, true));
+						services[i].statusDataPoints[services[i].statusAddress[j]].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue));
 
 						services[i].statusDataPoints[services[i].statusAddress[j]].read((src, value) => {
 
 							this._clearRequests('status', services[i].statusAddress[j]);
 			
-							this.DeviceManager.updateState(services[i], value, true);
+							this.DeviceManager.updateState(services[i], value);
+						});
+
+						this.EventManager.setInputStream('SynTexKNX', services[i], services[i].statusAddress[j], (value) => {
+
+							if(services[i].statusDataPoints != null && services[i].statusDataPoints[services[i].statusAddress[j]] != null)
+							{
+								services[i].statusDataPoints[receiver].current_value = value;
+
+								services[i].updateState({ power : value });
+							}
 						});
 					}
 				}
@@ -67,13 +78,23 @@ class KNXInterface
 				{
 					services[i].statusDataPoints[services[i].statusAddress] = new knx.Datapoint({ ga : services[i].statusAddress, dpt : services[i].dataPoint }, this.connection);
 
-					services[i].statusDataPoints[services[i].statusAddress].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue, true));
+					services[i].statusDataPoints[services[i].statusAddress].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue));
 
 					services[i].statusDataPoints[services[i].statusAddress].read((src, value) => {
 
 						this._clearRequests('status', services[i].statusAddress);
 		
-						this.DeviceManager.updateState(services[i], value, true);
+						this.DeviceManager.updateState(services[i], value);
+					});
+
+					this.EventManager.setInputStream('SynTexKNX', services[i], services[i].statusAddress, (value) => {
+
+						if(services[i].statusDataPoints != null && services[i].statusDataPoints[services[i].statusAddress] != null)
+						{
+							services[i].statusDataPoints[services[i].statusAddress].current_value = value;
+
+							services[i].updateState({ power : value });
+						}
 					});
 				}
 			}
@@ -106,7 +127,7 @@ class KNXInterface
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service.statusAddress != null)
+			if(this.connected && service.statusAddress != null && service.statusDataPoints != null)
 			{
 				if(Array.isArray(service.statusAddress))
 				{
@@ -147,7 +168,7 @@ class KNXInterface
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service.controlAddress != null)
+			if(this.connected && service.controlAddress != null && service.controlDataPoints != null)
 			{
 				if(Array.isArray(service.controlAddress))
 				{
@@ -158,10 +179,7 @@ class KNXInterface
 							service.controlDataPoints[service.controlAddress[i]].write(value);
 						}
 
-						if(service.statusDataPoints[service.controlAddress[i]] != null)
-						{
-							service.statusDataPoints[service.controlAddress[i]].current_value = value; // TODO: Update State
-						}
+						this.EventManager.setOutputStream('SynTexKNX', service, service.controlAddress[i], value);
 					}
 				}
 				else
@@ -171,10 +189,7 @@ class KNXInterface
 						service.controlDataPoints[service.controlAddress].write(value);
 					}
 
-					if(service.statusDataPoints[service.controlAddress] != null)
-					{
-						service.statusDataPoints[service.controlAddress].current_value = value; // TODO: Update State
-					}
+					this.EventManager.setOutputStream('SynTexKNX', service, service.controlAddress, value);
 				}
 			}
 			else
@@ -212,12 +227,13 @@ class KNXInterface
 
 module.exports = class DeviceManager
 {
-	constructor(logger, accessories, gatewayIP, TypeManager)
+	constructor(logger, accessories, gatewayIP, TypeManager, EventManager)
 	{
 		this.logger = logger;
 		this.accessories = accessories;
 
 		this.TypeManager = TypeManager;
+		this.EventManager = EventManager;
 
 		this.KNXInterface = new KNXInterface(gatewayIP, this);
 	}
@@ -242,9 +258,9 @@ module.exports = class DeviceManager
 		});
 	}
 
-	updateState(service, value, selectAll)
+	updateState(service, value)
 	{
-		var services = this._getServices(selectAll ? null : service.id);
+		var services = this._getServices(service.id);
 
 		for(const i in services)
 		{
@@ -272,7 +288,7 @@ module.exports = class DeviceManager
 		{
 			for(const i in accessory[1].service)
 			{
-				if(accessory[1].service[i].statusAddress != null && accessory[1].service[i].dataPoint != null && (excludeID == null || accessory[1].service[i].id != excludeID))
+				if(accessory[1].service[i].dataPoint != null && (excludeID == null || accessory[1].service[i].id != excludeID))
 				{
 					services.push(accessory[1].service[i]);
 				}

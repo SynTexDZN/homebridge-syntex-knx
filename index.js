@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), AutomationSystem = require('syntex-automation');
+let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), AutomationSystem = require('syntex-automation'), EventManager = require('./src/event-manager');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
@@ -25,7 +25,8 @@ class SynTexKNXPlatform extends DynamicPlatform
 			this.api.on('didFinishLaunching', () => {
 
 				TypeManager = new TypeManager(this.logger);
-				DeviceManager = new DeviceManager(this.logger, this.accessories, this.gatewayIP, TypeManager);
+				EventManager = new EventManager(this.logger);
+				DeviceManager = new DeviceManager(this.logger, this.accessories, this.gatewayIP, TypeManager, EventManager);
 				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
 				this.loadAccessories();
