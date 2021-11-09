@@ -12,12 +12,15 @@ module.exports = class SynTexContactService extends ContactService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.controlAddress = serviceConfig.address.control;
 		this.statusAddress = serviceConfig.address.status;
+
+		this.dataPoint = 'DPT1.001';
 
 		super.getState((value) => {
 
 			this.value = value || false;
+
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.value);
 
 		}, true);
 
@@ -55,11 +58,28 @@ module.exports = class SynTexContactService extends ContactService
 			if(value != null)
 			{
 				this.value = value;
-			}
-				
-			callback(null, this.value);
 
-		}, true);
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+
+				callback(null, this.value);
+			}
+			else
+			{
+				DeviceManager.getState(this).then((value) => {
+
+					if(value != null && !isNaN(value))
+					{
+						this.value = value;
+
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+					
+						super.setState(this.value, () => {});
+					}
+
+					callback(null, this.value);
+				});
+			}
+		});
 	}
 
 	updateState(state)

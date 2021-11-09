@@ -12,12 +12,16 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.controlAddress = serviceConfig.address.control;
 		this.statusAddress = serviceConfig.address.status;
+		this.controlAddress = serviceConfig.address.control;
+
+		this.dataPoint = 'DPT1.001';
 
 		super.getState((power) => {
 
 			this.power = power || false;
+
+			this.service.getCharacteristic(Characteristic.On).updateValue(this.power);
 
 		}, true);
 
@@ -39,16 +43,33 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			if(value != null)
 			{
 				this.power = value;
-			}
-				
-			callback(null, this.power);
 
-		}, true);
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
+
+				callback(null, this.power);
+			}
+			else
+			{
+				DeviceManager.getState(this).then((value) => {
+
+					if(value != null && !isNaN(value))
+					{
+						this.power = value;
+
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
+					
+						super.setState(this.power, () => {});
+					}
+
+					callback(null, this.power);
+				});
+			}
+		});
 	}
 	
 	setState(value, callback)
 	{
-		DeviceManager.setState(this.controlAddress, { power : value }).then((success) => {
+		DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{
@@ -57,11 +78,6 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 				super.setState(this.power, 
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
 			
-				if(DeviceManager.KNXInterface.connected)
-				{
-					DeviceManager.updateState(this.id, this.statusAddress, value ? 1 : 0);
-				}
-
 				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
 				callback();	
