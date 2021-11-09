@@ -7,54 +7,206 @@ class KNXInterface
 		this.DeviceManager = DeviceManager;
 		this.logger = DeviceManager.logger;
 
-		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'debug',
+		this.requests = { status : [], control : [] };
+
+		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
 				connected : () => this.connectionSuccess(),
-				event : (evt, src, dest, value) => this.readState(dest, value),
-				error : (connstatus) => this.logger.log('error', 'bridge', 'Bridge', '**** ERROR: %j' + connstatus)
+				confirmed : (data) => {
+					
+					var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
+
+					if(event == 'GroupValue_Read')
+					{
+						this._clearRequests('status', address);
+					}
+					else if(event == 'GroupValue_Write')
+					{
+						this._clearRequests('control', address);
+					}
+				},
+				event : (evt, src, dest, value) => this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']'),
+				error : (e) => this.logger.log('error', 'bridge', 'Bridge', '**** ERROR: ' + e),
+				disconnected : () => this.logger.debug('KNX IP Gateway getrennt!')
 			}
 		});
 	}
 
 	connectionSuccess()
 	{
-		this.logger.log('success', 'bridge', 'Bridge', 'KNX IP Gateway verbunden!');
-
-		//connection.write("2/1/0", 22.5, "DPT9.001");
-
 		this.connected = true;
 
-		setTimeout(() => {
-		
-			//this.connection.Disconnect();
-		
-		}, 60000);
-	}
+		var services = this.DeviceManager._getServices();
 
-	readState(statusAddress, value)
-	{
-		var values = [];
-
-		for(var i = 0; i < Object.keys(value).length; i++)
+		for(const i in services)
 		{
-			values.push(value[i]);
+			if(services[i].statusAddress != null)
+			{
+				if(services[i].statusDataPoints == null)
+				{
+					services[i].statusDataPoints = {};
+				}
+
+				if(Array.isArray(services[i].statusAddress))
+				{
+					for(const j in services[i].statusAddress)
+					{
+						services[i].statusDataPoints[services[i].statusAddress[j]] = new knx.Datapoint({ ga : services[i].statusAddress[j], dpt : services[i].dataPoint }, this.connection);
+					
+						services[i].statusDataPoints[services[i].statusAddress[j]].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue, true));
+
+						services[i].statusDataPoints[services[i].statusAddress[j]].read((src, value) => {
+
+							this._clearRequests('status', services[i].statusAddress[j]);
+			
+							this.DeviceManager.updateState(services[i], value, true);
+						});
+					}
+				}
+				else
+				{
+					services[i].statusDataPoints[services[i].statusAddress] = new knx.Datapoint({ ga : services[i].statusAddress, dpt : services[i].dataPoint }, this.connection);
+
+					services[i].statusDataPoints[services[i].statusAddress].on('change', (oldValue, newValue) => this.DeviceManager.updateState(services[i], newValue, true));
+
+					services[i].statusDataPoints[services[i].statusAddress].read((src, value) => {
+
+						this._clearRequests('status', services[i].statusAddress);
+		
+						this.DeviceManager.updateState(services[i], value, true);
+					});
+				}
+			}
+
+			if(services[i].controlAddress != null)
+			{
+				if(services[i].controlDataPoints == null)
+				{
+					services[i].controlDataPoints = {};
+				}
+
+				if(Array.isArray(services[i].controlAddress))
+				{
+					for(const j in services[i].controlAddress)
+					{
+						services[i].controlDataPoints[services[i].controlAddress[j]] = new knx.Datapoint({ ga : services[i].constolAddress[j], dpt : services[i].dataPoint }, this.connection);
+					}
+				}
+				else
+				{
+					services[i].controlDataPoints[services[i].controlAddress] = new knx.Datapoint({ ga : services[i].controlAddress, dpt : services[i].dataPoint }, this.connection);
+				}
+			}
 		}
 
-		this.logger.debug('GET [' + statusAddress + '] --> [' + values[0] + ']');
-
-		this.DeviceManager.updateState(null, statusAddress, values[0]);
+		this.logger.log('success', 'bridge', 'Bridge', 'KNX IP Gateway verbunden!');
 	}
 
-	writeState(controlAddress, state)
+	readState(service)
+	{
+		return new Promise((resolve) => {
+
+			if(this.connected && service.statusAddress != null)
+			{
+				if(Array.isArray(service.statusAddress))
+				{
+					for(const i in service.statusAddress)
+					{
+						if(service.statusDataPoints[service.statusAddress[i]] != null)
+						{
+							service.statusDataPoints[service.statusAddress[i]].read((src, value) => {
+
+								this._clearRequests('status', service.statusAddress[i]);
+			
+								resolve(value);
+							});
+						}
+					}
+				}
+				else
+				{
+					if(service.statusDataPoints[service.statusAddress] != null)
+					{
+						service.statusDataPoints[service.statusAddress].read((src, value) => {
+
+							this._clearRequests('status', service.statusAddress);
+		
+							resolve(value);
+						});
+					}
+				}
+			}
+			else
+			{
+				resolve(null);
+			}
+		});
+	}
+
+	writeState(service, value)
+	{
+		return new Promise((resolve) => {
+
+			if(this.connected && service.controlAddress != null)
+			{
+				if(Array.isArray(service.controlAddress))
+				{
+					for(const i in service.controlAddress)
+					{
+						if(service.controlDataPoints[service.controlAddress[i]] != null)
+						{
+							service.controlDataPoints[service.controlAddress[i]].write(value);
+						}
+
+						if(service.statusDataPoints[service.controlAddress[i]] != null)
+						{
+							service.statusDataPoints[service.controlAddress[i]].current_value = value; // TODO: Update State
+						}
+					}
+				}
+				else
+				{
+					if(service.controlDataPoints[service.controlAddress] != null)
+					{
+						service.controlDataPoints[service.controlAddress].write(value);
+					}
+
+					if(service.statusDataPoints[service.controlAddress] != null)
+					{
+						service.statusDataPoints[service.controlAddress].current_value = value; // TODO: Update State
+					}
+				}
+			}
+			else
+			{
+				resolve(false);
+			}
+		});
+	}
+
+	_addRequest(type, address, callback)
 	{
 		if(this.connected)
 		{
-			this.connection.write(controlAddress, state.power ? 0 : 1);
-			
-			return true;
+			this.requests[type].push({ address, callback });
 		}
+		else
+		{
+			callback(type == 'status' ? null : false);
+		}
+	}
 
-		return false;
+	_clearRequests(type, address)
+	{
+		for(var i = this.requests[type].length - 1; i >= 0; i--)
+		{
+			if(this.requests[type][i].address == address)
+			{
+				this.requests[type][i].callback(type == 'status' ? null : true);
+
+				this.requests[type].splice(i, 1);
+			}
+		}
 	}
 }
 
@@ -64,60 +216,69 @@ module.exports = class DeviceManager
 	{
 		this.logger = logger;
 		this.accessories = accessories;
+
 		this.TypeManager = TypeManager;
 
 		this.KNXInterface = new KNXInterface(gatewayIP, this);
 	}
 
-	setState(controlAddress, state)
+	getState(service)
 	{
 		return new Promise((resolve) => {
 
-			this.logger.debug('SET [' + controlAddress + '] --> [' + (state.power ? 1 : 0) + ']');
+			this.KNXInterface._addRequest('status', service.statusAddress, resolve);
 
-			if(Array.isArray(controlAddress))
-			{
-				for(const i in controlAddress)
-				{
-					this.KNXInterface.writeState(controlAddress[i], state)
-				}
-			}
-			else
-			{
-				this.KNXInterface.writeState(controlAddress, state)
-			}
-
-			resolve(this.KNXInterface.connected);
+			this.KNXInterface.readState(service);
 		});
 	}
 
-	updateState(id, statusAddress, value)
+	setState(service, value)
 	{
+		return new Promise((resolve) => {
+
+			this.KNXInterface._addRequest('control', service.controlAddress, resolve);
+
+			this.KNXInterface.writeState(service, value);
+		});
+	}
+
+	updateState(service, value, selectAll)
+	{
+		var services = this._getServices(selectAll ? null : service.id);
+
+		for(const i in services)
+		{
+			if((Array.isArray(service.statusAddress) && service.statusAddress.includes(services[i].statusAddress)) || services[i].statusAddress == service.statusAddress)
+			{
+				var type = this.TypeManager.letterToType(services[i].letters[0]);
+
+				if(type == 'switch' || type == 'outlet' || type == 'relais' || type == 'led')
+				{
+					services[i].updateState({ power : value });
+				}
+				else
+				{
+					services[i].updateState({ value });
+				}
+			}
+		}
+	}
+
+	_getServices(excludeID)
+	{
+		var services = [];
+
 		for(const accessory of this.accessories)
 		{
 			for(const i in accessory[1].service)
 			{
-				if((Array.isArray(statusAddress) && statusAddress.includes(accessory[1].service[i].statusAddress)) || (accessory[1].service[i].statusAddress == statusAddress) && accessory[1].id != id)
+				if(accessory[1].service[i].statusAddress != null && accessory[1].service[i].dataPoint != null && (excludeID == null || accessory[1].service[i].id != excludeID))
 				{
-					var type = this.TypeManager.letterToType(accessory[1].service[i].letters[0]), dataType = this.TypeManager.getDataType(type);
-
-					if(dataType == 'boolean')
-					{
-						if(type == 'switch' || type == 'outlet' || type == 'relais' || type == 'led')
-						{
-							accessory[1].service[i].updateState({ power : value == 1 });
-						}
-						else
-						{
-							accessory[1].service[i].updateState({ value : value == 1 });
-						}
-					}
-					else
-					{
-						accessory[1].service[i].updateState({ value : value });
-					}
+					services.push(accessory[1].service[i]);
 				}
 			}
 		}
+
+		return services;
 	}
 }
