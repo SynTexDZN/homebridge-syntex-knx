@@ -44,7 +44,7 @@ class KNXInterface
 		{
 			if(services[i].statusAddress != null)
 			{
-				var statusAddress = Array.isArray(services[i].statusAddress) ? services[i].statusAddress : [ services[i].statusAddress ];
+				const statusAddress = Array.isArray(services[i].statusAddress) ? services[i].statusAddress : [ services[i].statusAddress ];
 
 				for(const j in statusAddress)
 				{
@@ -53,7 +53,7 @@ class KNXInterface
 						this.dataPoints.status[statusAddress[j]] = new knx.Datapoint({ ga : statusAddress[j], dpt : services[i].dataPoint }, this.connection);
 
 						this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
-						
+
 							this._clearRequests('status', statusAddress[j]);
 							
 							this.EventManager.setOutputStream('SynTexKNX', null, statusAddress[j], newValue);
@@ -74,7 +74,7 @@ class KNXInterface
 
 			if(services[i].controlAddress != null)
 			{
-				var controlAddress = Array.isArray(services[i].controlAddress) ? services[i].controlAddress : [ services[i].controlAddress ];
+				const controlAddress = Array.isArray(services[i].controlAddress) ? services[i].controlAddress : [ services[i].controlAddress ];
 
 				for(const j in controlAddress)
 				{
@@ -94,7 +94,7 @@ class KNXInterface
 
 			if(this.connected && service.statusAddress != null)
 			{
-				var statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
+				const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
 
 				for(const i in statusAddress)
 				{
@@ -122,7 +122,7 @@ class KNXInterface
 
 			if(this.connected && service.controlAddress != null)
 			{
-				var controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
+				const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
 
 				for(const i in controlAddress)
 				{
