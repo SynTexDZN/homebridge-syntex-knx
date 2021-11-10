@@ -25,8 +25,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		}, true);
 
-		this.changeHandler = (state) =>
-		{
+		this.changeHandler = (state) => {
+			
 			if(state.value != null)
 			{
 				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);

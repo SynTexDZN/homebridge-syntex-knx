@@ -25,8 +25,8 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 		}, true);
 
-		this.changeHandler = (state) =>
-		{
+		this.changeHandler = (state) => {
+			
 			if(state.value != null)
 			{
 				this.service.getCharacteristic(Characteristic.On).updateValue(state.value);
