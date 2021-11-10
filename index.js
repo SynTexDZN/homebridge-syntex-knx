@@ -1,4 +1,4 @@
-let DeviceManager = require('./device-manager'), TypeManager = require('./type-manager'), AutomationSystem = require('syntex-automation'), EventManager = require('./src/event-manager');
+let DeviceManager = require('./src/device-manager'), TypeManager = require('./src/type-manager'), AutomationSystem = require('syntex-automation'), EventManager = require('./src/event-manager');
 
 const { DynamicPlatform, ContextManager } = require('homebridge-syntex-dynamic-platform');
 
