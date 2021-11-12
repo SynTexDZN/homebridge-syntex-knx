@@ -1,8 +1,8 @@
 let Characteristic, DeviceManager, AutomationSystem;
 
-const { ContactService } = require('homebridge-syntex-dynamic-platform');
+const { MotionService } = require('homebridge-syntex-dynamic-platform');
 
-module.exports = class SynTexContactService extends ContactService
+module.exports = class SynTexMotionService extends MotionService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
@@ -20,8 +20,8 @@ module.exports = class SynTexContactService extends ContactService
 
 			this.value = value || false;
 
-			this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.value);
-
+			this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
+			
 		}, true);
 
 		this.changeHandler = (state) => { // TODO: Should There Be A Change Handler ? 
@@ -30,7 +30,7 @@ module.exports = class SynTexContactService extends ContactService
 			{
 				this.value = state.value;
 
-				this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.value);
+				this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
 
 				super.setValue('value', this.value, true);
 
@@ -76,7 +76,7 @@ module.exports = class SynTexContactService extends ContactService
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(Characteristic.ContactSensorState).updateValue(this.value);
+			this.service.getCharacteristic(Characteristic.MotionDetected).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
 

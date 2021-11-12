@@ -6,6 +6,7 @@ class KNXInterface
 	{
 		this.DeviceManager = DeviceManager;
 		this.logger = DeviceManager.logger;
+		this.TypeManager = DeviceManager.TypeManager;
 		this.EventManager = DeviceManager.EventManager;
 
 		this.requests = { status : [], control : [] };
@@ -66,7 +67,16 @@ class KNXInterface
 						{
 							this.dataPoints.status[statusAddress[j]].current_value = value;
 
-							services[i].updateState({ power : value });
+							var type = this.TypeManager.letterToType(services[i].letters[0]);
+
+							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
+							{
+								services[i].updateState({ power : value });
+							}
+							else
+							{
+								services[i].updateState({ value });
+							}
 						}
 					});
 				}
