@@ -209,6 +209,12 @@ module.exports = class DeviceManager
 
 			this.KNXInterface._addRequest('status', service.statusAddress, resolve);
 
+			setTimeout(() => {
+
+				this.KNXInterface._clearRequests('status', service.statusAddress);
+
+			}, 3000);
+
 			this.KNXInterface.readState(service);
 		});
 	}
