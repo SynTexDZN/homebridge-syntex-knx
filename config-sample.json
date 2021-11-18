@@ -49,6 +49,19 @@
 				},
 				{
 					"id": "knx4",
+					"name": "Contact",
+					"services": [
+						{
+							"address": {
+								"status": "1/1/4",
+								"control": "1/1/4"
+							},
+							"type": "contact"
+						}
+					]
+				},
+				{
+					"id": "knx5",
 					"name": "Multi Device",
 					"services": [
 						{
@@ -74,6 +87,14 @@
 							},
 							"type": "outlet",
 							"name": "Outlet"
+						},
+						{
+							"address": {
+								"status": "1/1/4",
+								"control": "1/1/4"
+							},
+							"type": "contact",
+							"name": "Contact"
 						}
 					]
 				}

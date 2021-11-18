@@ -36,85 +36,106 @@ It stores accessory data you can request to display the content on your website 
 
 ```
 "platforms": [
-    {
-        "platform": "SynTexKNX",
-        "baseDirectory": "/var/homebridge/SynTex",
-        "ip": "192.168.188.88",
-        "port": 1714,
-        "language": "us",
-        "debug": false,
-        "accessories": [
-            {
-                "id": "knx1",
-                "name": "Switch",
-                "services": [
-                    {
-                        "address": {
-                            "status": "1/1/1",
-                            "control": "1/1/1"
-                        },
-                        "type": "switch"
-                    }
-                ]
+  {
+    "platform": "SynTexKNX",
+    "baseDirectory": "/var/homebridge/SynTex",
+    "ip": "192.168.188.88",
+    "port": 1714,
+    "language": "us",
+    "debug": false,
+    "accessories": [
+      {
+        "id": "knx1",
+        "name": "Switch",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/1",
+              "control": "1/1/1"
             },
-            {
-                "id": "knx2",
-                "name": "Light",
-                "services": [
-                    {
-                        "address": {
-                            "status": "1/1/2",
-                            "control": "1/1/2"
-                        },
-                        "type": "led"
-                    }
-                ]
-            },
-            {
-                "id": "knx3",
-                "name": "Outlet",
-                "services": [
-                    {
-                        "address": {
-                            "status": "1/1/3",
-                            "control": "1/1/3"
-                        },
-                        "type": "outlet"
-                    }
-                ]
-            },
-            {
-                "id": "knx4",
-                "name": "Multi Device",
-                "services": [
-                    {
-                        "address": {
-                            "status": "1/1/1",
-                            "control": "1/1/1"
-                        },
-                        "type": "switch",
-                        "name": "Switch"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/2",
-                            "control": "1/1/2"
-                        },
-                        "type": "led",
-                        "name": "LED"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/3",
-                            "control": "1/1/3"
-                        },
-                        "type": "outlet",
-                        "name": "Outlet"
-                    }
-                ]
-            }
+            "type": "switch"
+          }
         ]
-    }
+      },
+      {
+        "id": "knx2",
+        "name": "Light",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/2",
+              "control": "1/1/2"
+            },
+            "type": "led"
+          }
+        ]
+      },
+      {
+        "id": "knx3",
+        "name": "Outlet",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/3",
+              "control": "1/1/3"
+            },
+            "type": "outlet"
+          }
+        ]
+      },
+      {
+        "id": "knx4",
+        "name": "Contact",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/4",
+              "control": "1/1/4"
+            },
+            "type": "contact"
+          }
+        ]
+      },
+      {
+        "id": "knx5",
+        "name": "Multi Device",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/1",
+              "control": "1/1/1"
+            },
+            "type": "switch",
+            "name": "Switch"
+          },
+          {
+            "address": {
+              "status": "1/1/2",
+              "control": "1/1/2"
+            },
+            "type": "led",
+            "name": "LED"
+          },
+          {
+            "address": {
+              "status": "1/1/3",
+              "control": "1/1/3"
+            },
+            "type": "outlet",
+            "name": "Outlet"
+          },
+          {
+            "address": {
+              "status": "1/1/4",
+              "control": "1/1/4"
+            },
+            "type": "contact",
+            "name": "Contact"
+          }
+        ]
+      }
+    ]
+  }
 ]
 ```
 ### Required Parameters
