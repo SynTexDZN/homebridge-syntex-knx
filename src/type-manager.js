@@ -33,16 +33,30 @@ module.exports = class TypeManager
 				return letter;
 			}
 		}
+
+		return null;
 	}
 
 	letterToType(letter)
 	{
-		return this.data[letter.toUpperCase()].type;
+		if(letter != null && this.data[letter.toUpperCase()] != null)
+		{
+			return this.data[letter.toUpperCase()].type;
+		}
+
+		return null;
 	}
 
 	getDataType(type)
 	{
-		return this.data[this.typeToLetter(type)].format;
+		var letter = this.typeToLetter(type);
+
+		if(letter != null && this.data[letter] != null)
+		{
+			return this.data[letter].format;
+		}
+
+		return null;
 	}
 	
 	validateUpdate(id, letters, state)

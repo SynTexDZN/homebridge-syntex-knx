@@ -20,7 +20,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 
 		this.gatewayIP = config['ip'];
 	
-		if(this.api && this.logger)
+		if(this.api != null && this.logger != null && this.files != null && this.gatewayIP != null)
 		{
 			this.api.on('didFinishLaunching', () => {
 
@@ -32,6 +32,10 @@ class SynTexKNXPlatform extends DynamicPlatform
 				this.loadAccessories();
 				this.initWebServer();
 			});
+		}
+		else
+		{
+			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex-knx/blob/master/README.md');
 		}
 	}
 
