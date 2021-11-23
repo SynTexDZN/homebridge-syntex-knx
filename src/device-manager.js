@@ -223,9 +223,11 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			this.KNXInterface._addRequest('control', service.controlAddress, resolve);
-
+			//this.KNXInterface._addRequest('control', service.controlAddress, resolve);
+			
 			this.KNXInterface.writeState(service, value);
+
+			resolve(true);
 		});
 	}
 
