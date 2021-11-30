@@ -59,7 +59,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 
 			device.manufacturer = pluginName;
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager : DeviceManager, AutomationSystem : AutomationSystem, ContextManager : ContextManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager, AutomationSystem, ContextManager }));
 		}
 	}
 }
