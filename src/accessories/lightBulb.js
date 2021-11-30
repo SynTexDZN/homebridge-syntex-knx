@@ -15,6 +15,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
 
+		this.invertState = serviceConfig.inverted || false;
+
 		this.dataPoint = 'DPT1.001';
 
 		super.getState((power) => {

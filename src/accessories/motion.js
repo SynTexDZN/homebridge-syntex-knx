@@ -14,6 +14,8 @@ module.exports = class SynTexMotionService extends MotionService
 
 		this.statusAddress = serviceConfig.address.status;
 
+		this.invertState = serviceConfig.inverted || false;
+
 		this.dataPoint = 'DPT1.001';
 
 		super.getState((value) => {

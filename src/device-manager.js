@@ -56,7 +56,7 @@ class KNXInterface
 						this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
 
 							this._clearRequests('status', statusAddress[j]);
-							
+
 							this.EventManager.setOutputStream('SynTexKNX', null, statusAddress[j], newValue);
 						});
 					}
@@ -65,6 +65,11 @@ class KNXInterface
 
 						if(this.dataPoints.status[statusAddress[j]] != null)
 						{
+							if(services[i].invertState)
+							{
+								value = !value;
+							}
+
 							this.dataPoints.status[statusAddress[j]].current_value = value;
 
 							var type = this.TypeManager.letterToType(services[i].letters[0]);
@@ -113,6 +118,11 @@ class KNXInterface
 						this.dataPoints.status[statusAddress[i]].read((src, value) => {
 
 							this._clearRequests('status', statusAddress[i]);
+
+							if(service.invertState)
+							{
+								value = !value;
+							}
 		
 							resolve(value);
 						});
@@ -138,7 +148,14 @@ class KNXInterface
 				{
 					if(this.dataPoints.control[controlAddress[i]] != null)
 					{
-						this.dataPoints.control[controlAddress[i]].write(value);
+						if(service.invertState)
+						{
+							this.dataPoints.control[controlAddress[i]].write(!value);
+						}
+						else
+						{
+							this.dataPoints.control[controlAddress[i]].write(value);
+						}
 					}
 
 					this.EventManager.setOutputStream('SynTexKNX', service, controlAddress[i], value);

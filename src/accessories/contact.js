@@ -14,6 +14,8 @@ module.exports = class SynTexContactService extends ContactService
 
 		this.statusAddress = serviceConfig.address.status;
 
+		this.invertState = serviceConfig.inverted || false;
+
 		this.dataPoint = 'DPT1.001';
 
 		super.getState((value) => {
