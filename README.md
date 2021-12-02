@@ -1,15 +1,14 @@
 # Homebridge SynTex KNX
-A simple plugin to control KNX devices.<br>
-This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
-It stores accessory data you can request to display the content on your website / app.
-
 [![NPM Recommended Version](https://img.shields.io/npm/v/homebridge-syntex-knx?label=release&color=brightgree&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-knx)
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-knx/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-knx)
 [![NPM Downloads](https://img.shields.io/npm/dt/homebridge-syntex-knx?color=9944ee&&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-knx)
 [![GitHub Commits](https://img.shields.io/github/commits-since/SynTexDZN/homebridge-syntex-knx/1.0.0?color=yellow&label=commits&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/commits)
 [![GitHub Code Size](https://img.shields.io/github/languages/code-size/SynTexDZN/homebridge-syntex-knx?color=0af&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx)
 
-<br>
+A simple plugin to control KNX devices.<br>
+This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
+It stores accessory data you can request to display the content on your website / app.
+
 
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
@@ -34,7 +33,7 @@ It stores accessory data you can request to display the content on your website 
 - `sudo chown -R homebridge /var/homebridge/SynTex/` *( permissions only for homebridge )*
 - `sudo chmod 777 -R homebridge /var/homebridge/SynTex/` *( permissions for many processes )*
 
-```
+```json
 "platforms": [
   {
     "platform": "SynTexKNX",
@@ -98,6 +97,33 @@ It stores accessory data you can request to display the content on your website 
       },
       {
         "id": "knx5",
+        "name": "Motion",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/5",
+              "control": "1/1/5"
+            },
+            "type": "motion"
+          }
+        ]
+      },
+      {
+        "id": "knx6",
+        "name": "Inverted Accessory",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/6",
+              "control": "1/1/6"
+            },
+            "type": "switch",
+            "inverted": true
+          }
+        ]
+      },
+      {
+        "id": "knx7",
         "name": "Multi Device",
         "services": [
           {
@@ -131,6 +157,23 @@ It stores accessory data you can request to display the content on your website 
             },
             "type": "contact",
             "name": "Contact"
+          },
+          {
+            "address": {
+              "status": "1/1/5",
+              "control": "1/1/5"
+            },
+            "type": "motion",
+            "name": "Motion"
+          },
+          {
+            "address": {
+              "status": "1/1/6",
+              "control": "1/1/6"
+            },
+            "type": "switch",
+            "name": "Inverted Switch",
+            "inverted": true
           }
         ]
       }
@@ -147,6 +190,15 @@ It stores accessory data you can request to display the content on your website 
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
+
+### Accessory Config
+- Every device needs these parameters: `id`, `name` and `services` *( required )*
+- `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
+- `name` could be anything.
+- `services` Should be one of these: `motion`, `contact`, `switch`, `relais`, `outlet`, `led`
+
+### Service Config
+- For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
 
 
 ---
@@ -192,5 +244,6 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 ## Currently Supported
 - Contact Sensor
+- Motion Sensor
 - Switch / Relais / Outlet
 - LED Lights
