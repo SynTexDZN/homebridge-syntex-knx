@@ -110,12 +110,25 @@ It stores accessory data you can request to display the content on your website 
       },
       {
         "id": "knx6",
-        "name": "Inverted Accessory",
+        "name": "Occupancy",
         "services": [
           {
             "address": {
               "status": "1/1/6",
               "control": "1/1/6"
+            },
+            "type": "occupancy"
+          }
+        ]
+      },
+      {
+        "id": "knx7",
+        "name": "Inverted Accessory",
+        "services": [
+          {
+            "address": {
+              "status": "1/1/7",
+              "control": "1/1/7"
             },
             "type": "switch",
             "inverted": true
@@ -123,7 +136,7 @@ It stores accessory data you can request to display the content on your website 
         ]
       },
       {
-        "id": "knx7",
+        "id": "knx8",
         "name": "Multi Device",
         "services": [
           {
@@ -170,6 +183,14 @@ It stores accessory data you can request to display the content on your website 
             "address": {
               "status": "1/1/6",
               "control": "1/1/6"
+            },
+            "type": "occupancy",
+            "name": "Occupancy"
+          },
+          {
+            "address": {
+              "status": "1/1/7",
+              "control": "1/1/7"
             },
             "type": "switch",
             "name": "Inverted Switch",
@@ -245,5 +266,6 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Currently Supported
 - Contact Sensor
 - Motion Sensor
+- Occupancy Sensor
 - Switch / Relais / Outlet
 - LED Lights

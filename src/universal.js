@@ -11,7 +11,7 @@ const LightBulbService = require('./accessories/lightBulb');
 // const ColoredBulbService = require('./accessories/coloredBulb');
 // const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
-// const OccupancyService = require('./accessories/occupancy');
+const OccupancyService = require('./accessories/occupancy');
 // const StatelessSwitchService = require('./accessories/statelessswitch');
 // const SmokeService = require('./accessories/smoke');
 // const AirQualityService = require('./accessories/airquality');
@@ -71,11 +71,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(type == 'motion')
 		{
 			service = new MotionService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}/*
+		}
 		else if(type == 'occupancy')
 		{
 			service = new OccupancyService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}/*
 		else if(type == 'temperature')
 		{
 			service = new TemperatureService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);

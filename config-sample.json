@@ -75,12 +75,25 @@
 				},
 				{
 					"id": "knx6",
-					"name": "Inverted Accessory",
+					"name": "Occupancy",
 					"services": [
 						{
 							"address": {
 								"status": "1/1/6",
 								"control": "1/1/6"
+							},
+							"type": "occupancy"
+						}
+					]
+				},
+				{
+					"id": "knx7",
+					"name": "Inverted Accessory",
+					"services": [
+						{
+							"address": {
+								"status": "1/1/7",
+								"control": "1/1/7"
 							},
 							"type": "switch",
 							"inverted": true
@@ -88,7 +101,7 @@
 					]
 				},
 				{
-					"id": "knx7",
+					"id": "knx8",
 					"name": "Multi Device",
 					"services": [
 						{
@@ -135,6 +148,14 @@
 							"address": {
 								"status": "1/1/6",
 								"control": "1/1/6"
+							},
+							"type": "occupancy",
+							"name": "Occupancy"
+						},
+						{
+							"address": {
+								"status": "1/1/7",
+								"control": "1/1/7"
 							},
 							"type": "switch",
 							"name": "Inverted Switch",
