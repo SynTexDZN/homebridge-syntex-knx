@@ -15,7 +15,7 @@ module.exports = class EventManager extends EventEmitter
 	{
 		super.on(stream, (source, destination, value) => {
 			
-			if(source.id != sender.id && destination == receiver)
+			if(source != sender && destination == receiver)
 			{
 				callback(value);
 
