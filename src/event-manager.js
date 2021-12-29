@@ -15,13 +15,13 @@ module.exports = class EventManager extends EventEmitter
 	{
 		super.on(stream, (source, destination, value) => {
 			
-			if(source != sender && destination == receiver)
+			if((source == null || source != sender) && destination == receiver)
 			{
 				callback(value);
 
 				this.logger.debug('<<< ' + stream + ' [' + receiver + '] ' + JSON.stringify(value));
 			}
-		});
+		})	;
 	}
 
 	setOutputStream(stream, sender, receiver, value)
