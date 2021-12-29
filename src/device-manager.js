@@ -29,8 +29,8 @@ class KNXInterface
 					}
 				},
 				event : (evt, src, dest, value) => this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']'),
-				error : (e) => this.logger.log('error', 'bridge', 'Bridge', '**** ERROR: ' + e),
-				disconnected : () => this.logger.debug('KNX IP Gateway getrennt!')
+				error : (e) => this.logger.err(e),
+				disconnected : () => this.logger.debug('%knx_gateway_disconnected%!')
 			}
 		});
 	}
@@ -100,7 +100,7 @@ class KNXInterface
 
 		this.updateStates();
 
-		this.logger.log('success', 'bridge', 'Bridge', 'KNX IP Gateway verbunden!');
+		this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
 	}
 
 	readState(service)
@@ -158,7 +158,7 @@ class KNXInterface
 						}
 					}
 
-					this.EventManager.setOutputStream('SynTexKNX', service, controlAddress[i], value);
+					this.EventManager.setOutputStream('SynTexKNX', null, controlAddress[i], value);
 				}
 			}
 			else
