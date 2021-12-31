@@ -12,9 +12,17 @@ class KNXInterface
 		this.requests = { status : [], control : [] };
 		this.dataPoints = { status : {}, control : {} };
 
+		this.connected = false;
+
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
 				connected : () => this.connectionSuccess(),
+				disconnected : () => {
+					
+					this.connected = false;
+
+					this.logger.debug('%knx_gateway_disconnected%!');
+				},
 				confirmed : (data) => {
 					
 					var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
@@ -29,8 +37,7 @@ class KNXInterface
 					}
 				},
 				event : (evt, src, dest, value) => this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']'),
-				error : (e) => this.logger.err(e),
-				disconnected : () => this.logger.debug('%knx_gateway_disconnected%!')
+				error : (e) => this.logger.err(e)
 			}
 		});
 	}
