@@ -244,7 +244,7 @@ module.exports = class DeviceManager
 			
 			this.KNXInterface.writeState(service, value);
 
-			resolve(true);
+			resolve(this.KNXInterface.connected);
 		});
 	}
 
