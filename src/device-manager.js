@@ -153,19 +153,22 @@ class KNXInterface
 
 				for(const i in controlAddress)
 				{
-					if(this.dataPoints.control[controlAddress[i]] != null)
+					if(service.invertState)
 					{
-						if(service.invertState)
-						{
-							this.dataPoints.control[controlAddress[i]].write(!value);
-						}
-						else
-						{
-							this.dataPoints.control[controlAddress[i]].write(value);
-						}
+						value = !value;
 					}
 
-					this.EventManager.setOutputStream('SynTexKNX', null, controlAddress[i], value);
+					if(this.dataPoints.control[controlAddress[i]] != null)
+					{
+						this.dataPoints.control[controlAddress[i]].write(value);
+					}
+
+					if(this.dataPoints.status[controlAddress[i]] != null)
+					{
+						this.dataPoints.status[controlAddress[i]].current_value = value;
+					}
+
+					this.EventManager.setOutputStream('SynTexKNX', service, controlAddress[i], value);
 				}
 			}
 			else
