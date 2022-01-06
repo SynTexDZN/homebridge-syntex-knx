@@ -45,7 +45,7 @@ It stores accessory data you can request to display the content on your website 
     "accessories": [
       {
         "id": "knx1",
-        "name": "Switch",
+        "name": "Control Accessory",
         "services": [
           {
             "address": {
@@ -58,86 +58,34 @@ It stores accessory data you can request to display the content on your website 
       },
       {
         "id": "knx2",
-        "name": "Light",
+        "name": "Sensor Accessory",
         "services": [
           {
             "address": {
               "status": "1/1/2",
               "control": "1/1/2"
             },
-            "type": "led"
+            "type": "motion"
           }
         ]
       },
       {
         "id": "knx3",
-        "name": "Outlet",
+        "name": "Inverted Accessory",
         "services": [
           {
             "address": {
               "status": "1/1/3",
               "control": "1/1/3"
             },
-            "type": "outlet"
-          }
-        ]
-      },
-      {
-        "id": "knx4",
-        "name": "Contact",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/4",
-              "control": "1/1/4"
-            },
-            "type": "contact"
-          }
-        ]
-      },
-      {
-        "id": "knx5",
-        "name": "Motion",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/5",
-              "control": "1/1/5"
-            },
-            "type": "motion"
-          }
-        ]
-      },
-      {
-        "id": "knx6",
-        "name": "Occupancy",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/6",
-              "control": "1/1/6"
-            },
-            "type": "occupancy"
-          }
-        ]
-      },
-      {
-        "id": "knx7",
-        "name": "Inverted Accessory",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/7",
-              "control": "1/1/7"
-            },
-            "type": "switch",
+            "type": "contact",
             "inverted": true
           }
         ]
       },
       {
-        "id": "knx8",
-        "name": "Multi Device",
+        "id": "knx4",
+        "name": "Multi Accessory",
         "services": [
           {
             "address": {
@@ -149,48 +97,56 @@ It stores accessory data you can request to display the content on your website 
           },
           {
             "address": {
-              "status": "1/1/2",
-              "control": "1/1/2"
+              "status": "1/1/1",
+              "control": "1/1/1"
             },
             "type": "led",
             "name": "LED"
           },
           {
             "address": {
-              "status": "1/1/3",
-              "control": "1/1/3"
+              "status": "1/1/1",
+              "control": "1/1/1"
             },
             "type": "outlet",
             "name": "Outlet"
           },
           {
             "address": {
-              "status": "1/1/4",
-              "control": "1/1/4"
-            },
-            "type": "contact",
-            "name": "Contact"
-          },
-          {
-            "address": {
-              "status": "1/1/5",
-              "control": "1/1/5"
+              "status": "1/1/2",
+              "control": "1/1/2"
             },
             "type": "motion",
             "name": "Motion"
           },
           {
             "address": {
-              "status": "1/1/6",
-              "control": "1/1/6"
+              "status": "1/1/3",
+              "control": "1/1/3"
+            },
+            "type": "contact",
+            "name": "Contact"
+          },
+          {
+            "address": {
+              "status": "1/1/4",
+              "control": "1/1/4"
             },
             "type": "occupancy",
             "name": "Occupancy"
           },
           {
             "address": {
-              "status": "1/1/7",
-              "control": "1/1/7"
+              "status": "1/1/5",
+              "control": "1/1/5"
+            },
+            "type": "temperature",
+            "name": "Temperature"
+          },
+          {
+            "address": {
+              "status": "1/1/1",
+              "control": "1/1/1"
             },
             "type": "switch",
             "name": "Inverted Switch",
@@ -216,7 +172,7 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `motion`, `contact`, `switch`, `relais`, `outlet`, `led`
+- `services` Should be one of these: `contact`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
 
 ### Service Config
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
@@ -267,5 +223,6 @@ https://github.com/SynTexDZN/homebridge-syntex
 - Contact Sensor
 - Motion Sensor
 - Occupancy Sensor
+- Temperature Sensor
 - Switch / Relais / Outlet
 - LED Lights
