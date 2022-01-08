@@ -25,98 +25,85 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
 	setService(config, subtype)
 	{
-		var name = this.name;
-		var type = config;
+		var serviceConfig = { name : this.name, type : config, subtype }, service = null;
 
 		if(config instanceof Object)
 		{
-			if(config.name != null)
+			for(const i in config)
 			{
-				name = config.name;
-			}
-			
-			if(config.type != null)
-			{
-				type = config.type;
+				serviceConfig[i] = config[i];
 			}
 		}
 
-		if(Array.isArray(this.services) && this.services.length > 1 && this.name == name)
+		if(Array.isArray(this.services) && this.services.length > 1 && this.name == serviceConfig.name)
 		{
-			name = name + ' ' + type[0].toUpperCase() + type.substring(1);
+			serviceConfig.name = serviceConfig.name + ' ' + serviceConfig.type[0].toUpperCase() + serviceConfig.type.substring(1);
 
-			if((JSON.stringify(this.services).match(new RegExp(type, 'g')) || []).length > 1)
+			if((JSON.stringify(this.services).match(new RegExp(serviceConfig.type, 'g')) || []).length > 1)
 			{
 				var letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
-				name += ' ' + letters[subtype];
+				serviceConfig.name += ' ' + letters[subtype];
 			}
 		}
-
-		var service = null;
-		var serviceConfig = { name : name, type : type, subtype : subtype, requests : config.requests, address : config.address, inverted : config.inverted };
         
-		if(type == 'contact')
+		if(serviceConfig.type == 'contact')
 		{
 			service = new ContactService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'switch')
+		else if(serviceConfig.type == 'switch')
 		{
 			service = new SwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}/*
-		else if(type == 'light')
+		else if(serviceConfig.type == 'light')
 		{
 			service = new LightService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}*/
-		else if(type == 'motion')
+		else if(serviceConfig.type == 'motion')
 		{
 			service = new MotionService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'occupancy')
+		else if(serviceConfig.type == 'occupancy')
 		{
 			service = new OccupancyService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'temperature')
+		else if(serviceConfig.type == 'temperature')
 		{
 			service = new TemperatureService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}/*
-		else if(type == 'humidity')
+		else if(serviceConfig.type == 'humidity')
 		{
 			service = new HumidityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}*/
-		else if(type == 'led')
+		else if(serviceConfig.type == 'led')
 		{
 			service = new LightBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}/*
-		else if(type == 'dimmer')
+		else if(serviceConfig.type == 'dimmer')
 		{
 			service = new DimmedBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'rgb')
+		else if(serviceConfig.type == 'rgb')
 		{
-			serviceConfig.spectrum = config.spectrum;
-
 			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'rain')
+		else if(serviceConfig.type == 'rain')
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}*/
-		else if(type == 'outlet' || type == 'relais')
+		else if(serviceConfig.type == 'outlet' || serviceConfig.type == 'relais')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}/*
-		else if(type == 'statelessswitch')
+		else if(serviceConfig.type == 'statelessswitch')
 		{
-			serviceConfig.buttons = config.buttons;
-
 			service = new StatelessSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'smoke')
+		else if(serviceConfig.type == 'smoke')
 		{
 			service = new SmokeService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-		else if(type == 'airquality')
+		else if(serviceConfig.type == 'airquality')
 		{
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
