@@ -21,7 +21,7 @@ module.exports = class EventManager extends EventEmitter
 
 				this.logger.debug('<<< ' + stream + ' [' + receiver + '] ' + JSON.stringify(value));
 			}
-		})	;
+		});
 	}
 
 	setOutputStream(stream, sender, receiver, value)

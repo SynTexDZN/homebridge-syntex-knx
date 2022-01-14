@@ -14,8 +14,6 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 
 		this.statusAddress = serviceConfig.address.status;
 
-		this.invertState = serviceConfig.inverted || false;
-
 		this.dataPoint = 'DPT9.001';
 
 		super.getState((value) => {
