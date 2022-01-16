@@ -146,6 +146,13 @@ It stores accessory data you can request to display the content on your website 
           },
           {
             "address": {
+              "status": "1/1/7"
+            },
+            "type": "humidity",
+            "name": "Humidity"
+          },
+          {
+            "address": {
               "status": "1/1/1",
               "control": "1/1/1"
             },
@@ -173,7 +180,7 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `contact`, `light`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
+- `services` Should be one of these: `contact`, `humidity`, `light`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
 
 ### Service Config
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
@@ -194,8 +201,10 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For all devices: `true` / `false` *( outlet, switch, light, dimmable light )*
-- For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
+- For boolean devices: `true` / `false` *( switch, outlet, led )*
+- For accessories with multiple service types add `&type=`  **SERVICETYPE**
+- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&value=true&brightness=100`\
 *( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example )*
@@ -222,9 +231,10 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 ## Currently Supported
 - Contact Sensor
+- Humidity Sensor
 - Light Sensor
 - Motion Sensor
 - Occupancy Sensor
 - Temperature Sensor
 - Switch / Relais / Outlet
-- LED Lights
+- LED Light

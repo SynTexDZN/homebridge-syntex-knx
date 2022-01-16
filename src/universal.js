@@ -5,7 +5,7 @@ const SwitchService = require('./accessories/switch');
 const LightService = require('./accessories/light');
 const MotionService = require('./accessories/motion');
 const TemperatureService = require('./accessories/temperature');
-// const HumidityService = require('./accessories/humidity');
+const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
 // const DimmedBulbService = require('./accessories/dimmedBulb');
 // const ColoredBulbService = require('./accessories/coloredBulb');
@@ -70,11 +70,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'temperature')
 		{
 			service = new TemperatureService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}/*
+		}
 		else if(serviceConfig.type == 'humidity')
 		{
 			service = new HumidityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}*/
+		}
 		else if(serviceConfig.type == 'led')
 		{
 			service = new LightBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
@@ -117,7 +117,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	getModel()
 	{
 		var name = 'Accessory';
-		var sensors = ['airquality', 'contact', 'humidity', 'leak', 'motion', 'occupancy', 'smoke', 'temperature'];
+		var sensors = ['airquality', 'contact', 'humidity', 'leak', 'light', 'motion', 'occupancy', 'smoke', 'temperature'];
 
 		if(this.services != null)
 		{
