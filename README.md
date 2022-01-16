@@ -62,8 +62,7 @@ It stores accessory data you can request to display the content on your website 
         "services": [
           {
             "address": {
-              "status": "1/1/2",
-              "control": "1/1/2"
+              "status": "1/1/2"
             },
             "type": "motion"
           }
@@ -75,8 +74,7 @@ It stores accessory data you can request to display the content on your website 
         "services": [
           {
             "address": {
-              "status": "1/1/3",
-              "control": "1/1/3"
+              "status": "1/1/3"
             },
             "type": "contact",
             "inverted": true
@@ -113,35 +111,38 @@ It stores accessory data you can request to display the content on your website 
           },
           {
             "address": {
-              "status": "1/1/2",
-              "control": "1/1/2"
+              "status": "1/1/2"
             },
             "type": "motion",
             "name": "Motion"
           },
           {
             "address": {
-              "status": "1/1/3",
-              "control": "1/1/3"
+              "status": "1/1/3"
             },
             "type": "contact",
             "name": "Contact"
           },
           {
             "address": {
-              "status": "1/1/4",
-              "control": "1/1/4"
+              "status": "1/1/4"
             },
             "type": "occupancy",
             "name": "Occupancy"
           },
           {
             "address": {
-              "status": "1/1/5",
-              "control": "1/1/5"
+              "status": "1/1/5"
             },
             "type": "temperature",
             "name": "Temperature"
+          },
+          {
+            "address": {
+              "status": "1/1/6"
+            },
+            "type": "light",
+            "name": "Light"
           },
           {
             "address": {
@@ -172,7 +173,7 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `contact`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
+- `services` Should be one of these: `contact`, `light`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
 
 ### Service Config
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
@@ -221,6 +222,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 ## Currently Supported
 - Contact Sensor
+- Light Sensor
 - Motion Sensor
 - Occupancy Sensor
 - Temperature Sensor

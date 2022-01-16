@@ -27,8 +27,7 @@
 					"services": [
 						{
 							"address": {
-								"status": "1/1/2",
-								"control": "1/1/2"
+								"status": "1/1/2"
 							},
 							"type": "motion"
 						}
@@ -40,8 +39,7 @@
 					"services": [
 						{
 							"address": {
-								"status": "1/1/3",
-								"control": "1/1/3"
+								"status": "1/1/3"
 							},
 							"type": "contact",
 							"inverted": true
@@ -78,35 +76,38 @@
 						},
 						{
 							"address": {
-								"status": "1/1/2",
-								"control": "1/1/2"
+								"status": "1/1/2"
 							},
 							"type": "motion",
 							"name": "Motion"
 						},
 						{
 							"address": {
-								"status": "1/1/3",
-								"control": "1/1/3"
+								"status": "1/1/3"
 							},
 							"type": "contact",
 							"name": "Contact"
 						},
 						{
 							"address": {
-								"status": "1/1/4",
-								"control": "1/1/4"
+								"status": "1/1/4"
 							},
 							"type": "occupancy",
 							"name": "Occupancy"
 						},
 						{
 							"address": {
-								"status": "1/1/5",
-								"control": "1/1/5"
+								"status": "1/1/5"
 							},
 							"type": "temperature",
 							"name": "Temperature"
+						},
+						{
+							"address": {
+								"status": "1/1/6"
+							},
+							"type": "light",
+							"name": "Light"
 						},
 						{
 							"address": {
