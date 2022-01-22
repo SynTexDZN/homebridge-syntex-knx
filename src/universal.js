@@ -9,12 +9,12 @@ const HumidityService = require('./accessories/humidity');
 const LightBulbService = require('./accessories/lightBulb');
 // const DimmedBulbService = require('./accessories/dimmedBulb');
 // const ColoredBulbService = require('./accessories/coloredBulb');
-// const LeakService = require('./accessories/leak');
+const LeakService = require('./accessories/leak');
 const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
 // const StatelessSwitchService = require('./accessories/statelessswitch');
-// const SmokeService = require('./accessories/smoke');
-// const AirQualityService = require('./accessories/airquality');
+const SmokeService = require('./accessories/smoke');
+const AirQualityService = require('./accessories/airquality');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -86,11 +86,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'rgb')
 		{
 			service = new ColoredBulbService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
-		else if(serviceConfig.type == 'rain')
+		}*/
+		else if(serviceConfig.type == 'rain' || serviceConfig.type == 'leak')
 		{
 			service = new LeakService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}*/
+		}
 		else if(serviceConfig.type == 'outlet' || serviceConfig.type == 'relais')
 		{
 			service = new OutletService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
@@ -98,7 +98,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'statelessswitch')
 		{
 			service = new StatelessSwitchService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}*/
 		else if(serviceConfig.type == 'smoke')
 		{
 			service = new SmokeService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
@@ -107,7 +107,6 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		{
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
 		}
-        */
 		if(service != null)
 		{
 			this.service.push(service);

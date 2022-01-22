@@ -118,6 +118,27 @@
 						},
 						{
 							"address": {
+								"status": "1/1/8"
+							},
+							"type": "leak",
+							"name": "Leak"
+						},
+						{
+							"address": {
+								"status": "1/1/9"
+							},
+							"type": "smoke",
+							"name": "Smoke"
+						},
+						{
+							"address": {
+								"status": "1/1/10"
+							},
+							"type": "airquality",
+							"name": "Airquality"
+						},
+						{
+							"address": {
 								"status": "1/1/1",
 								"control": "1/1/1"
 							},

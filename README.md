@@ -153,6 +153,27 @@ It stores accessory data you can request to display the content on your website 
           },
           {
             "address": {
+              "status": "1/1/8"
+            },
+            "type": "leak",
+            "name": "Leak"
+          },
+          {
+            "address": {
+              "status": "1/1/9"
+            },
+            "type": "smoke",
+            "name": "Smoke"
+          },
+          {
+            "address": {
+              "status": "1/1/10"
+            },
+            "type": "airquality",
+            "name": "Airquality"
+          },
+          {
+            "address": {
               "status": "1/1/1",
               "control": "1/1/1"
             },
@@ -180,7 +201,7 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `contact`, `humidity`, `light`, `motion`, `occupancy`, `temperature`, `switch`, `relais`, `outlet`, `led`
+- `services` Should be one of these: `airquality`, `contact`, `humidity`, `leak`, `light`, `motion`, `occupancy`, `rain`, `smoke`, `temperature`, `switch`, `relais`, `outlet`, `led`
 
 ### Service Config
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
@@ -230,11 +251,14 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 
 ## Currently Supported
+- Airquality Sensor
 - Contact Sensor
 - Humidity Sensor
+- Leak / Rain Sensor
 - Light Sensor
 - Motion Sensor
 - Occupancy Sensor
+- Smoke Sensor
 - Temperature Sensor
 - Switch / Relais / Outlet
 - LED Light
