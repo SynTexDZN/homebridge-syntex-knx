@@ -38,7 +38,7 @@ It stores accessory data you can request to display the content on your website 
   {
     "platform": "SynTexKNX",
     "baseDirectory": "/var/homebridge/SynTex",
-    "ip": "192.168.188.88",
+    "ip": "192.168.1.100",
     "port": 1714,
     "language": "us",
     "debug": false,
@@ -199,7 +199,7 @@ It stores accessory data you can request to display the content on your website 
 
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
-- `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
+- `id` has to be either a `physical group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` see service config below.
 
