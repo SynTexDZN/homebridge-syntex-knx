@@ -49,8 +49,8 @@ It stores accessory data you can request to display the content on your website 
         "services": [
           {
             "address": {
-              "status": "1/1/1",
-              "control": "1/1/1"
+              "status": ["1/1/0", "1/1/1"],
+              "control": ["1/1/0", "1/1/1"]
             },
             "type": "switch"
           }
@@ -201,9 +201,11 @@ It stores accessory data you can request to display the content on your website 
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `real group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` Should be one of these: `airquality`, `contact`, `humidity`, `leak`, `light`, `motion`, `occupancy`, `rain`, `smoke`, `temperature`, `switch`, `relais`, `outlet`, `led`
+- `services` see service config below.
 
 ### Service Config
+- `type` should be one of these: `airquality`, `contact`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+- `address` must include your `status` and probably `control` group address / addresses from your knx system.
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
 
 

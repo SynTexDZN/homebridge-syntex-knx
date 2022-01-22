@@ -14,8 +14,8 @@
 					"services": [
 						{
 							"address": {
-								"status": "1/1/1",
-								"control": "1/1/1"
+								"status": ["1/1/0", "1/1/1"],
+             					"control": ["1/1/0", "1/1/1"]
 							},
 							"type": "outlet"
 						}
