@@ -18,7 +18,7 @@ module.exports = class SynTexLightService extends LightService
 
 		super.getState((value) => {
 
-			this.value = value || 0;
+			this.value = value || 0.0001;
 
 			this.service.getCharacteristic(Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
 			
