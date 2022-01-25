@@ -34,5 +34,8 @@
 	"bugs": {
 		"url": "https://github.com/SynTexDZN/homebridge-syntex-knx/issues"
 	},
-	"license": "ISC"
+	"license": "ISC",
+	"devDependencies": {
+		"eslint": "^8.7.0"
+	}
 }
