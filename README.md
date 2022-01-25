@@ -39,9 +39,11 @@ It stores accessory data you can request to display the content on your website 
     "platform": "SynTexKNX",
     "baseDirectory": "/var/homebridge/SynTex",
     "ip": "192.168.1.100",
-    "port": 1714,
-    "language": "us",
-    "debug": false,
+    "options": {
+      "port": 1714,
+      "language": "us",
+      "debug": false
+    },
     "accessories": [
       {
         "id": "knx1",

@@ -4,9 +4,11 @@
 			"platform": "SynTexKNX",
 			"baseDirectory": "/var/homebridge/SynTex",
 			"ip": "192.168.188.88",
-			"port": 1714,
-			"language": "us",
-			"debug": false,
+			"options": {
+				"port": 1714,
+				"language": "us",
+				"debug": false
+			},
 			"accessories": [
 				{
 					"id": "knx1",
