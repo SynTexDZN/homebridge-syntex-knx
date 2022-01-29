@@ -13,6 +13,7 @@ class KNXInterface
 		this.dataPoints = { status : {}, control : {} };
 
 		this.connected = false;
+		this.firstConnect = true;
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
@@ -46,61 +47,66 @@ class KNXInterface
 	{
 		this.connected = true;
 
-		var services = this.DeviceManager._getServices();
-
-		for(const i in services)
+		if(this.firstConnect)
 		{
-			if(services[i].statusAddress != null)
+			this.firstConnect = false;
+			
+			var services = this.DeviceManager._getServices();
+
+			for(const i in services)
 			{
-				const statusAddress = Array.isArray(services[i].statusAddress) ? services[i].statusAddress : [ services[i].statusAddress ];
-
-				for(const j in statusAddress)
+				if(services[i].statusAddress != null)
 				{
-					if(this.dataPoints.status[statusAddress[j]] == null)
+					const statusAddress = Array.isArray(services[i].statusAddress) ? services[i].statusAddress : [ services[i].statusAddress ];
+
+					for(const j in statusAddress)
 					{
-						this.dataPoints.status[statusAddress[j]] = new knx.Datapoint({ ga : statusAddress[j], dpt : services[i].dataPoint }, this.connection);
+						if(this.dataPoints.status[statusAddress[j]] == null)
+						{
+							this.dataPoints.status[statusAddress[j]] = new knx.Datapoint({ ga : statusAddress[j], dpt : services[i].dataPoint }, this.connection);
 
-						this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
+							this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
 
-							this._clearRequests('status', statusAddress[j]);
+								this._clearRequests('status', statusAddress[j]);
 
-							this.EventManager.setOutputStream('SynTexKNX', null, statusAddress[j], newValue);
+								this.EventManager.setOutputStream('SynTexKNX', null, statusAddress[j], newValue);
+							});
+						}
+
+						this.EventManager.setInputStream('SynTexKNX', services[i], statusAddress[j], (value) => {
+
+							if(this.dataPoints.status[statusAddress[j]] != null)
+							{
+								if(services[i].invertState)
+								{
+									value = !value;
+								}
+
+								this.dataPoints.status[statusAddress[j]].current_value = value;
+
+								var type = this.TypeManager.letterToType(services[i].letters[0]);
+
+								if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
+								{
+									services[i].updateState({ power : value });
+								}
+								else
+								{
+									services[i].updateState({ value });
+								}
+							}
 						});
 					}
-
-					this.EventManager.setInputStream('SynTexKNX', services[i], statusAddress[j], (value) => {
-
-						if(this.dataPoints.status[statusAddress[j]] != null)
-						{
-							if(services[i].invertState)
-							{
-								value = !value;
-							}
-
-							this.dataPoints.status[statusAddress[j]].current_value = value;
-
-							var type = this.TypeManager.letterToType(services[i].letters[0]);
-
-							if(type == 'outlet' || type == 'relais' || type == 'switch' || type == 'led')
-							{
-								services[i].updateState({ power : value });
-							}
-							else
-							{
-								services[i].updateState({ value });
-							}
-						}
-					});
 				}
-			}
 
-			if(services[i].controlAddress != null)
-			{
-				const controlAddress = Array.isArray(services[i].controlAddress) ? services[i].controlAddress : [ services[i].controlAddress ];
-
-				for(const j in controlAddress)
+				if(services[i].controlAddress != null)
 				{
-					this.dataPoints.control[controlAddress[j]] = new knx.Datapoint({ ga : controlAddress[j], dpt : services[i].dataPoint }, this.connection);
+					const controlAddress = Array.isArray(services[i].controlAddress) ? services[i].controlAddress : [ services[i].controlAddress ];
+
+					for(const j in controlAddress)
+					{
+						this.dataPoints.control[controlAddress[j]] = new knx.Datapoint({ ga : controlAddress[j], dpt : services[i].dataPoint }, this.connection);
+					}
 				}
 			}
 		}
