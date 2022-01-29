@@ -14,7 +14,7 @@ module.exports = class SynTexLightService extends LightService
 
 		this.statusAddress = serviceConfig.address.status;
 
-		this.dataPoint = 'DPT7.013';
+		this.dataPoint = 'DPT9.004';
 
 		super.getState((value) => {
 
