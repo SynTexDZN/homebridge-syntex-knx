@@ -14,7 +14,7 @@ const OutletService = require('./accessories/outlet');
 const OccupancyService = require('./accessories/occupancy');
 // const StatelessSwitchService = require('./accessories/statelessswitch');
 const SmokeService = require('./accessories/smoke');
-const AirQualityService = require('./accessories/airquality');
+// const AirQualityService = require('./accessories/airquality');
 
 module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 {
@@ -102,11 +102,11 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 		else if(serviceConfig.type == 'smoke')
 		{
 			service = new SmokeService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}/*
 		else if(serviceConfig.type == 'airquality')
 		{
 			service = new AirQualityService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
-		}
+		}*/
 		if(service != null)
 		{
 			this.service.push(service);

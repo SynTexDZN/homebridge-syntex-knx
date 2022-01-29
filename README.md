@@ -169,13 +169,6 @@ It stores accessory data you can request to display the content on your website 
           },
           {
             "address": {
-              "status": "1/1/10"
-            },
-            "type": "airquality",
-            "name": "Airquality"
-          },
-          {
-            "address": {
               "status": "1/1/1",
               "control": "1/1/1"
             },
@@ -206,7 +199,7 @@ It stores accessory data you can request to display the content on your website 
 - `services` see service config below.
 
 ### Service Config
-- `type` should be one of these: `airquality`, `contact`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+- `type` should be one of these: `contact`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
 - `address` must include your `status` and probably `control` group address / addresses from your knx system.
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
 
@@ -255,7 +248,6 @@ https://github.com/SynTexDZN/homebridge-syntex
 
 
 ## Currently Supported
-- Airquality Sensor
 - Contact Sensor
 - Humidity Sensor
 - Leak / Rain Sensor
