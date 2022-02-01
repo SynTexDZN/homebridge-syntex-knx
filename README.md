@@ -10,6 +10,13 @@ This plugin is made to cooperate with Homebridge: https://github.com/nfarina/hom
 It stores accessory data you can request to display the content on your website / app.
 
 
+## Core Features
+- **IP Gateway Connection:** Connect to your KNX IP Gateway trough your network.
+- **Device Control:** View and control your KNX devices.
+- **HTTP Access:** Update and read device states via HTTP calls.
+- **Automation:** We integrated our powerful automation API for fast and complex automation.
+
+
 ## Troubleshooting
 #### [![GitHub Issues](https://img.shields.io/github/issues-raw/SynTexDZN/homebridge-syntex-knx?logo=github&style=for-the-badge)](https://github.com/SynTexDZN/homebridge-syntex-knx/issues)
 - `Report` us your `Issues`
