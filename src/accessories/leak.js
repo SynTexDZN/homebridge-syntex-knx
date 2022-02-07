@@ -25,20 +25,6 @@ module.exports = class SynTexLeakService extends LeakService
 			this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(this.value);
 			
 		}, true);
-
-		this.changeHandler = (state) => { // TODO: Should There Be A Change Handler ? 
-
-			if(state.value != null)
-			{
-				this.value = state.value;
-
-				this.service.getCharacteristic(Characteristic.LeakDetected).updateValue(this.value);
-
-				super.setValue('value', this.value, true);
-
-				AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
-			}
-		};
 	}
 
 	getState(callback)
