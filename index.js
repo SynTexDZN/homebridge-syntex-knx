@@ -24,7 +24,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 		{
 			this.api.on('didFinishLaunching', () => {
 
-				DeviceManager = new DeviceManager(this.logger, this.accessories, this.gatewayIP, this.TypeManager, this.EventManager);
+				DeviceManager = new DeviceManager(this);
 				AutomationSystem = new AutomationSystem(this.logger, this.files, this, pluginName, this.api.user.storagePath());
 
 				this.loadAccessories();
@@ -57,7 +57,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 
 			device.manufacturer = pluginName;
 
-			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, logger : this.logger, DeviceManager, AutomationSystem, ContextManager }));
+			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager, AutomationSystem, ContextManager }));
 		}
 	}
 }

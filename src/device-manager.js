@@ -225,15 +225,16 @@ class KNXInterface
 
 module.exports = class DeviceManager
 {
-	constructor(logger, accessories, gatewayIP, TypeManager, EventManager)
+	constructor(platform)
 	{
-		this.logger = logger;
-		this.accessories = accessories;
+		this.accessories = platform.accessories;
+		
+		this.logger = platform.logger;
 
-		this.TypeManager = TypeManager;
-		this.EventManager = EventManager;
+		this.TypeManager = platform.TypeManager;
+		this.EventManager = platform.EventManager;
 
-		this.KNXInterface = new KNXInterface(gatewayIP, this);
+		this.KNXInterface = new KNXInterface(platform.gatewayIP, this);
 	}
 
 	getState(service)
