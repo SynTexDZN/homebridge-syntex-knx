@@ -7,7 +7,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.AutomationSystem;
+		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);

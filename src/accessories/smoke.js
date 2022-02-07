@@ -7,7 +7,7 @@ module.exports = class SynTexSmokeService extends SmokeService
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
 		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.AutomationSystem;
+		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
