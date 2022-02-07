@@ -228,7 +228,7 @@ module.exports = class DeviceManager
 	constructor(platform)
 	{
 		this.accessories = platform.accessories;
-
+		
 		this.logger = platform.logger;
 
 		this.TypeManager = platform.TypeManager;
