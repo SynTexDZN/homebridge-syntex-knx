@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { TemperatureService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexTemperatureService extends TemperatureService
 {
@@ -12,9 +12,9 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.statusAddress = serviceConfig.address.status;
-
 		this.dataPoint = 'DPT9.001';
+
+		this.statusAddress = serviceConfig.address.status;
 
 		super.getState((value) => {
 

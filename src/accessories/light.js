@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { LightService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexLightService extends LightService
 {
@@ -12,9 +12,9 @@ module.exports = class SynTexLightService extends LightService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.statusAddress = serviceConfig.address.status;
-
 		this.dataPoint = 'DPT9.004';
+
+		this.statusAddress = serviceConfig.address.status;
 
 		super.getState((value) => {
 

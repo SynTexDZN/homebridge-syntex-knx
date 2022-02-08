@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { OccupancyService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexOccupancyService extends OccupancyService
 {
@@ -12,11 +12,11 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.dataPoint = 'DPT1.001';
+
 		this.statusAddress = serviceConfig.address.status;
 
 		this.invertState = serviceConfig.inverted || false;
-
-		this.dataPoint = 'DPT1.001';
 
 		super.getState((value) => {
 

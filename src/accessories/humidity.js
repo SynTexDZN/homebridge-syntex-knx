@@ -1,6 +1,6 @@
-let Characteristic, DeviceManager, AutomationSystem;
-
 const { HumidityService } = require('homebridge-syntex-dynamic-platform');
+
+let Characteristic, DeviceManager, AutomationSystem;
 
 module.exports = class SynTexHumidityService extends HumidityService
 {
@@ -12,9 +12,9 @@ module.exports = class SynTexHumidityService extends HumidityService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.statusAddress = serviceConfig.address.status;
-
 		this.dataPoint = 'DPT9.007';
+
+		this.statusAddress = serviceConfig.address.status;
 
 		super.getState((value) => {
 
