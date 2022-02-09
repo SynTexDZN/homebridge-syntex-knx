@@ -17,11 +17,11 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		this.invertState = serviceConfig.inverted || false;
 
-		super.getState((power) => {
+		super.getState((value) => {
 
-			this.power = power || false;
+			this.value = value || false;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 
 		}, true);
 
@@ -42,11 +42,11 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 			if(value != null)
 			{
-				this.power = value;
+				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 
-				callback(null, this.power);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -54,14 +54,14 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 					if(value != null && !isNaN(value))
 					{
-						this.power = value;
+						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.power + '] ( ' + this.id + ' )');
+						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 					
-						super.setState(this.power, () => {});
+						super.setState(this.value, () => {});
 					}
 
-					callback(null, this.power);
+					callback(null, this.value);
 				});
 			}
 		});
@@ -73,10 +73,10 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 			if(success)
 			{
-				this.power = value;
+				this.value = value;
 
-				super.setState(this.power, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
+				super.setState(this.value, 
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 			
 					this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
@@ -91,16 +91,16 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 	updateState(state)
 	{
-		if(state.power != null && !isNaN(state.power) && this.power != state.power)
+		if(state.value != null && !isNaN(state.value) && this.value != state.value)
 		{
-			this.power = state.power;
+			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.power);
+			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
 
-			super.setState(state.power,
-				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.power + '] ( ' + this.id + ' )'));
+			super.setState(state.value,
+				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 		
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.power });
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.value });
 		}
 	}
 };
