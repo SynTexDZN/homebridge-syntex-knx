@@ -25,24 +25,11 @@ class SynTexKNXPlatform extends DynamicPlatform
 				DeviceManager = new DeviceManager(this);
 
 				this.loadAccessories();
-				this.initWebServer();
 			});
 		}
 		else
 		{
 			throw new Error('Minimal parameters not configurated. Please check the README! https://github.com/SynTexDZN/homebridge-syntex-knx/blob/master/README.md');
-		}
-	}
-
-	initWebServer()
-	{
-		if(this.port != null)
-		{
-			this.WebServer.addPage('/reload-automation', async (response) => {
-
-				response.write(await this.AutomationSystem.LogikEngine.loadAutomation() ? 'Success' : 'Error');
-				response.end();
-			});
 		}
 	}
 
