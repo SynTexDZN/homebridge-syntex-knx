@@ -1,13 +1,11 @@
 const { TemperatureService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexTemperatureService extends TemperatureService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -20,7 +18,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 
 			this.value = value || 0;
 
-			this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.CurrentTemperature).updateValue(this.value);
 			
 		}, true);
 	}
@@ -62,11 +60,11 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(Characteristic.CurrentTemperature).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.CurrentTemperature).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
 
-			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		}
 	}
 };

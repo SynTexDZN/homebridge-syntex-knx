@@ -1,13 +1,11 @@
 const { SmokeService } = require('homebridge-syntex-dynamic-platform');
 
-let Characteristic, DeviceManager, AutomationSystem;
+let DeviceManager;
 
 module.exports = class SynTexSmokeService extends SmokeService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		Characteristic = manager.platform.api.hap.Characteristic;
-		AutomationSystem = manager.platform.AutomationSystem;
 		DeviceManager = manager.DeviceManager;
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
@@ -22,7 +20,7 @@ module.exports = class SynTexSmokeService extends SmokeService
 
 			this.value = value || false;
 
-			this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.SmokeDetected).updateValue(this.value);
 			
 		}, true);
 	}
@@ -64,11 +62,11 @@ module.exports = class SynTexSmokeService extends SmokeService
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(Characteristic.SmokeDetected).updateValue(this.value);
+			this.service.getCharacteristic(this.Characteristic.SmokeDetected).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
 
-			AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		}
 	}
 };
