@@ -65,8 +65,8 @@ module.exports = class SynTexSmokeService extends SmokeService
 			this.service.getCharacteristic(this.Characteristic.SmokeDetected).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
-
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 	}
 };

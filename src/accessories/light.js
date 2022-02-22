@@ -63,8 +63,8 @@ module.exports = class SynTexLightService extends LightService
 			this.service.getCharacteristic(this.Characteristic.CurrentAmbientLightLevel).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
-
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 	}
 };

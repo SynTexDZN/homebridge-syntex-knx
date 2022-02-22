@@ -65,8 +65,8 @@ module.exports = class SynTexContactService extends ContactService
 			this.service.getCharacteristic(this.Characteristic.ContactSensorState).updateValue(this.value);
 
 			super.setValue('value', this.value, true);
-
-			this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 	}
 };

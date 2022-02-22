@@ -99,8 +99,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 			super.setState(state.value,
 				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
-		
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value : state.value });
 		}
+
+		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
 	}
 };
