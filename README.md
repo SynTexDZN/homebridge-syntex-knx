@@ -48,8 +48,10 @@ It stores accessory data you can request to display the content on your website 
     "ip": "192.168.1.100",
     "options": {
       "port": 1714,
-      "language": "us",
-      "debug": false
+      "language": "us"
+    },
+    "log": {
+        "debug": false
     },
     "accessories": [
       {
