@@ -42,7 +42,7 @@
 					"name": "Inverted Accessory",
 					"services": [
 						{
-							"datapoint": "DPT1.001",
+							"datapoint": "1.001",
 							"address": {
 								"status": "1/1/3"
 							},
@@ -136,7 +136,7 @@
 							"name": "Smoke"
 						},
 						{
-							"datapoint": "DPT1.001",
+							"datapoint": "1.001",
 							"address": {
 								"status": "1/1/1",
 								"control": "1/1/1"
