@@ -10,7 +10,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = 'DPT9.001';
+		this.dataPoint = serviceConfig.datapoint || 'DPT9.001';
 
 		this.statusAddress = serviceConfig.address.status;
 

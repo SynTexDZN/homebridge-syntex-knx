@@ -10,7 +10,7 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = 'DPT1.001';
+		this.dataPoint = serviceConfig.datapoint || 'DPT1.001';
 
 		this.statusAddress = serviceConfig.address.status;
 

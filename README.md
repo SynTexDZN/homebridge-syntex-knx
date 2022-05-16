@@ -84,6 +84,7 @@ It stores accessory data you can request to display the content on your website 
         "name": "Inverted Accessory",
         "services": [
           {
+            "datapoint": "1.001",
             "address": {
               "status": "1/1/3"
             },
@@ -177,6 +178,7 @@ It stores accessory data you can request to display the content on your website 
             "name": "Smoke"
           },
           {
+            "datapoint": "1.001",
             "address": {
               "status": "1/1/1",
               "control": "1/1/1"
@@ -210,6 +212,7 @@ It stores accessory data you can request to display the content on your website 
 ### Service Config
 - `type` should be one of these: `contact`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
 - `address` must include your `status` and probably `control` group address / addresses from your knx system.
+- You can customize the datapoint by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
 
 

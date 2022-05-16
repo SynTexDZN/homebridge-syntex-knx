@@ -10,7 +10,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = 'DPT1.001';
+		this.dataPoint = serviceConfig.datapoint || 'DPT1.001';
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
