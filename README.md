@@ -81,6 +81,23 @@ It stores accessory data you can request to display the content on your website 
       },
       {
         "id": "knx3",
+        "name": "Window Covering Accessory",
+        "services": [
+          {
+            "address": {
+              "status": "1/2/0",
+              "control": "1/2/0"
+            },
+            "delay": {
+              "up": 6000,
+              "down": 5000
+            },
+            "type": "cover"
+          }
+        ]
+      },
+      {
+        "id": "knx4",
         "name": "Inverted Accessory",
         "services": [
           {
@@ -94,7 +111,7 @@ It stores accessory data you can request to display the content on your website 
         ]
       },
       {
-        "id": "knx4",
+        "id": "knx5",
         "name": "Multi Accessory",
         "services": [
           {
@@ -178,6 +195,18 @@ It stores accessory data you can request to display the content on your website 
             "name": "Smoke"
           },
           {
+            "address": {
+              "status": "1/2/0",
+              "control": "1/2/0"
+            },
+            "delay": {
+              "up": 6000,
+              "down": 5000
+            },
+            "type": "cover",
+            "name": "Cover"
+          },
+          {
             "datapoint": "1.001",
             "address": {
               "status": "1/1/1",
@@ -210,10 +239,11 @@ It stores accessory data you can request to display the content on your website 
 - `services` see service config below.
 
 ### Service Config
-- `type` should be one of these: `contact`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+- `type` should be one of these: `contact`, `cover`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
 - `address` must include your `status` and probably `control` group address / addresses from your knx system.
 - You can customize the datapoint by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
+- For Window Coverings you can add `delay` *( to calibrate the time it takes to open / close the covering )*
 
 
 ---
@@ -270,3 +300,4 @@ https://github.com/SynTexDZN/homebridge-syntex
 - Temperature Sensor
 - Switch / Relais / Outlet
 - LED Light
+- Window Coverings
