@@ -31,15 +31,12 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.changeHandler = (state) => {
 
-			this.convertCurrentPosition(state, (position) => {
+			var position = this.convertCurrentPosition(state);
 
-				if(position != null)
-				{
-					this.updatePosition(position);
-
-					super.setTargetPosition(position, () => {});
-				}
-			});
+			if(position != null)
+			{
+				this.setTargetPosition(position, () => {});
+			}
 		};
 	}
 
