@@ -92,7 +92,7 @@ It stores accessory data you can request to display the content on your website 
               "up": 6000,
               "down": 5000
             },
-            "type": "cover"
+            "type": "blind"
           }
         ]
       },
@@ -203,8 +203,8 @@ It stores accessory data you can request to display the content on your website 
               "up": 6000,
               "down": 5000
             },
-            "type": "cover",
-            "name": "Cover"
+            "type": "blind",
+            "name": "Blind"
           },
           {
             "datapoint": "1.001",
@@ -239,7 +239,7 @@ It stores accessory data you can request to display the content on your website 
 - `services` see service config below.
 
 ### Service Config
-- `type` should be one of these: `contact`, `cover`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+- `type` should be one of these: `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
 - `address` must include your `status` and probably `control` group address / addresses from your knx system.
 - You can customize the datapoint by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*

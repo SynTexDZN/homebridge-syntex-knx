@@ -1,8 +1,8 @@
-const { CoverService } = require('homebridge-syntex-dynamic-platform');
+const { BlindService } = require('homebridge-syntex-dynamic-platform');
 
 let DeviceManager;
 
-module.exports = class SynTexCoverService extends CoverService
+module.exports = class SynTexBlindService extends BlindService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{

@@ -50,7 +50,7 @@
 								"up": 6000,
 								"down": 5000
 							},
-							"type": "cover"
+							"type": "blind"
 						}
 					]
 				},
@@ -161,8 +161,8 @@
 								"up": 6000,
 								"down": 5000
 							},
-							"type": "cover",
-							"name": "Cover"
+							"type": "blind",
+							"name": "Blind"
 						},
 						{
 							"datapoint": "1.001",
