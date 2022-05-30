@@ -77,14 +77,35 @@ class KNXInterface
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
+								var state = { value }, letter = services[i].letters[0], format = this.TypeManager.getDataType(this.TypeManager.letterToType(letter));
+								
 								if(services[i].invertState)
 								{
-									value = !value;
+									state.value = !state.value;
 								}
 
-								this.dataPoints.status[statusAddress[j]].current_value = value;
+								if(typeof state.value == 'boolean' && format == 'number')
+								{
+									if(state.value == true)
+									{
+										state.value = this.TypeManager.data[letter.toUpperCase()].max;
+									}
+									else
+									{
+										state.value = this.TypeManager.data[letter.toUpperCase()].min;
+									}
+								}
 
-								services[i].updateState({ value });
+								if((state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, state)) != null && services[i].updateState != null)
+								{
+									this.dataPoints.status[statusAddress[j]].current_value = value;
+
+									services[i].updateState(state);
+								}
+								else
+								{
+									this.logger.log('error', this.id, this.letters, '[' + this.name + '] %update_error%! ( ' + this.id + ' )');
+								}
 							}
 						});
 					}

@@ -31,11 +31,9 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.changeHandler = (state) => {
 
-			var position = this.convertCurrentPosition(state);
-
-			if(position != null)
+			if(state.value != null)
 			{
-				this.setTargetPosition(position, () => {});
+				this.setTargetPosition(state.value, () => {});
 			}
 		};
 	}
@@ -107,36 +105,22 @@ module.exports = class SynTexBlindService extends BlindService
 
 	updateState(state)
 	{
-		var position = this.convertCurrentPosition(state);
-
-		if(position != null && this.value != position)
+		if(state.value != null)
 		{
-			this.value = position;
+			state.value = 100 - state.value;
 
-			super.setTargetPosition(this.value,
-				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
-		
-			this.updatePosition(this.value);
+			if(this.value != state.value)
+			{
+				this.value = state.value;
+
+				super.setTargetPosition(this.value,
+					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
+			
+				this.updatePosition(this.value);
+			}
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
-	}
-
-	convertCurrentPosition(state)
-	{
-		var position = null;
-
-		if(state.value != null)
-		{
-			position = state.value ? 0 : 100;
-		}
-
-		if(state.position != null)
-		{
-			position = state.position;
-		}
-
-		return position;
 	}
 
 	updatePosition(value)
