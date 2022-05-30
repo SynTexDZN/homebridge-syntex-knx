@@ -56,7 +56,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 					if(value != null && !isNaN(value))
 					{
-						this.value = value ? 0 : 100;
+						this.value = value;
 
 						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 					
@@ -80,9 +80,9 @@ module.exports = class SynTexBlindService extends BlindService
 				super.setTargetPosition(this.value, 
 					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 			
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
-
 				this.updatePosition(this.value);
+
+				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 
 				callback();
 			}
@@ -132,7 +132,6 @@ module.exports = class SynTexBlindService extends BlindService
 
 		setTimeout(() => {
 
-			this.value = value;
 			this.positionState = 2;
 
 			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
