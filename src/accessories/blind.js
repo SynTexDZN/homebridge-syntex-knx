@@ -17,8 +17,8 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.invertState = serviceConfig.inverted || false;
 
-		this.timeDelayUp = serviceConfig.delay.up || 6000;
-		this.timeDelayDown = serviceConfig.delay.down || 5000;
+		this.timeDelayUp = serviceConfig.delay.up || 11000;
+		this.timeDelayDown = serviceConfig.delay.down || 10000;
 
 		super.getTargetPosition((value) => {
 
