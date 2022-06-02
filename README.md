@@ -89,10 +89,19 @@ It stores accessory data you can request to display the content on your website 
               "control": "1/2/0"
             },
             "delay": {
-              "up": 6000,
-              "down": 5000
+              "up": 11000,
+              "down": 10000
             },
-            "type": "blind"
+            "type": "blind",
+            "name": "Up / Down"
+          },
+          {
+            "address": {
+              "status": "1/2/1",
+              "control": "1/2/1"
+            },
+            "type": "switch",
+            "name": "Stop"
           }
         ]
       },
@@ -195,13 +204,14 @@ It stores accessory data you can request to display the content on your website 
             "name": "Smoke"
           },
           {
+            "datapoint": "5.001",
             "address": {
-              "status": "1/2/0",
-              "control": "1/2/0"
+              "status": "1/2/2",
+              "control": "1/2/3"
             },
             "delay": {
-              "up": 6000,
-              "down": 5000
+              "up": 11000,
+              "down": 10000
             },
             "type": "blind",
             "name": "Blind"
