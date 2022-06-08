@@ -77,7 +77,7 @@ class KNXInterface
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
-								var state = { value }, letter = services[i].letters[0], format = this.TypeManager.getDataType(this.TypeManager.letterToType(letter));
+								var state = { value }, format = this.TypeManager.getDataType({ letters : services[i].letters });
 								
 								if(services[i].invertState)
 								{
@@ -88,11 +88,11 @@ class KNXInterface
 								{
 									if(state.value == true)
 									{
-										state.value = this.TypeManager.data[letter.toUpperCase()].max;
+										state.value = this.TypeManager.data[services[i].letters[0].toUpperCase()].max;
 									}
 									else
 									{
-										state.value = this.TypeManager.data[letter.toUpperCase()].min;
+										state.value = this.TypeManager.data[services[i].letters[0].toUpperCase()].min;
 									}
 								}
 
