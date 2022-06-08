@@ -77,22 +77,22 @@ class KNXInterface
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
-								var state = { value }, format = this.TypeManager.getDataType({ letters : services[i].letters });
+								var characteristic = this.TypeManager.getCharacteristic('value', { letters : services[i].letters }), state = { value };
 								
 								if(services[i].invertState)
 								{
 									state.value = !state.value;
 								}
 
-								if(typeof state.value == 'boolean' && format == 'number')
+								if(typeof state.value == 'boolean' && characteristic != null && characteristic.format == 'number')
 								{
 									if(state.value == true)
 									{
-										state.value = this.TypeManager.data[services[i].letters[0].toUpperCase()].max;
+										state.value = characteristic.max;
 									}
 									else
 									{
-										state.value = this.TypeManager.data[services[i].letters[0].toUpperCase()].min;
+										state.value = characteristic.min;
 									}
 								}
 
