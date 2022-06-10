@@ -352,7 +352,7 @@ To enable the automation module you have to create a file named `automation.json
         }
       ]
     }
-  }
+  ]
 }
 ```
 
