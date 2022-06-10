@@ -100,7 +100,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 	getPositionState(callback)
 	{
-		callback(null, this.positionState);
+		callback(null, this.position);
 	}
 
 	updateState(state)
@@ -125,17 +125,21 @@ module.exports = class SynTexBlindService extends BlindService
 
 	updatePosition(value)
 	{
-		this.positionState = value > 0 ? 1 : 0;
+		this.position = value > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
 
 		this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(value);
-		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.positionState);
+		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+
+		super.setPositionState(this.position, () => {});
 
 		setTimeout(() => {
 
-			this.positionState = 2;
+			this.position = this.Characteristic.PositionState.STOPPED;
 
 			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
-			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.positionState);
+			this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
+
+			super.setPositionState(this.position, () => {});
 
 		}, value > 0 ? this.timeDelayUp : this.timeDelayDown);
 	}
