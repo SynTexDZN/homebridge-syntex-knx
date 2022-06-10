@@ -242,6 +242,9 @@ It stores accessory data you can request to display the content on your website 
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
 - `debug` For further information because of troubleshooting and bug reports.
 
+### Log Parameters
+- Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
+
 ### Accessory Config
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `physical group address` or another `random unique text` *( no duplicates! )*
@@ -251,9 +254,9 @@ It stores accessory data you can request to display the content on your website 
 ### Service Config
 - `type` should be one of these: `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
 - `address` must include your `status` and probably `control` group address / addresses from your knx system.
-- You can customize the datapoint by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
+- You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
 - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
-- For Window Coverings you can add `delay` *( to calibrate the time it takes to open / close the covering )*
+- For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to open / close the covering )*
 
 
 ---
@@ -272,20 +275,24 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
 - For boolean devices: `true` / `false` *( switch, outlet, led )*
+- For numeric devices: `10` / `12.4` *( blind, humidity, light, temperature )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&value=true&brightness=100`\
-*( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` as example )*
+*( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
 
 
 ## Read KNX Device Values
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
+- For accessories with multiple service types add `&type=`  **SERVICETYPE**
+- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890`\
-*( Reads the value of `ABCDEF1234567890` as example )*
+*( Reads the value of `ABCDEF1234567890` for example )*
 
 
 ## Remove KNX Device
@@ -293,7 +300,107 @@ https://github.com/SynTexDZN/homebridge-syntex
 2. Insert the `Bridge IP` and `Device ID`
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&remove=CONFIRM`\
-*( Removes `ABCDEF1234567890` from the Home app )*
+*( Removes `ABCDEF1234567890` from the Home App )*
+
+
+---
+
+
+## Automation
+To enable the automation module you have to create a file named `automation.json` in your `baseDirectory >> automation` or install the `homebridge-syntex` plugin to create them via UI *( only between syntex plugins )*<br><br>
+**Example:**  For manual configuration update your `automation.json` file. See snippet below.   
+
+```json
+{
+  "id": "automation",
+  "automation": [
+    {
+      "id": 0,
+      "name": "Demo Automation",
+      "active": true,
+      "trigger": [
+        {
+          "id": "multi2",
+          "name": "Multi Device",
+          "letters": "F0",
+          "plugin": "SynTexWebHooks",
+          "operation": "<",
+          "value": "1000"
+        }
+      ],
+      "condition": [
+        {
+          "id": "multi1",
+          "name": "Multi Switch",
+          "letters": "41",
+          "plugin": "SynTexWebHooks",
+          "operation": "=",
+          "value": "false"
+        }
+      ],
+      "result": [
+        {
+          "id": "knx5",
+          "name": "Multi Accessory",
+          "letters": "80",
+          "plugin": "SynTexKNX",
+          "operation": "=",
+          "value": "true"
+        },
+        {
+          "url": "http://192.168.1.100:1714/devices?id=knx1&value=true"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Required Parameters
+- `id` is the same like in your config file *( or in your log )*
+- `name` The name of the accessory.
+- `letters` See letter configuration below.
+- `operation` Use the logical operands *( `>`, `<`, `=` )*
+- `value` The state of your accessory.
+
+### Optional Parameters
+- `plugin` Use the platform name of the plugin *( see supported plugins below )*
+- `hue` is used for RGB lights.
+- `saturation` is used for RGB lights.
+- `brightness` is used for dimmable lights.
+
+### Letter Configuration
+The letters are split into two parts *( numbers )*
+
+**1. Service Type**
+- A : Contact
+- B : Motion
+- C : Temperature
+- D : Humidity
+- E : Rain
+- F : Light
+- 0 : Occupancy
+- 1 : Smoke
+- 2 : Airquality
+- 3 : RGB
+- 4 : Switch
+- 5 : Relais
+- 6 : Stateless Switch
+- 7 : Outlet
+- 8 : LED
+- 9 : Dimmer
+
+**2. Duplicate Counter**
+- If there are more services of the same type the counter indicates which is which
+- Simply count from top to bottom.
+
+**Example:**  The first switch in your config has the letters `40`, the second `41` and so on ..
+
+### Supported Plugins
+- SynTexKNX *( `homebridge-syntex-knx` )*
+- SynTexMagicHome *( `homebridge-syntex-webhooks` )*
+- SynTexTuya *( `homebridge-syntex-tuya` )*
+- SynTexWebHooks *( `homebridge-syntex-webhooks` )*
 
 
 ---
