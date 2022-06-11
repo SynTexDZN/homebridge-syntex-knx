@@ -240,7 +240,6 @@ It stores accessory data you can request to display the content on your website 
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
-- `debug` For further information because of troubleshooting and bug reports.
 
 ### Log Parameters
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
@@ -379,6 +378,7 @@ The letters are split into two parts *( numbers )*
 - D : Humidity
 - E : Rain
 - F : Light
+- G : Blind
 - 0 : Occupancy
 - 1 : Smoke
 - 2 : Airquality
