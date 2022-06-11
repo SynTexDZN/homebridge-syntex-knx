@@ -7,7 +7,7 @@
 
 A simple plugin to control KNX devices.<br>
 This plugin is made to cooperate with Homebridge: https://github.com/nfarina/homebridge<br>
-It stores accessory data you can request to display the content on your website / app.
+It connects to a KNX IP Gateway and offers some special tweaks.
 
 
 ## Core Features
