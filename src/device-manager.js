@@ -123,7 +123,10 @@ class KNXInterface
 			}
 		}
 
-		this.updateStates();
+		if(!this.platform.options.disablePreload)
+		{
+			this.updateStates();
+		}
 
 		this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
 	}

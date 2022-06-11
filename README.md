@@ -48,7 +48,8 @@ It connects to a KNX IP Gateway and offers some special tweaks.
     "ip": "192.168.1.100",
     "options": {
       "port": 1714,
-      "language": "us"
+      "language": "us",
+      "disablePreload": false
     },
     "log": {
         "debug": false
@@ -240,6 +241,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
 - `language` You can use your country initials if you want to change it *( Currently supported: `us`, `en`, `de` )*
+- `disablePreload` Disable reading device states after reboot *( prevents the bus from overflow )*
 
 ### Log Parameters
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*

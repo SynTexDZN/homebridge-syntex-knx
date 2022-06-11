@@ -17,6 +17,8 @@ class SynTexKNXPlatform extends DynamicPlatform
 		super(config, api, pluginID, pluginName, pluginVersion);
 
 		this.gatewayIP = config['ip'];
+
+		this.discovery = config['discovery'] || {};
 	
 		if(this.api != null && this.logger != null && this.files != null && this.gatewayIP != null)
 		{

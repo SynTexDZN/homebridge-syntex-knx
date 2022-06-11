@@ -6,7 +6,8 @@
 			"ip": "192.168.188.88",
 			"options": {
 				"port": 1714,
-				"language": "us"
+				"language": "us",
+				"disablePreload": false
 			},
 			"log": {
 				"debug": false
