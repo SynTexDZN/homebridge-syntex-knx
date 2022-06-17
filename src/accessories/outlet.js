@@ -63,8 +63,7 @@ module.exports = class SynTexOutletService extends OutletService
 			{
 				this.value = value;
 
-				super.setState(value,
-					() => callback(), true);
+				super.setState(value, () => callback(), true);
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 			}

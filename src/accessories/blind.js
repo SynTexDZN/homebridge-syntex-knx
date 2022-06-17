@@ -65,8 +65,7 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = value;
 
-				super.setTargetPosition(value,
-					() => callback(), true);
+				super.setTargetPosition(value, () => callback(), true);
 
 				this.updatePosition(value);
 			
