@@ -1,14 +1,12 @@
 const { OutletService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexOutletService extends OutletService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+
+		this.DeviceManager = manager.DeviceManager;
 
 		this.dataPoint = serviceConfig.datapoint || 'DPT1.001';
 
@@ -17,21 +15,12 @@ module.exports = class SynTexOutletService extends OutletService
 
 		this.invertState = serviceConfig.inverted || false;
 
-		super.getState((value) => {
-
-			this.value = value || false;
-
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-
-		}, true);
-
 		this.changeHandler = (state) => {
 			
 			if(state.value != null)
 			{
-				this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value);
-
-				this.setState(state.value, () => {});
+				this.setState(state.value,
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 			}
 		};
 	}
@@ -40,25 +29,24 @@ module.exports = class SynTexOutletService extends OutletService
 	{
 		super.getState((value) => {
 
-			if(value != null)
+			if(super.hasState('value'))
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
 
-				callback(null, this.value);
+				callback(null, value);
 			}
 			else
 			{
-				DeviceManager.getState(this).then((value) => {
+				this.DeviceManager.getState(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
 						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
-					
-						super.setState(this.value, () => {});
+						super.setState(value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -69,18 +57,16 @@ module.exports = class SynTexOutletService extends OutletService
 	
 	setState(value, callback)
 	{
-		DeviceManager.setState(this, value).then((success) => {
+		this.DeviceManager.setState(this, value).then((success) => {
 
 			if(success)
 			{
 				this.value = value;
 
-				super.setState(this.value, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
+				super.setState(value,
+					() => callback(), true);
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
-
-				callback();	
 			}
 			else
 			{
@@ -91,14 +77,12 @@ module.exports = class SynTexOutletService extends OutletService
 
 	updateState(state)
 	{
-		if(state.value != null && !isNaN(state.value) && this.value != state.value)
+		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-
 			super.setState(state.value,
-				() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
+				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), true);
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);

@@ -1,14 +1,12 @@
 const { BlindService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexBlindService extends BlindService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+
+		this.DeviceManager = manager.DeviceManager;
 
 		this.dataPoint = serviceConfig.datapoint || 'DPT1.008';
 		
@@ -19,15 +17,6 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.timeDelayUp = serviceConfig.delay != null && serviceConfig.delay.up != null ? serviceConfig.delay.up : 11000;
 		this.timeDelayDown = serviceConfig.delay != null && serviceConfig.delay.down != null ? serviceConfig.delay.down : 10000;
-
-		super.getTargetPosition((value) => {
-
-			this.value = value || 0;
-
-			this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(this.value);
-			this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.value);
-
-		}, true);
 
 		this.changeHandler = (state) => {
 
@@ -42,25 +31,24 @@ module.exports = class SynTexBlindService extends BlindService
 	{
 		super.getTargetPosition((value) => {
 
-			if(value != null)
+			if(super.hasState('value'))
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
 
-				callback(null, this.value);
+				callback(null, value);
 			}
 			else
 			{
-				DeviceManager.getState(this).then((value) => {
+				this.DeviceManager.getState(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
 						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
-					
-						super.setTargetPosition(this.value, () => {});
+						super.setTargetPosition(value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -71,20 +59,18 @@ module.exports = class SynTexBlindService extends BlindService
 	
 	setTargetPosition(value, callback)
 	{
-		DeviceManager.setState(this, (100 - value)).then((success) => {
+		this.DeviceManager.setState(this, (100 - value)).then((success) => {
 
 			if(success)
 			{
 				this.value = value;
 
-				super.setTargetPosition(this.value, 
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
+				super.setTargetPosition(value,
+					() => callback(), true);
+
+				this.updatePosition(value);
 			
-				this.updatePosition(this.value);
-
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
-
-				callback();
 			}
 			else
 			{
@@ -105,18 +91,16 @@ module.exports = class SynTexBlindService extends BlindService
 
 	updateState(state)
 	{
-		if(state.value != null)
+		if(state.value != null && !isNaN(state.value))
 		{
 			state.value = 100 - state.value;
 
-			if(this.value != state.value)
+			if(!super.hasState('value') || this.value != state.value)
 			{
 				this.value = state.value;
 
-				super.setTargetPosition(this.value,
-					() => this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
-			
-				this.updatePosition(this.value);
+				super.setTargetPosition(state.value,
+					() => this.updatePosition(state.value), true);
 			}
 		}
 

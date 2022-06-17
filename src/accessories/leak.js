@@ -1,53 +1,42 @@
 const { LeakService } = require('homebridge-syntex-dynamic-platform');
 
-let DeviceManager;
-
 module.exports = class SynTexLeakService extends LeakService
 {
 	constructor(homebridgeAccessory, deviceConfig, serviceConfig, manager)
 	{
-		DeviceManager = manager.DeviceManager;
-		
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
+
+		this.DeviceManager = manager.DeviceManager;
 
 		this.dataPoint = serviceConfig.datapoint || 'DPT1.001';
 
 		this.statusAddress = serviceConfig.address.status;
 
 		this.invertState = serviceConfig.inverted || false;
-
-		super.getState((value) => {
-
-			this.value = value || false;
-
-			this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(this.value);
-			
-		}, true);
 	}
 
 	getState(callback)
 	{
 		super.getState((value) => {
 
-			if(value != null)
+			if(super.hasState('value'))
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
 
-				callback(null, this.value);
+				callback(null, value);
 			}
 			else
 			{
-				DeviceManager.getState(this).then((value) => {
+				this.DeviceManager.getState(this).then((value) => {
 
 					if(value != null && !isNaN(value))
 					{
 						this.value = value;
 
-						this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
-					
-						super.setState(this.value, () => {});
+						super.setState(value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -58,13 +47,12 @@ module.exports = class SynTexLeakService extends LeakService
 
 	updateState(state)
 	{
-		if(state.value != null && !isNaN(state.value) && this.value != state.value)
+		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
 			this.value = state.value;
 
-			this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(this.value);
-
-			super.setValue('value', this.value, true);
+			super.setState(state.value,
+				() => this.service.getCharacteristic(this.Characteristic.LeakDetected).updateValue(state.value), true);
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
