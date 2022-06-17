@@ -65,9 +65,10 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = value;
 
-				super.setTargetPosition(value, () => callback(), true);
+				super.setTargetPosition(value,
+					() => this.updatePosition(value), true);
 
-				this.updatePosition(value);
+				callback();
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
 			}
@@ -113,9 +114,7 @@ module.exports = class SynTexBlindService extends BlindService
 		this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(value);
 		this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(this.position);
 
-		super.setPositionState(this.position, () => {});
-
-		setTimeout(() => {
+		super.setPositionState(this.position, () => setTimeout(() => {
 
 			this.position = this.Characteristic.PositionState.STOPPED;
 
@@ -124,6 +123,6 @@ module.exports = class SynTexBlindService extends BlindService
 
 			super.setPositionState(this.position, () => {});
 
-		}, value > 0 ? this.timeDelayUp : this.timeDelayDown);
+		}, value > 0 ? this.timeDelayUp : this.timeDelayDown));
 	}
 };
