@@ -42,195 +42,195 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 
 ```json
 "platforms": [
-  {
-    "platform": "SynTexKNX",
-    "baseDirectory": "/var/homebridge/SynTex",
-    "ip": "192.168.1.100",
-    "options": {
-      "port": 1714,
-      "language": "us",
-      "disablePreload": false
-    },
-    "log": {
-        "debug": false
-    },
-    "accessories": [
-      {
-        "id": "knx1",
-        "name": "Control Accessory",
-        "services": [
-          {
-            "address": {
-              "status": ["1/1/0", "1/1/1"],
-              "control": ["1/1/0", "1/1/1"]
+    {
+        "platform": "SynTexKNX",
+        "baseDirectory": "/var/homebridge/SynTex",
+        "ip": "192.168.1.100",
+        "options": {
+            "port": 1714,
+            "language": "us",
+            "disablePreload": false
+        },
+        "log": {
+                "debug": false
+        },
+        "accessories": [
+            {
+                "id": "knx1",
+                "name": "Control Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": ["1/1/0", "1/1/1"],
+                            "control": ["1/1/0", "1/1/1"]
+                        },
+                        "type": "switch"
+                    }
+                ]
             },
-            "type": "switch"
-          }
+            {
+                "id": "knx2",
+                "name": "Sensor Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/1/2"
+                        },
+                        "type": "motion"
+                    }
+                ]
+            },
+            {
+                "id": "knx3",
+                "name": "Window Covering Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/2/0",
+                            "control": "1/2/0"
+                        },
+                        "delay": {
+                            "up": 11000,
+                            "down": 10000
+                        },
+                        "type": "blind",
+                        "name": "Up / Down"
+                    },
+                    {
+                        "address": {
+                            "status": "1/2/1",
+                            "control": "1/2/1"
+                        },
+                        "type": "switch",
+                        "name": "Stop"
+                    }
+                ]
+            },
+            {
+                "id": "knx4",
+                "name": "Inverted Accessory",
+                "services": [
+                    {
+                        "datapoint": "1.001",
+                        "address": {
+                            "status": "1/1/3"
+                        },
+                        "type": "contact",
+                        "inverted": true
+                    }
+                ]
+            },
+            {
+                "id": "knx5",
+                "name": "Multi Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/1/1",
+                            "control": "1/1/1"
+                        },
+                        "type": "switch",
+                        "name": "Switch"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/1",
+                            "control": "1/1/1"
+                        },
+                        "type": "led",
+                        "name": "LED"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/1",
+                            "control": "1/1/1"
+                        },
+                        "type": "outlet",
+                        "name": "Outlet"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/2"
+                        },
+                        "type": "motion",
+                        "name": "Motion"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/3"
+                        },
+                        "type": "contact",
+                        "name": "Contact"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/4"
+                        },
+                        "type": "occupancy",
+                        "name": "Occupancy"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/5"
+                        },
+                        "type": "temperature",
+                        "name": "Temperature"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/6"
+                        },
+                        "type": "light",
+                        "name": "Light"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/7"
+                        },
+                        "type": "humidity",
+                        "name": "Humidity"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/8"
+                        },
+                        "type": "leak",
+                        "name": "Leak"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/9"
+                        },
+                        "type": "smoke",
+                        "name": "Smoke"
+                    },
+                    {
+                        "datapoint": "5.001",
+                        "address": {
+                            "status": "1/2/2",
+                            "control": "1/2/3"
+                        },
+                        "delay": {
+                            "up": 11000,
+                            "down": 10000
+                        },
+                        "type": "blind",
+                        "name": "Blind"
+                    },
+                    {
+                        "datapoint": "1.001",
+                        "address": {
+                            "status": "1/1/1",
+                            "control": "1/1/1"
+                        },
+                        "type": "switch",
+                        "name": "Inverted Switch",
+                        "inverted": true
+                    }
+                ]
+            }
         ]
-      },
-      {
-        "id": "knx2",
-        "name": "Sensor Accessory",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/2"
-            },
-            "type": "motion"
-          }
-        ]
-      },
-      {
-        "id": "knx3",
-        "name": "Window Covering Accessory",
-        "services": [
-          {
-            "address": {
-              "status": "1/2/0",
-              "control": "1/2/0"
-            },
-            "delay": {
-              "up": 11000,
-              "down": 10000
-            },
-            "type": "blind",
-            "name": "Up / Down"
-          },
-          {
-            "address": {
-              "status": "1/2/1",
-              "control": "1/2/1"
-            },
-            "type": "switch",
-            "name": "Stop"
-          }
-        ]
-      },
-      {
-        "id": "knx4",
-        "name": "Inverted Accessory",
-        "services": [
-          {
-            "datapoint": "1.001",
-            "address": {
-              "status": "1/1/3"
-            },
-            "type": "contact",
-            "inverted": true
-          }
-        ]
-      },
-      {
-        "id": "knx5",
-        "name": "Multi Accessory",
-        "services": [
-          {
-            "address": {
-              "status": "1/1/1",
-              "control": "1/1/1"
-            },
-            "type": "switch",
-            "name": "Switch"
-          },
-          {
-            "address": {
-              "status": "1/1/1",
-              "control": "1/1/1"
-            },
-            "type": "led",
-            "name": "LED"
-          },
-          {
-            "address": {
-              "status": "1/1/1",
-              "control": "1/1/1"
-            },
-            "type": "outlet",
-            "name": "Outlet"
-          },
-          {
-            "address": {
-              "status": "1/1/2"
-            },
-            "type": "motion",
-            "name": "Motion"
-          },
-          {
-            "address": {
-              "status": "1/1/3"
-            },
-            "type": "contact",
-            "name": "Contact"
-          },
-          {
-            "address": {
-              "status": "1/1/4"
-            },
-            "type": "occupancy",
-            "name": "Occupancy"
-          },
-          {
-            "address": {
-              "status": "1/1/5"
-            },
-            "type": "temperature",
-            "name": "Temperature"
-          },
-          {
-            "address": {
-              "status": "1/1/6"
-            },
-            "type": "light",
-            "name": "Light"
-          },
-          {
-            "address": {
-              "status": "1/1/7"
-            },
-            "type": "humidity",
-            "name": "Humidity"
-          },
-          {
-            "address": {
-              "status": "1/1/8"
-            },
-            "type": "leak",
-            "name": "Leak"
-          },
-          {
-            "address": {
-              "status": "1/1/9"
-            },
-            "type": "smoke",
-            "name": "Smoke"
-          },
-          {
-            "datapoint": "5.001",
-            "address": {
-              "status": "1/2/2",
-              "control": "1/2/3"
-            },
-            "delay": {
-              "up": 11000,
-              "down": 10000
-            },
-            "type": "blind",
-            "name": "Blind"
-          },
-          {
-            "datapoint": "1.001",
-            "address": {
-              "status": "1/1/1",
-              "control": "1/1/1"
-            },
-            "type": "switch",
-            "name": "Inverted Switch",
-            "inverted": true
-          }
-        ]
-      }
-    ]
-  }
+    }
 ]
 ```
 ### Required Parameters
@@ -313,47 +313,47 @@ To enable the automation module you have to create a file named `automation.json
 
 ```json
 {
-  "id": "automation",
-  "automation": [
-    {
-      "id": 0,
-      "name": "Demo Automation",
-      "active": true,
-      "trigger": [
+    "id": "automation",
+    "automation": [
         {
-          "id": "multi2",
-          "name": "Multi Device",
-          "letters": "F0",
-          "plugin": "SynTexWebHooks",
-          "operation": "<",
-          "value": "1000"
+            "id": 0,
+            "name": "Demo Automation",
+            "active": true,
+            "trigger": [
+                {
+                    "id": "multi2",
+                    "name": "Multi Device",
+                    "letters": "F0",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "<",
+                    "value": "1000"
+                }
+            ],
+            "condition": [
+                {
+                    "id": "multi1",
+                    "name": "Multi Switch",
+                    "letters": "41",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "value": "false"
+                }
+            ],
+            "result": [
+                {
+                    "id": "knx5",
+                    "name": "Multi Accessory",
+                    "letters": "80",
+                    "plugin": "SynTexKNX",
+                    "operation": "=",
+                    "value": "true"
+                },
+                {
+                    "url": "http://192.168.1.100:1714/devices?id=knx1&value=true"
+                }
+            ]
         }
-      ],
-      "condition": [
-        {
-          "id": "multi1",
-          "name": "Multi Switch",
-          "letters": "41",
-          "plugin": "SynTexWebHooks",
-          "operation": "=",
-          "value": "false"
-        }
-      ],
-      "result": [
-        {
-          "id": "knx5",
-          "name": "Multi Accessory",
-          "letters": "80",
-          "plugin": "SynTexKNX",
-          "operation": "=",
-          "value": "true"
-        },
-        {
-          "url": "http://192.168.1.100:1714/devices?id=knx1&value=true"
-        }
-      ]
-    }
-  ]
+    ]
 }
 ```
 
