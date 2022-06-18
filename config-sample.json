@@ -3,7 +3,7 @@
 		{
 			"platform": "SynTexKNX",
 			"baseDirectory": "/var/homebridge/SynTex",
-			"ip": "192.168.188.88",
+			"ip": "192.168.1.100",
 			"options": {
 				"port": 1714,
 				"language": "us",
@@ -20,9 +20,9 @@
 						{
 							"address": {
 								"status": ["1/1/0", "1/1/1"],
-             					"control": ["1/1/0", "1/1/1"]
+								"control": ["1/1/0", "1/1/1"]
 							},
-							"type": "outlet"
+							"type": "switch"
 						}
 					]
 				},
