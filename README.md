@@ -278,7 +278,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For boolean devices: `true` / `false` *( switch, outlet, led )*
 - For numeric devices: `10` / `12.4` *( blind, humidity, light, temperature )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&value=true&brightness=100`\
@@ -289,7 +289,7 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service types add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890`\
@@ -299,6 +299,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 ## Remove KNX Device
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&remove=CONFIRM`
 2. Insert the `Bridge IP` and `Device ID`
+- To remove a specific service add `&type=`  **SERVICETYPE**
+- To remove a specific service from an accessory with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
+*( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&remove=CONFIRM`\
 *( Removes `ABCDEF1234567890` from the Home App )*
