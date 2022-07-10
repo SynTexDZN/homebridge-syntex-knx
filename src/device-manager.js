@@ -22,6 +22,8 @@ class KNXInterface
 					
 					this.connected = false;
 
+					this.DeviceManager._updateConnectionState(this.connected);
+
 					this.logger.debug('%knx_gateway_disconnected%!');
 				},
 				confirmed : (data) => {
@@ -46,6 +48,8 @@ class KNXInterface
 	connectionSuccess()
 	{
 		this.connected = true;
+
+		this.DeviceManager._updateConnectionState(this.connected);
 
 		if(this.firstConnect)
 		{
@@ -296,5 +300,15 @@ module.exports = class DeviceManager
 		}
 
 		return services;
+	}
+
+	_updateConnectionState(online)
+	{
+		var services = this._getServices();
+
+		for(const i in services)
+		{
+			services[i].setConnectionState(online);
+		}
 	}
 }
