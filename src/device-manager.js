@@ -304,11 +304,9 @@ module.exports = class DeviceManager
 
 	_updateConnectionState(online)
 	{
-		var services = this._getServices();
-
-		for(const i in services)
+		for(const accessory of this.accessories)
 		{
-			services[i].setConnectionState(online);
+			accessory[1].setConnectionState(online);
 		}
 	}
 }
