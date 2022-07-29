@@ -65,7 +65,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 				super.setState(this.value, () => callback(), true);
 			
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{
@@ -84,6 +84,6 @@ module.exports = class SynTexSwitchService extends SwitchService
 				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), true);
 		}
 
-		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
 };

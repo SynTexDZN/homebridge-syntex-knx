@@ -70,7 +70,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 				callback();
 			
-				this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, { value });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
 			else
 			{
@@ -104,7 +104,7 @@ module.exports = class SynTexBlindService extends BlindService
 			}
 		}
 
-		this.AutomationSystem.LogikEngine.runAutomation(this.id, this.letters, state);
+		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
 
 	updatePosition(value)
