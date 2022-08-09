@@ -11,7 +11,7 @@
 		"node": ">=9.11.2"
 	},
 	"dependencies": {
-		"homebridge-syntex-dynamic-platform": "1.0.7-b67",
+		"homebridge-syntex-dynamic-platform": "1.0.7-b68",
 		"knx": "^2.4.1"
 	},
 	"keywords": [
