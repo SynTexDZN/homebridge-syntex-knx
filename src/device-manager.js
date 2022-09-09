@@ -69,19 +69,21 @@ class KNXInterface
 						{
 							this.dataPoints.status[statusAddress[j]] = new knx.Datapoint({ ga : statusAddress[j], dpt : services[i].dataPoint }, this.connection);
 
+							// TODO: Write Own Change Detection And Input Conversion
+
 							this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
 
 								this._clearRequests('status', statusAddress[j]);
 
-								this.EventManager.setOutputStream('SynTexKNX', null, statusAddress[j], newValue);
+								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, { value : newValue });
 							});
 						}
 
-						this.EventManager.setInputStream('SynTexKNX', services[i], statusAddress[j], (value) => {
+						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (state) => {
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
-								var characteristic = this.TypeManager.getCharacteristic('value', { letters : services[i].letters }), state = { value };
+								var characteristic = this.TypeManager.getCharacteristic('value', { letters : services[i].letters });
 								
 								if(services[i].invertState)
 								{
@@ -102,7 +104,7 @@ class KNXInterface
 
 								if((state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, state)) != null && services[i].updateState != null)
 								{
-									this.dataPoints.status[statusAddress[j]].current_value = value;
+									this.dataPoints.status[statusAddress[j]].current_value = state.value;
 
 									services[i].updateState(state);
 								}
@@ -193,7 +195,7 @@ class KNXInterface
 						this.dataPoints.status[controlAddress[i]].current_value = value;
 					}
 
-					this.EventManager.setOutputStream('SynTexKNX', service, controlAddress[i], value);
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : controlAddress[i] }, { value });
 				}
 			}
 			else
@@ -211,7 +213,7 @@ class KNXInterface
 
 				this._clearRequests('status', address);
 
-				this.EventManager.setOutputStream('SynTexKNX', null, address, value);
+				this.EventManager.setOutputStream('updateState', { receiver : address }, { value });
 			});
 		}
 	}
