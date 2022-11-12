@@ -430,7 +430,7 @@ To enable the automation module you have to create a file named `automation.json
 - `blocks` Logical layer two *( See block configuration below )*
 
 ### Block Configuration
-#### Service Block
+#### Service Block ( Trigger, Result )
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
@@ -450,18 +450,18 @@ To enable the automation module you have to create a file named `automation.json
 - `hue` can be used for RGB lights.
 - `saturation` can be used for RGB lights.
 
-#### Time Block
+#### Time Block ( Trigger )
 - `time` Define a time point *( e.g. `16:00` )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 
-#### Weekday Block
+#### Weekday Block ( Trigger )
 - `days` Set the weekdays *( from `0` to `6` )*
 - `operation` Use the logical operands *( `=` )*
 
-#### Delay Block
+#### Delay Block ( Result )
 - `delay` Set a timeout *( in milliseconds )*
 
-#### URL Block
+#### URL Block ( Result )
 - `url` Fetch an URL.
 
 ### Letter Configuration
