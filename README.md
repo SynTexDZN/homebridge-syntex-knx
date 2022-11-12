@@ -455,7 +455,7 @@ To enable the automation module you have to create a file named `automation.json
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 
 #### Weekday Block
-- `days` Set the weekdays *( 0 - 6 )*
+- `days` Set the weekdays *( from `0` to `6` )*
 - `operation` Use the logical operands *( `=` )*
 
 #### Delay Block
