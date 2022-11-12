@@ -252,7 +252,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
     - `type` Define the service type *( `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature` )*
-    - `address` must include your `status` and probably `control` group address / addresses from your knx system.
+    - `address` must include your `status` and probably `control` group address from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
     - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
     - For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to     open / close the covering )*
