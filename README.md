@@ -418,9 +418,9 @@ To enable the automation module you have to create a file named `automation.json
 - `id` A unique ID of your automation.
 - `name` The name of the automation.
 - `active` Enable / disable a single automation.
-- `trigger` What triggers the automation? *( See below )*<br><br>
+- `trigger` What triggers the automation?<br><br>
 	- `logic` Define a logical operation for your groups *( `AND`, `OR` )*
-	- `groups` Logical layer one *( See below )*<br><br>
+	- `groups` Logical layer one<br><br>
 		- `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
 		- `blocks` Logical layer two *( See block configuration below )*<br><br>
 - `result` What happens when running an automation?<br><br>
@@ -433,7 +433,7 @@ To enable the automation module you have to create a file named `automation.json
 - `bridge` IP of your other bridge.
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
-- `state` The state of your accessory *( see below )*<br><br>
+- `state` The state of your accessory.<br><br>
 	- `value` is used for the main characteristic.
 	- `brightness` can be used for dimmable / RGB lights.
 	- `hue` can be used for RGB lights.
