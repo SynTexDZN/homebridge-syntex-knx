@@ -438,6 +438,7 @@ To enable the automation module you have to create a file named `automation.json
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 - `state` The state of your accessory *( see below )*
+
   - `value` is used for the main characteristic.
   - `brightness` can be used for dimmable / RGB lights.
   - `hue` can be used for RGB lights.
