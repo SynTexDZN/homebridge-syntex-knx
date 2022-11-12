@@ -422,7 +422,7 @@ To enable the automation module you have to create a file named `automation.json
     - `logic` Define a logical operation for your groups *( `AND`, `OR` )*
     - `groups` Logical layer one<br><br>
         - `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
-        - `blocks` Logical layer two *( See block configuration below )*<br><br>
+        - `blocks` Logical layer two<br><br>
 - `result` What happens when running an automation?<br><br>
 
 ### Block Configuration
@@ -430,8 +430,8 @@ To enable the automation module you have to create a file named `automation.json
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
-- `bridge` IP of your other bridge.
-- `plugin` Use the platform name of the plugin *( see supported plugins below )*
+- `bridge` IP of your other bridge *( optional )*
+- `plugin` Use the platform name of the plugin *( optional, see supported plugins below )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 - `state` The state of your accessory.<br><br>
     - `value` is used for the main characteristic.
