@@ -255,7 +255,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
     - `address` must include your `status` and probably `control` group address from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
     - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
-    - For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to     open / close the covering )*
+    - For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to open / close the covering )*
 
 
 ---
