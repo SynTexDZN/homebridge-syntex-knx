@@ -363,7 +363,7 @@ To enable the automation module you have to create a file named `automation.json
                                 }
                             },
                             {
-							    "operation": "=",
+                                "operation": "=",
                                 "days": [
                                     1,
                                     2,
@@ -451,9 +451,18 @@ To enable the automation module you have to create a file named `automation.json
 - `saturation` can be used for RGB lights.
 
 #### Time Block
+- `time` Define a time point *( e.g. `16:00` )*
+- `operation` Use the logical operands *( `>`, `<`, `=` )*
+
 #### Weekday Block
+- `days` Set the weekdays *( 0 - 6 )*
+- `operation` Use the logical operands *( `=` )*
+
 #### Delay Block
+- `delay` Set a timeout *( in milliseconds )*
+
 #### URL Block
+- `url` Fetch an URL.
 
 ### Letter Configuration
 The letters are split into two parts *( characters )*
