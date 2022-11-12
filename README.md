@@ -247,11 +247,11 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - Disable certain log level: `error`, `warn`, `info`, `read`, `update`, `success` and `debug` *( for example `debug: false` )*
 
 ### Accessory Config
-- Every device needs these parameters: `id`, `name` and `services` *( required )*
+- Every accessory needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `physical group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
-    - `type` should be one of these: `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+    - `type` Define the service type *( `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature` )*
     - `address` must include your `status` and probably `control` group address / addresses from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
     - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
