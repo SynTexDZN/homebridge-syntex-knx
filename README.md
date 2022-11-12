@@ -253,6 +253,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - `id` has to be either a `physical group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
+    - `name` could be anything.
     - `type` Define the service type *( `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature` )*
     - `address` must include your `status` and probably `control` group address from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
