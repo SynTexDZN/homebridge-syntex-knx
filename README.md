@@ -250,14 +250,12 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - Every device needs these parameters: `id`, `name` and `services` *( required )*
 - `id` has to be either a `physical group address` or another `random unique text` *( no duplicates! )*
 - `name` could be anything.
-- `services` see service config below.
-
-### Service Config
-- `type` should be one of these: `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
-- `address` must include your `status` and probably `control` group address / addresses from your knx system.
-- You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
-- For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
-- For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to open / close the covering )*
+- `services` The services of your accessory.<br><br>
+    - `type` should be one of these: `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature`
+    - `address` must include your `status` and probably `control` group address / addresses from your knx system.
+    - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
+    - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
+    - For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to     open / close the covering )*
 
 
 ---
