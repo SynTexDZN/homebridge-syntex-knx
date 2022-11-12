@@ -425,6 +425,8 @@ To enable the automation module you have to create a file named `automation.json
         - `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
         - `blocks` Logical layer two<br><br>
 - `result` What happens when running an automation?
+- `options` General automation options<br><br>
+    - `timeLock` Set a timeout to prevent to many executions *( in milliseconds )*<br><br>
 
 ### Block Configuration
 #### Service Block ( Trigger, Result )
