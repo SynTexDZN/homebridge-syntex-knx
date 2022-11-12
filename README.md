@@ -434,19 +434,14 @@ To enable the automation module you have to create a file named `automation.json
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
+- `bridge` IP of your other bridge.
+- `plugin` Use the platform name of the plugin *( see supported plugins below )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
 - `state` The state of your accessory *( see below )*
   - `value` is used for the main characteristic.
   - `brightness` can be used for dimmable / RGB lights.
   - `hue` can be used for RGB lights.
   - `saturation` can be used for RGB lights.
-
-##### Optional Parameters
-- `bridge` IP of your other bridge *( see supported plugins below )*
-- `plugin` Use the platform name of the plugin *( see supported plugins below )*
-- `brightness` can be used for dimmable / RGB lights.
-- `hue` can be used for RGB lights.
-- `saturation` can be used for RGB lights.
 
 #### Time Block ( Trigger )
 - `time` Define a time point *( e.g. `16:00` )*
