@@ -440,12 +440,12 @@ To enable the automation module you have to create a file named `automation.json
     - `saturation` can be used for RGB lights.
 
 #### Time Block ( Trigger )
-- `time` Define a time point *( e.g. `16:00` )*
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
+- `time` Define a time point *( e.g. `16:00` )*
 
 #### Weekday Block ( Trigger )
-- `days` Set the weekdays *( from `0` to `6` )*
 - `operation` Use the logical operands *( `=` )*
+- `days` Set the weekdays *( from `0` to `6` )*
 
 #### Delay Block ( Result )
 - `delay` Set a timeout *( in milliseconds )*
