@@ -418,16 +418,12 @@ To enable the automation module you have to create a file named `automation.json
 - `id` A unique ID of your automation.
 - `name` The name of the automation.
 - `active` Enable / disable a single automation.
-- `trigger` What triggers the automation? *( See trigger configuration below )*
-- `result` What happens when running an automation? *( See result configuration below )*
-
-### Trigger Configuration
-- `logic` Define a logical operation for your groups *( `AND`, `OR` )*
-- `groups` Logical layer one *( See group configuration below )*
-
-### Group Configuration
-- `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
-- `blocks` Logical layer two *( See block configuration below )*
+- `trigger` What triggers the automation? *( See trigger configuration below )*<br><br>
+	- `logic` Define a logical operation for your groups *( `AND`, `OR` )*
+	- `groups` Logical layer one *( See group configuration below )*
+- `result` What happens when running an automation? *( See result configuration below )*<br><br>
+	- `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
+	- `blocks` Logical layer two *( See block configuration below )*
 
 ### Block Configuration
 #### Service Block ( Trigger, Result )
