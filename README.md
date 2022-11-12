@@ -321,26 +321,61 @@ To enable the automation module you have to create a file named `automation.json
             "id": 0,
             "name": "Demo Automation",
             "active": true,
-            "trigger": [
-                {
-                    "id": "multi2",
-                    "name": "Multi Device",
-                    "letters": "F0",
-                    "plugin": "SynTexWebHooks",
-                    "operation": "<",
-                    "value": "1000"
-                }
-            ],
-            "condition": [
-                {
-                    "id": "multi1",
-                    "name": "Multi Switch",
-                    "letters": "41",
-                    "plugin": "SynTexWebHooks",
-                    "operation": "=",
-                    "value": "false"
-                }
-            ],
+            "trigger": {
+                "logic": "AND",
+                "groups": [
+                    {
+                        "logic": "OR",
+                        "blocks": [
+                            {
+                                "id": "multi2",
+                                "name": "Multi Device",
+                                "letters": "F0",
+                                "plugin": "SynTexWebHooks",
+                                "operation": "<",
+                                "state": {
+                                    "value": 1000
+                                }
+                            },
+                            {
+                                "operation": "=",
+                                "time": "16:00",
+                                "options": {
+                                    "stateLock": true
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "logic": "AND",
+                        "blocks": [
+                            {
+                                "id": "multi1",
+                                "name": "Multi Switch",
+                                "letters": "41",
+                                "plugin": "SynTexWebHooks",
+                                "operation": "=",
+                                "state": {
+                                    "value": false
+                                },
+                                "options": {
+                                    "stateLock": true
+                                }
+                            },
+                            {
+							    "operation": "=",
+                                "days": [
+                                    1,
+                                    2,
+                                    3,
+                                    4,
+                                    5
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
             "result": [
                 {
                     "id": "knx5",
@@ -348,7 +383,27 @@ To enable the automation module you have to create a file named `automation.json
                     "letters": "80",
                     "plugin": "SynTexKNX",
                     "operation": "=",
-                    "value": "true"
+                    "state": {
+                        "value": true
+                    }
+                },
+                {
+                    "id": "extern1",
+                    "name": "Extern Accessory",
+                    "letters": "40",
+                    "bridge": "192.168.1.100",
+                    "plugin": "SynTexWebHooks",
+                    "operation": "=",
+                    "state": {
+                        "value": false
+                    },
+                    "options": {
+                        "stateLock": false
+                    }
+                },
+                {
+                    "operation": "=",
+                    "delay": 1000
                 },
                 {
                     "url": "http://192.168.1.100:1714/devices?id=knx1&value=true"
@@ -360,17 +415,45 @@ To enable the automation module you have to create a file named `automation.json
 ```
 
 ### Required Parameters
+- `id` A unique ID of your automation.
+- `name` The name of the automation.
+- `active` Enable / disable a single automation.
+- `trigger` What triggers the automation? *( See trigger configuration below )*
+- `result` What happens when running an automation? *( See result configuration below )*
+
+### Trigger Configuration
+- `logic` Define a logical operation for your groups *( `AND`, `OR` )*
+- `groups` Logical layer one *( See group configuration below )*
+
+### Group Configuration
+- `logic` Define a logical operation for your blocks *( `AND`, `OR` )*
+- `blocks` Logical layer two *( See block configuration below )*
+
+### Block Configuration
+#### Service Block
 - `id` is the same like in your config file *( or in your log )*
 - `name` The name of the accessory.
 - `letters` See letter configuration below.
 - `operation` Use the logical operands *( `>`, `<`, `=` )*
-- `value` The state value of your accessory.
+- `state` The state of your accessory *( see below )*
 
-### Optional Parameters
+##### State Parameters
+- `value` is used for the main characteristic.
+- `brightness` can be used for dimmable / RGB lights.
+- `hue` can be used for RGB lights.
+- `saturation` can be used for RGB lights.
+
+##### Optional Parameters
+- `bridge` IP of your other bridge *( see supported plugins below )*
 - `plugin` Use the platform name of the plugin *( see supported plugins below )*
 - `brightness` can be used for dimmable / RGB lights.
 - `hue` can be used for RGB lights.
 - `saturation` can be used for RGB lights.
+
+#### Time Block
+#### Weekday Block
+#### Delay Block
+#### URL Block
 
 ### Letter Configuration
 The letters are split into two parts *( characters )*
