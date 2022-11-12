@@ -52,7 +52,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
             "disablePreload": false
         },
         "log": {
-                "debug": false
+            "debug": false
         },
         "accessories": [
             {
@@ -233,10 +233,12 @@ It connects to a KNX IP Gateway and offers some special tweaks.
     }
 ]
 ```
+
 ### Required Parameters
 - `platform` is always `SynTexKNX`
 - `baseDirectory` The path where cache data is stored.
 - `ip` The IP address of your KNX gateway.
+- `accessories` For the accessory config.
 
 ### Optional Parameters
 - `port` To control your accessory over HTTP calls.
@@ -276,10 +278,10 @@ https://github.com/SynTexDZN/homebridge-syntex
 - For boolean devices: `true` / `false` *( switch, outlet, led )*
 - For numeric devices: `10` / `12.4` *( blind, humidity, light, temperature )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
-**Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&value=true&brightness=100`\
+**Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890&type=dimmer&counter=0&value=true&brightness=100`\
 *( Updates the value and brightness of `ABCDEF1234567890` to `turned on, 100% brightness` for example )*
 
 
@@ -287,11 +289,11 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**
 2. Insert the `Bridge IP` and `Device ID`
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
-- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER** 
+- For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
 
 **Example:**  `http://homebridge.local:1714/devices?id=ABCDEF1234567890`\
-*( Reads the value of `ABCDEF1234567890` for example )*
+*( Reads the state of `ABCDEF1234567890` for example )*
 
 
 ## Remove KNX Device
@@ -404,7 +406,7 @@ To enable the automation module you have to create a file named `automation.json
                     "delay": 1000
                 },
                 {
-                    "url": "http://192.168.1.100:1714/devices?id=knx1&value=true"
+                    "url": "http://192.168.1.100:1714/devices?id=ABCDEF1234567890&value=true"
                 }
             ]
         }
