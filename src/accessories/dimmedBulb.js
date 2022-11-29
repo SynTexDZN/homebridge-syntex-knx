@@ -13,8 +13,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
 
-		this.invertState = serviceConfig.inverted || false;
-
 		this.changeHandler = (state) => {
 			
 			if(state.value != null)
