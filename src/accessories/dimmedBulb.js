@@ -14,7 +14,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		this.controlAddress = serviceConfig.address.control;
 
 		this.changeHandler = (state) => {
-			
+
 			this.setToCurrentBrightness(state, (failed) => {
 
 				if(!failed)
@@ -57,7 +57,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 		});
 	}
-	
+
 	setState(value, callback)
 	{
 		this.setToCurrentBrightness({ value }, (failed) => {
@@ -81,8 +81,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.brightness = brightness;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + brightness + '] ( ' + this.id + ' )');
-
 				callback(null, brightness);
 			}
 			else
@@ -92,17 +90,16 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					if(brightness != null && !isNaN(brightness))
 					{
 						this.brightness = brightness;
-
-						super.setState(brightness,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + brightness + '] ( ' + this.id + ' )'));
+						
+						super.setBrightness(brightness, () => {});
 					}
-
+					
 					callback(null, this.brightness);
 				});
 			}
 		});
 	}
-	
+
 	setBrightness(brightness, callback)
 	{
 		this.setToCurrentBrightness({ brightness }, (failed) => {
@@ -120,23 +117,42 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	updateState(state)
 	{
-		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
+		if(!this.running)
 		{
-			this.value = state.value > 0;
-			this.brightness = state.value;
+			var changed = false;
 
-			super.setState(state.value > 0,
-				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value > 0));
+			if(state.value != null && !isNaN(state.value))
+			{
+				var value = state.value > 0,
+					brightness = state.value;
 
-			super.setBrightness(state.value,
-				() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.value));
+				if(!super.hasState('value') || !super.hasState('brightness') || this.value != value || this.brightness != brightness)
+				{
+					changed = true;
+				}
+
+				this.value = this.tempState.value = value;
+				this.brightness = this.tempState.brightness = brightness;
+
+				super.setState(value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(value));
+
+				super.setBrightness(brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(brightness));
+			}
+
+			if(changed)
+			{
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+			}
+
+			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 		}
-
-		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 	}
 
 	setToCurrentBrightness(state, callback)
 	{
+		/*
 		const setPower = (resolve) => {
 
 			this.DeviceManager.setState(this, this.tempState.value).then((success) => {
@@ -144,8 +160,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				if(success)
 				{
 					this.value = this.tempState.value;
-	
-					super.setState(this.value, () => callback());
+
+					super.setState(this.value, () => {});
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 				}
@@ -160,7 +176,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 			});
 		};
-
+		*/
 		const setBrightness = (resolve) => {
 
 			this.DeviceManager.setState(this, this.tempState.brightness).then((success) => {
