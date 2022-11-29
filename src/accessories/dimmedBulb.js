@@ -31,7 +31,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
 				callback(null, value);
 			}
@@ -44,7 +44,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 						this.value = value;
 
 						super.setState(value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )'));
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
