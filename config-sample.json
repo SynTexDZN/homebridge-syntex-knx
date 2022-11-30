@@ -40,6 +40,19 @@
 				},
 				{
 					"id": "knx3",
+					"name": "Dimmer Accessory",
+					"services": [
+						{
+							"address": {
+								"status": "1/1/3",
+								"control": "1/1/3"
+							},
+							"type": "dimmer"
+						}
+					]
+				},
+				{
+					"id": "knx4",
 					"name": "Window Covering Accessory",
 					"services": [
 						{
@@ -65,13 +78,13 @@
 					]
 				},
 				{
-					"id": "knx4",
+					"id": "knx5",
 					"name": "Inverted Accessory",
 					"services": [
 						{
 							"datapoint": "1.001",
 							"address": {
-								"status": "1/1/3"
+								"status": "1/1/4"
 							},
 							"type": "contact",
 							"inverted": true
@@ -79,7 +92,7 @@
 					]
 				},
 				{
-					"id": "knx5",
+					"id": "knx6",
 					"name": "Multi Accessory",
 					"services": [
 						{
@@ -115,49 +128,57 @@
 						},
 						{
 							"address": {
-								"status": "1/1/3"
+								"status": "1/1/3",
+								"control": "1/1/3"
+							},
+							"type": "dimmer",
+							"name": "Dimmer"
+						},
+						{
+							"address": {
+								"status": "1/1/4"
 							},
 							"type": "contact",
 							"name": "Contact"
 						},
 						{
 							"address": {
-								"status": "1/1/4"
+								"status": "1/1/5"
 							},
 							"type": "occupancy",
 							"name": "Occupancy"
 						},
 						{
 							"address": {
-								"status": "1/1/5"
+								"status": "1/1/6"
 							},
 							"type": "temperature",
 							"name": "Temperature"
 						},
 						{
 							"address": {
-								"status": "1/1/6"
+								"status": "1/1/7"
 							},
 							"type": "light",
 							"name": "Light"
 						},
 						{
 							"address": {
-								"status": "1/1/7"
+								"status": "1/1/8"
 							},
 							"type": "humidity",
 							"name": "Humidity"
 						},
 						{
 							"address": {
-								"status": "1/1/8"
+								"status": "1/1/9"
 							},
 							"type": "leak",
 							"name": "Leak"
 						},
 						{
 							"address": {
-								"status": "1/1/9"
+								"status": "1/1/10"
 							},
 							"type": "smoke",
 							"name": "Smoke"

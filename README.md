@@ -82,6 +82,19 @@ It connects to a KNX IP Gateway and offers some special tweaks.
             },
             {
                 "id": "knx3",
+                "name": "Dimmer Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/1/3",
+                            "control": "1/1/3"
+                        },
+                        "type": "dimmer"
+                    }
+                ]
+            },
+            {
+                "id": "knx4",
                 "name": "Window Covering Accessory",
                 "services": [
                     {
@@ -107,13 +120,13 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                 ]
             },
             {
-                "id": "knx4",
+                "id": "knx5",
                 "name": "Inverted Accessory",
                 "services": [
                     {
                         "datapoint": "1.001",
                         "address": {
-                            "status": "1/1/3"
+                            "status": "1/1/4"
                         },
                         "type": "contact",
                         "inverted": true
@@ -121,7 +134,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                 ]
             },
             {
-                "id": "knx5",
+                "id": "knx6",
                 "name": "Multi Accessory",
                 "services": [
                     {
@@ -157,49 +170,57 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                     },
                     {
                         "address": {
-                            "status": "1/1/3"
+                            "status": "1/1/3",
+                            "control": "1/1/3"
+                        },
+                        "type": "dimmer",
+                        "name": "Dimmer"
+                    },
+                    {
+                        "address": {
+                            "status": "1/1/4"
                         },
                         "type": "contact",
                         "name": "Contact"
                     },
                     {
                         "address": {
-                            "status": "1/1/4"
+                            "status": "1/1/5"
                         },
                         "type": "occupancy",
                         "name": "Occupancy"
                     },
                     {
                         "address": {
-                            "status": "1/1/5"
+                            "status": "1/1/6"
                         },
                         "type": "temperature",
                         "name": "Temperature"
                     },
                     {
                         "address": {
-                            "status": "1/1/6"
+                            "status": "1/1/7"
                         },
                         "type": "light",
                         "name": "Light"
                     },
                     {
                         "address": {
-                            "status": "1/1/7"
+                            "status": "1/1/8"
                         },
                         "type": "humidity",
                         "name": "Humidity"
                     },
                     {
                         "address": {
-                            "status": "1/1/8"
+                            "status": "1/1/9"
                         },
                         "type": "leak",
                         "name": "Leak"
                     },
                     {
                         "address": {
-                            "status": "1/1/9"
+                            "status": "1/1/10"
                         },
                         "type": "smoke",
                         "name": "Smoke"
@@ -254,10 +275,10 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
     - `name` could be anything.
-    - `type` Define the service type *( `contact`, `blind`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature` )*
+    - `type` Define the service type *( `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `smoke`, `switch`, `temperature` )*
     - `address` must include your `status` and probably `control` group address from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
-    - For Boolean Devices you can add `inverted` *( inverts the state from `true` -> `false` / `false` -> `true` )*
+    - For Boolean and Percentage Devices you can add `inverted` *( inverts the state from `false` -> `true` / `0` -> `100` )*
     - For Window Coverings you can add `delay` for `up` and `down` *( to calibrate the time it takes to open / close the covering )*
 
 
@@ -276,8 +297,9 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For boolean devices: `true` / `false` *( switch, outlet, led )*
-- For numeric devices: `10` / `12.4` *( blind, humidity, light, temperature )*
+- For boolean devices: `true` / `false` *( dimmer, led, outlet, switch )*
+- For numeric devices: `10` / `12.4` *( blind )*
+- For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
@@ -504,5 +526,5 @@ The letters are split into two parts *( characters )*
 - Smoke Sensor
 - Temperature Sensor
 - Switch / Relais / Outlet
-- LED Light
+- LED Lights / Dimmable Lights
 - Blinds / Shutters / Window Coverings
