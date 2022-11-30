@@ -13,6 +13,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
 
+		this.invertState = serviceConfig.inverted || false;
+
 		this.changeHandler = (state) => {
 
 			this.setToCurrentBrightness(state, (failed) => {
@@ -123,24 +125,30 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.value != null && !isNaN(state.value))
 			{
-				var value = state.value > 0,
-					brightness = state.value;
-
-				if(!super.hasState('value') || !super.hasState('brightness') || this.value != value || this.brightness != brightness)
+				if(!super.hasState('value') || this.value != state.value)
 				{
 					changed = true;
 				}
 
-				this.value = this.tempState.value = value;
-				this.brightness = this.tempState.brightness = brightness;
+				this.value = this.tempState.value = state.value;
 
-				super.setState(value, 
-					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(value));
-
-				super.setBrightness(brightness, 
-					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(brightness));
+				super.setState(state.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 			}
 
+			if(state.brightness != null && !isNaN(state.brightness))
+			{
+				if(!super.hasState('brightness') || this.brightness != state.brightness)
+				{
+					changed = true;
+				}
+
+				this.brightness = this.tempState.brightness = state.brightness;
+
+				super.setBrightness(state.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+			}
+			
 			if(changed)
 			{
 				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');

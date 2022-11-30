@@ -1,3 +1,5 @@
+let Converter = require('./converter');
+
 const knx = require('knx');
 
 class KNXInterface
@@ -14,6 +16,8 @@ class KNXInterface
 
 		this.connected = false;
 		this.firstConnect = true;
+
+		this.converter = new Converter(this);
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers: {
@@ -73,47 +77,23 @@ class KNXInterface
 
 							this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
 
+								var state = this.converter.getState(services[i], newValue);
+
 								this._clearRequests('status', statusAddress[j]);
 
-								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, { value : newValue });
+								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, { state, value : newValue });
 							});
 						}
 
-						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (state) => {
+						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (response) => {
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
-								var characteristic = this.TypeManager.getCharacteristic('value', { letters : services[i].letters });
-								
-								if(services[i].invertState)
+								if((response.state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, response.state)) != null && services[i].updateState != null)
 								{
-									if(services[i].dataPoint == '5.001')
-									{
-										state.value = 100 - state.value;
-									}
-									else
-									{
-										state.value = !state.value;
-									}
-								}
+									this.dataPoints.status[statusAddress[j]].current_value = response.value;
 
-								if(typeof state.value == 'boolean' && characteristic != null && characteristic.format == 'number')
-								{
-									if(state.value == true)
-									{
-										state.value = characteristic.max;
-									}
-									else
-									{
-										state.value = characteristic.min;
-									}
-								}
-
-								if((state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, state)) != null && services[i].updateState != null)
-								{
-									this.dataPoints.status[statusAddress[j]].current_value = state.value;
-
-									services[i].updateState(state);
+									services[i].updateState(response.state);
 								}
 								else
 								{
