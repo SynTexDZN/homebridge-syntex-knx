@@ -87,7 +87,14 @@ class KNXInterface
 								
 								if(services[i].invertState)
 								{
-									state.value = !state.value;
+									if(services[i].dataPoint == '5.001')
+									{
+										state.value = 100 - state.value;
+									}
+									else
+									{
+										state.value = !state.value;
+									}
 								}
 
 								if(typeof state.value == 'boolean' && characteristic != null && characteristic.format == 'number')
@@ -155,7 +162,14 @@ class KNXInterface
 
 							if(service.invertState)
 							{
-								value = !value;
+								if(service.dataPoint == '5.001')
+								{
+									value = 100 - value;
+								}
+								else
+								{
+									value = !value;
+								}
 							}
 
 							resolve(value);
@@ -182,7 +196,14 @@ class KNXInterface
 				{
 					if(service.invertState)
 					{
-						value = !value;
+						if(service.dataPoint == '5.001')
+						{
+							value = 100 - value;
+						}
+						else
+						{
+							value = !value;
+						}
 					}
 
 					if(this.dataPoints.control[controlAddress[i]] != null)
