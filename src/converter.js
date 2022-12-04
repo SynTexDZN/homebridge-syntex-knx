@@ -31,11 +31,11 @@ module.exports = class Converter
                 {
                     if(state[x] == true)
                     {
-                        state[x] = characteristic.max;
+                        state[x] = 1;
                     }
-                    else
+                    else if(state[x] == false)
                     {
-                        state[x] = characteristic.min;
+                        state[x] = 0;
                     }
                 }
 
