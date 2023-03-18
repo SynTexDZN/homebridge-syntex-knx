@@ -26,7 +26,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 	
 	setService(config, subtype)
 	{
-		var serviceConfig = { name : this.name, type : config, subtype }, service = null;
+		var serviceConfig = { address : {}, name : this.name, type : config, subtype }, service = null;
 
 		if(config instanceof Object)
 		{
@@ -47,7 +47,7 @@ module.exports = class SynTexUniversalAccessory extends UniversalAccessory
 				serviceConfig.name += ' ' + letters[subtype];
 			}
 		}
-        
+
 		if(serviceConfig.type == 'contact')
 		{
 			service = new ContactService(this.homebridgeAccessory, this.deviceConfig, serviceConfig, this.manager);
