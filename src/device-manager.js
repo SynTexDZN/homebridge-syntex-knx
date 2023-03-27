@@ -34,6 +34,15 @@ class KNXInterface
 					
 					var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
 
+					if(!this.connected)
+					{
+						this.connected = true;
+
+						this.DeviceManager._updateConnectionState(this.connected);
+
+						this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
+					}
+
 					if(event == 'GroupValue_Read')
 					{
 						this._clearRequests('status', address);
@@ -41,13 +50,6 @@ class KNXInterface
 					else if(event == 'GroupValue_Write')
 					{
 						this._clearRequests('control', address);
-					}
-
-					if(!this.connected)
-					{
-						this.connected = true;
-
-						this.DeviceManager._updateConnectionState(this.connected);
 					}
 				},
 				event : (evt, src, dest, value) => {
@@ -57,6 +59,8 @@ class KNXInterface
 						this.connected = true;
 
 						this.DeviceManager._updateConnectionState(this.connected);
+
+						this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
 					}
 
 					this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']');
