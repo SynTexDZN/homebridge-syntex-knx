@@ -20,7 +20,7 @@ class KNXInterface
 		this.converter = new Converter(this);
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
-			handlers: {
+			handlers : {
 				connected : () => this.connectionSuccess(),
 				disconnected : () => {
 					
@@ -42,8 +42,25 @@ class KNXInterface
 					{
 						this._clearRequests('control', address);
 					}
+
+					if(!this.connected)
+					{
+						this.connected = true;
+
+						this.DeviceManager._updateConnectionState(this.connected);
+					}
 				},
-				event : (evt, src, dest, value) => this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']'),
+				event : (evt, src, dest, value) => {
+					
+					if(!this.connected)
+					{
+						this.connected = true;
+
+						this.DeviceManager._updateConnectionState(this.connected);
+					}
+
+					this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']');
+				},
 				error : (e) => this.logger.err(e)
 			}
 		});
