@@ -23,8 +23,6 @@ module.exports = class Converter
         {
             var characteristic = this.TypeManager.getCharacteristic(x, { letters : service.letters });
 
-            console.log(x, characteristic);
-
             if(characteristic != null)
             {
                 if(typeof state[x] == 'boolean' && characteristic.format == 'number')
