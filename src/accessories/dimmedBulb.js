@@ -123,30 +123,24 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		{
 			var changed = false;
 
-			if(state.value != null && !isNaN(state.value))
+			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
-				if(!super.hasState('value') || this.value != state.value)
-				{
-					changed = true;
-				}
-
 				this.value = this.tempState.value = state.value;
 
 				super.setState(state.value, 
 					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
+
+				changed = true;
 			}
 
-			if(state.brightness != null && !isNaN(state.brightness))
+			if(state.brightness != null && !isNaN(state.brightness) && (!super.hasState('brightness') || this.brightness != state.brightness))
 			{
-				if(!super.hasState('brightness') || this.brightness != state.brightness)
-				{
-					changed = true;
-				}
-
 				this.brightness = this.tempState.brightness = state.brightness;
 
 				super.setBrightness(state.brightness, 
 					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+
+				changed = true;
 			}
 			
 			if(changed)
