@@ -100,7 +100,7 @@ class KNXInterface
 
 								var state = this.converter.getState(services[i], newValue);
 
-								this._clearRequests('status', statusAddress[j]);
+								this._clearRequests('status', statusAddress[j], state);
 
 								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, { state, value : newValue });
 							});
@@ -147,42 +147,23 @@ class KNXInterface
 
 	readState(service)
 	{
-		return new Promise((resolve) => {
+		if(this.connected && service.statusAddress != null)
+		{
+			const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
 
-			if(this.connected && service.statusAddress != null)
+			for(const i in statusAddress)
 			{
-				const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
-
-				for(const i in statusAddress)
+				if(this.dataPoints.status[statusAddress[i]] != null)
 				{
-					if(this.dataPoints.status[statusAddress[i]] != null)
-					{
-						this.dataPoints.status[statusAddress[i]].read((src, value) => {
+					this.dataPoints.status[statusAddress[i]].read((src, value) => {
 
-							this._clearRequests('status', statusAddress[i]);
+						var state = this.converter.getState(service, value);
 
-							if(service.invertState)
-							{
-								if(service.dataPoint == '5.001')
-								{
-									value = 100 - value;
-								}
-								else
-								{
-									value = !value;
-								}
-							}
-
-							resolve(value);
-						});
-					}
+						this._clearRequests('status', statusAddress[i], state);
+					});
 				}
 			}
-			else
-			{
-				resolve(null);
-			}
-		});
+		}
 	}
 
 	writeState(service, value)
@@ -242,23 +223,36 @@ class KNXInterface
 
 	_addRequest(type, address, callback)
 	{
-		if(this.connected)
+		if(this.connected && address != null && callback != null)
 		{
 			this.requests[type].push({ address, callback });
+
+			setTimeout(() => {
+
+				this._clearRequests(type, address);
+
+			}, 2000);
 		}
 		else
 		{
-			callback(type == 'status' ? null : false);
+			callback(type == 'status' ? {} : false);
 		}
 	}
 
-	_clearRequests(type, address)
+	_clearRequests(type, address, state)
 	{
 		for(var i = this.requests[type].length - 1; i >= 0; i--)
 		{
 			if(this.requests[type][i].address == address)
 			{
-				this.requests[type][i].callback(type == 'status' ? null : true);
+				if(type == 'status')
+				{
+					this.requests[type][i].callback(state || {});
+				}
+				else
+				{
+					this.requests[type][i].callback(true);
+				}
 
 				this.requests[type].splice(i, 1);
 			}
@@ -285,12 +279,6 @@ module.exports = class DeviceManager
 		return new Promise((resolve) => {
 
 			this.KNXInterface._addRequest('status', service.statusAddress, resolve);
-
-			setTimeout(() => {
-
-				this.KNXInterface._clearRequests('status', service.statusAddress);
-
-			}, 3000);
 
 			this.KNXInterface.readState(service);
 		});

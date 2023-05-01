@@ -27,14 +27,14 @@ module.exports = class SynTexLightService extends LightService
 			}
 			else
 			{
-				this.DeviceManager.getState(this).then((value) => {
+				this.DeviceManager.getState(this).then((state) => {
 
-					if(value != null && !isNaN(value))
+					if(state.value != null && !isNaN(state.value))
 					{
-						this.value = value;
+						this.value = state.value;
 
-						super.setState(value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )'));
+						super.setState(state.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
