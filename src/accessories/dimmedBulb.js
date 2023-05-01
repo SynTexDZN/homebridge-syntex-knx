@@ -223,4 +223,4 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			resolve();
 		});
 	}
-};
+}
