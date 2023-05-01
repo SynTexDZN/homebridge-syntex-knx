@@ -57,7 +57,19 @@ It connects to a KNX IP Gateway and offers some special tweaks.
         "accessories": [
             {
                 "id": "knx1",
-                "name": "Control Accessory",
+                "name": "Sensor Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/0/0"
+                        },
+                        "type": "contact"
+                    }
+                ]
+            },
+            {
+                "id": "knx2",
+                "name": "Boolean Accessory",
                 "services": [
                     {
                         "address": {
@@ -69,25 +81,13 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                 ]
             },
             {
-                "id": "knx2",
-                "name": "Sensor Accessory",
-                "services": [
-                    {
-                        "address": {
-                            "status": "1/1/2"
-                        },
-                        "type": "motion"
-                    }
-                ]
-            },
-            {
                 "id": "knx3",
                 "name": "Dimmer Accessory",
                 "services": [
                     {
                         "address": {
-                            "status": "1/1/3",
-                            "control": "1/1/3"
+                            "status": "1/1/2",
+                            "control": "1/1/2"
                         },
                         "type": "dimmer"
                     }
@@ -95,12 +95,25 @@ It connects to a KNX IP Gateway and offers some special tweaks.
             },
             {
                 "id": "knx4",
+                "name": "RGB Accessory",
+                "services": [
+                    {
+                        "address": {
+                            "status": "1/1/3",
+                            "control": "1/1/3"
+                        },
+                        "type": "rgb"
+                    }
+                ]
+            },
+            {
+                "id": "knx5",
                 "name": "Window Covering Accessory",
                 "services": [
                     {
                         "address": {
-                            "status": "1/2/0",
-                            "control": "1/2/0"
+                            "status": "1/1/4",
+                            "control": "1/1/4"
                         },
                         "delay": {
                             "up": 11000,
@@ -111,8 +124,8 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                     },
                     {
                         "address": {
-                            "status": "1/2/1",
-                            "control": "1/2/1"
+                            "status": "1/1/5",
+                            "control": "1/1/5"
                         },
                         "type": "switch",
                         "name": "Stop"
@@ -120,13 +133,13 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                 ]
             },
             {
-                "id": "knx5",
+                "id": "knx6",
                 "name": "Inverted Accessory",
                 "services": [
                     {
                         "datapoint": "1.001",
                         "address": {
-                            "status": "1/1/4"
+                            "status": "1/0/0"
                         },
                         "type": "contact",
                         "inverted": true
@@ -134,16 +147,64 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                 ]
             },
             {
-                "id": "knx6",
+                "id": "knx7",
                 "name": "Multi Accessory",
                 "services": [
                     {
                         "address": {
-                            "status": "1/1/1",
-                            "control": "1/1/1"
+                            "status": "1/0/0"
                         },
-                        "type": "switch",
-                        "name": "Switch"
+                        "type": "contact",
+                        "name": "Contact"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/1"
+                        },
+                        "type": "humidity",
+                        "name": "Humidity"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/2"
+                        },
+                        "type": "leak",
+                        "name": "Leak"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/3"
+                        },
+                        "type": "light",
+                        "name": "Light"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/4"
+                        },
+                        "type": "motion",
+                        "name": "Motion"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/5"
+                        },
+                        "type": "occupancy",
+                        "name": "Occupancy"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/6"
+                        },
+                        "type": "smoke",
+                        "name": "Smoke"
+                    },
+                    {
+                        "address": {
+                            "status": "1/0/7"
+                        },
+                        "type": "temperature",
+                        "name": "Temperature"
                     },
                     {
                         "address": {
@@ -163,73 +224,33 @@ It connects to a KNX IP Gateway and offers some special tweaks.
                     },
                     {
                         "address": {
-                            "status": "1/1/2"
+                            "status": "1/1/1",
+                            "control": "1/1/1"
                         },
-                        "type": "motion",
-                        "name": "Motion"
+                        "type": "switch",
+                        "name": "Switch"
                     },
                     {
                         "address": {
-                            "status": "1/1/3",
-                            "control": "1/1/3"
+                            "status": "1/1/2",
+                            "control": "1/1/2"
                         },
                         "type": "dimmer",
                         "name": "Dimmer"
                     },
                     {
                         "address": {
-                            "status": "1/1/4"
+                            "status": "1/1/3",
+                            "control": "1/1/3"
                         },
-                        "type": "contact",
-                        "name": "Contact"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/5"
-                        },
-                        "type": "occupancy",
-                        "name": "Occupancy"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/6"
-                        },
-                        "type": "temperature",
-                        "name": "Temperature"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/7"
-                        },
-                        "type": "light",
-                        "name": "Light"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/8"
-                        },
-                        "type": "humidity",
-                        "name": "Humidity"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/9"
-                        },
-                        "type": "leak",
-                        "name": "Leak"
-                    },
-                    {
-                        "address": {
-                            "status": "1/1/10"
-                        },
-                        "type": "smoke",
-                        "name": "Smoke"
+                        "type": "rgb",
+                        "name": "RGB"
                     },
                     {
                         "datapoint": "5.001",
                         "address": {
-                            "status": "1/2/2",
-                            "control": "1/2/3"
+                            "status": "1/1/4",
+                            "control": "1/1/4"
                         },
                         "delay": {
                             "up": 11000,
