@@ -1,3 +1,5 @@
+const convert = require('color-convert');
+
 module.exports = class Converter
 {
 	constructor(DeviceManager)
@@ -13,6 +15,19 @@ module.exports = class Converter
         {
             state.value = value > 0;
             state.brightness = value;
+        }
+        else if(type == 'rgb')
+        {
+            var converted = convert.rgb.hsv([value.red, value.green, value.blue]);
+
+            state.value = value.red > 0 || value.green > 0 || value.blue > 0;
+
+			if(converted != null)
+			{
+                state.hue = converted[0];
+                state.saturation = converted[1];
+                state.brightness = converted[2];
+            }
         }
         else
         {
