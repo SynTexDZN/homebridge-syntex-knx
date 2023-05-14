@@ -102,19 +102,21 @@ class KNXInterface
 
 								this._clearRequests('status', statusAddress[j], state);
 
-								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, { state, value : newValue });
+								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, newValue);
 							});
 						}
 
-						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (response) => {
+						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (value) => {
 
 							if(this.dataPoints.status[statusAddress[j]] != null)
 							{
-								if((response.state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, response.state)) != null && services[i].updateState != null)
-								{
-									this.dataPoints.status[statusAddress[j]].current_value = response.value;
+								var state = this.converter.getState(services[i], value);
 
-									services[i].updateState(response.state);
+								if((state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, state)) != null && services[i].updateState != null)
+								{
+									this.dataPoints.status[statusAddress[j]].current_value = value;
+
+									services[i].updateState(state);
 								}
 								else
 								{
@@ -198,7 +200,7 @@ class KNXInterface
 						this.dataPoints.status[controlAddress[i]].current_value = value;
 					}
 
-					this.EventManager.setOutputStream('updateState', { sender : service, receiver : controlAddress[i] }, { value });
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : controlAddress[i] }, value);
 				}
 			}
 			else
@@ -216,7 +218,7 @@ class KNXInterface
 
 				this._clearRequests('status', address);
 
-				this.EventManager.setOutputStream('updateState', { receiver : address }, { value });
+				this.EventManager.setOutputStream('updateState', { receiver : address }, value);
 			});
 		}
 	}
