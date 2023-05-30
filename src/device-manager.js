@@ -6,75 +6,39 @@ class KNXInterface
 {
 	constructor(gatewayIP, DeviceManager)
 	{
-		this.DeviceManager = DeviceManager;
-		this.logger = DeviceManager.logger;
-		this.TypeManager = DeviceManager.TypeManager;
-		this.EventManager = DeviceManager.EventManager;
+		this.connected = false;
+		this.firstConnect = true;
 
 		this.requests = { status : [], control : [] };
 		this.dataPoints = { status : {}, control : {} };
 
-		this.connected = false;
-		this.firstConnect = true;
+		this.DeviceManager = DeviceManager;
+
+		this.logger = DeviceManager.logger;
+		
+		this.EventManager = DeviceManager.EventManager;
+		this.TypeManager = DeviceManager.TypeManager;
 
 		this.converter = new Converter(this);
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers : {
-				connected : () => this.connectionSuccess(),
-				disconnected : () => {
-					
-					this.connected = false;
-
-					this.DeviceManager._updateConnectionState(this.connected);
-
-					this.logger.debug('%knx_gateway_disconnected%!');
-				},
-				confirmed : (data) => {
-					
-					var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
-
-					if(!this.connected)
-					{
-						this.connected = true;
-
-						this.DeviceManager._updateConnectionState(this.connected);
-
-						this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
-					}
-
-					if(event == 'GroupValue_Read')
-					{
-						this._clearRequests('status', address);
-					}
-					else if(event == 'GroupValue_Write')
-					{
-						this._clearRequests('control', address);
-					}
-				},
-				event : (evt, src, dest, value) => {
-					
-					if(!this.connected)
-					{
-						this.connected = true;
-
-						this.DeviceManager._updateConnectionState(this.connected);
-
-						this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
-					}
-
-					this.logger.debug('GET [' + dest + '] --> [' + value[0] + ']');
-				},
+				connected : () => this.connected(),
+				disconnected : () => this.disconnected(),
+				confirmed : (data) => this.confirmed(data),
+				event : (event, source, destination, value) => this.event(destination, value),
 				error : (e) => this.logger.err(e)
 			}
 		});
 	}
 
-	connectionSuccess()
+	connected()
 	{
 		this.connected = true;
 
 		this.DeviceManager._updateConnectionState(this.connected);
+
+		this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
 
 		if(this.firstConnect)
 		{
@@ -82,41 +46,41 @@ class KNXInterface
 			
 			var services = this.DeviceManager._getServices();
 
-			for(const i in services)
+			for(const service of services)
 			{
-				if(services[i].statusAddress != null)
+				if(service.statusAddress != null)
 				{
-					const statusAddress = Array.isArray(services[i].statusAddress) ? services[i].statusAddress : [ services[i].statusAddress ];
+					const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
 
-					for(const j in statusAddress)
+					for(const address of statusAddress)
 					{
-						if(this.dataPoints.status[statusAddress[j]] == null)
+						if(this.dataPoints.status[address] == null)
 						{
-							this.dataPoints.status[statusAddress[j]] = new knx.Datapoint({ ga : statusAddress[j], dpt : services[i].dataPoint }, this.connection);
+							this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
 
 							// TODO: Write Own Change Detection And Input Conversion
 
-							this.dataPoints.status[statusAddress[j]].on('change', (oldValue, newValue) => {
+							this.dataPoints.status[address].on('change', (oldValue, newValue) => {
 
-								var state = this.converter.getState(services[i], newValue);
+								var state = this.converter.getState(service, newValue);
 
-								this._clearRequests('status', statusAddress[j], state);
+								this._clearRequests('status', address, state);
 
-								this.EventManager.setOutputStream('updateState', { receiver : statusAddress[j] }, newValue);
+								this.EventManager.setOutputStream('updateState', { receiver : address }, newValue);
 							});
 						}
 
-						this.EventManager.setInputStream('updateState', { source : services[i], destination : statusAddress[j] }, (value) => {
+						this.EventManager.setInputStream('updateState', { source : service, destination : address }, (value) => {
 
-							if(this.dataPoints.status[statusAddress[j]] != null)
+							if(this.dataPoints.status[address] != null)
 							{
-								var state = this.converter.getState(services[i], value);
+								var state = this.converter.getState(service, value);
 
-								if((state = this.TypeManager.validateUpdate(services[i].id, services[i].letters, state)) != null && services[i].updateState != null)
+								if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
 								{
-									this.dataPoints.status[statusAddress[j]].current_value = value;
+									this.dataPoints.status[address].current_value = value;
 
-									services[i].updateState(state);
+									service.updateState(state);
 								}
 								else
 								{
@@ -127,13 +91,13 @@ class KNXInterface
 					}
 				}
 
-				if(services[i].controlAddress != null)
+				if(service.controlAddress != null)
 				{
-					const controlAddress = Array.isArray(services[i].controlAddress) ? services[i].controlAddress : [ services[i].controlAddress ];
+					const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
 
-					for(const j in controlAddress)
+					for(const address of controlAddress)
 					{
-						this.dataPoints.control[controlAddress[j]] = new knx.Datapoint({ ga : controlAddress[j], dpt : services[i].dataPoint }, this.connection);
+						this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
 					}
 				}
 			}
@@ -143,8 +107,52 @@ class KNXInterface
 		{
 			this.updateStates();
 		}
+	}
 
-		this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
+	disconnected()
+	{
+		this.connected = false;
+
+		this.DeviceManager._updateConnectionState(this.connected);
+
+		this.logger.debug('%knx_gateway_disconnected%!');
+	}
+
+	confirmed(data)
+	{
+		var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
+
+		if(!this.connected)
+		{
+			this.connected = true;
+
+			this.DeviceManager._updateConnectionState(this.connected);
+
+			this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
+		}
+
+		if(event == 'GroupValue_Read')
+		{
+			this._clearRequests('status', address);
+		}
+		else if(event == 'GroupValue_Write')
+		{
+			this._clearRequests('control', address);
+		}
+	}
+
+	event(destination, value)
+	{
+		if(!this.connected)
+		{
+			this.connected = true;
+
+			this.DeviceManager._updateConnectionState(this.connected);
+
+			this.logger.log('success', 'bridge', 'Bridge', '%knx_gateway_connected%!');
+		}
+
+		this.logger.debug('GET [' + destination + '] --> [' + value[0] + ']');
 	}
 
 	readState(service)
