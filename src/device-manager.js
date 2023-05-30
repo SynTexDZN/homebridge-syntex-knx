@@ -306,17 +306,17 @@ module.exports = class DeviceManager
 		});
 	}
 
-	_getServices(excludeID)
+	_getServices(id)
 	{
 		var services = [];
 
 		for(const accessory of this.accessories)
 		{
-			for(const i in accessory[1].service)
+			for(const service of accessory[1].service)
 			{
-				if(accessory[1].service[i].dataPoint != null && (excludeID == null || accessory[1].service[i].id != excludeID))
+				if(service.dataPoint != null && (id == null || service.id != id))
 				{
-					services.push(accessory[1].service[i]);
+					services.push(service);
 				}
 			}
 		}
