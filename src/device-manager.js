@@ -23,16 +23,16 @@ class KNXInterface
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers : {
-				connected : () => this.connected(),
-				disconnected : () => this.disconnected(),
-				confirmed : (data) => this.confirmed(data),
-				event : (event, source, destination, value) => this.event(destination, value),
+				connected : () => this.interfaceConnected(),
+				disconnected : () => this.interfaceDisconnected(),
+				confirmed : (data) => this.interfaceConfirmed(data),
+				event : (event, source, destination, value) => this.interfaceEvent(destination, value),
 				error : (e) => this.logger.err(e)
 			}
 		});
 	}
 
-	connected()
+	interfaceConnected()
 	{
 		this.connected = true;
 
@@ -109,7 +109,7 @@ class KNXInterface
 		}
 	}
 
-	disconnected()
+	interfaceDisconnected()
 	{
 		this.connected = false;
 
@@ -118,7 +118,7 @@ class KNXInterface
 		this.logger.debug('%knx_gateway_disconnected%!');
 	}
 
-	confirmed(data)
+	interfaceConfirmed(data)
 	{
 		var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
 
@@ -141,7 +141,7 @@ class KNXInterface
 		}
 	}
 
-	event(destination, value)
+	interfaceEvent(destination, value)
 	{
 		if(!this.connected)
 		{
@@ -181,28 +181,28 @@ class KNXInterface
 		return new Promise((resolve) => {
 
 			if(this.connected)
+			{
+				if(service.invertState)
 				{
-					if(service.invertState)
+					if(service.dataPoint == '5.001')
 					{
-						if(service.dataPoint == '5.001')
-						{
-							value = 100 - value;
-						}
-						else
-						{
-							value = !value;
-						}
+						value = 100 - value;
 					}
+					else
+					{
+						value = !value;
+					}
+				}
 
 				if(this.dataPoints.control[address] != null)
-					{
+				{
 					this.dataPoints.control[address].write(value);
-					}
+				}
 
 				if(this.dataPoints.status[address] != null)
-					{
+				{
 					this.dataPoints.status[address].current_value = value;
-					}
+				}
 
 				this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, value);
 			}
@@ -293,12 +293,12 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
+			const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
 
-			for(const address of statusAddress)
+			for(const address of controlAddress)
 			{
 				//this.KNXInterface._addRequest('control', address, resolve);
-			
+
 				this.KNXInterface.writeState(service, address, value);
 			}
 
