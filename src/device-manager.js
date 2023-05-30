@@ -295,7 +295,7 @@ module.exports = class DeviceManager
 
 			if(service.controlAddress != null)
 			{
-				const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
+				var controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
 
 				for(const address of controlAddress)
 				{
