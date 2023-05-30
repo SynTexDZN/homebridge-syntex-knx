@@ -84,7 +84,7 @@ class KNXInterface
 								}
 								else
 								{
-									this.logger.log('error', this.id, this.letters, '[' + this.name + '] %update_error%! ( ' + this.id + ' )');
+									this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
 								}
 							}
 						});
