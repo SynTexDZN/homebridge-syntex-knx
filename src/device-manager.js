@@ -50,52 +50,58 @@ class KNXInterface
 			{
 				if(service.statusAddress != null)
 				{
-					const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
+					var statusAddress = getAddresses(service.statusAddress);
 
-					for(const address of statusAddress)
+					for(const type in statusAddress)
 					{
-						if(this.dataPoints.status[address] == null)
+						for(const address of statusAddress[type])
 						{
-							this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
+							if(this.dataPoints.status[address] == null)
+							{
+								this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
 
-							// TODO: Write Own Change Detection And Input Conversion
+								// TODO: Write Own Change Detection And Input Conversion
 
-							this.dataPoints.status[address].on('change', (oldValue, newValue) => {
+								this.dataPoints.status[address].on('change', (oldValue, newValue) => {
 
-								this._clearRequests('status', address, newValue);
+									this._clearRequests('status', address, newValue);
 
-								this.EventManager.setOutputStream('updateState', { receiver : address }, newValue);
+									this.EventManager.setOutputStream('updateState', { receiver : address }, newValue);
+								});
+							}
+
+							this.EventManager.setInputStream('updateState', { source : service, destination : address }, (value) => {
+
+								if(this.dataPoints.status[address] != null)
+								{
+									var state = this.converter.getState(service, value);
+
+									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
+									{
+										this.dataPoints.status[address].current_value = value;
+
+										service.updateState(state);
+									}
+									else
+									{
+										this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+									}
+								}
 							});
 						}
-
-						this.EventManager.setInputStream('updateState', { source : service, destination : address }, (value) => {
-
-							if(this.dataPoints.status[address] != null)
-							{
-								var state = this.converter.getState(service, value);
-
-								if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
-								{
-									this.dataPoints.status[address].current_value = value;
-
-									service.updateState(state);
-								}
-								else
-								{
-									this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
-								}
-							}
-						});
 					}
 				}
 
 				if(service.controlAddress != null)
 				{
-					const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
+					var controlAddress = getAddresses(service.controlAddress);
 
-					for(const address of controlAddress)
+					for(const type in controlAddress)
 					{
-						this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
+						for(const address of controlAddress[type])
+						{
+							this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
+						}
 					}
 				}
 			}
@@ -278,33 +284,36 @@ module.exports = class DeviceManager
 
 			if(service.statusAddress != null)
 			{
-				var statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ], promiseArray = [];
+				var statusAddress = getAddresses(service.statusAddress), promiseArray = [];
 
-				for(const address of statusAddress)
+				for(const type in statusAddress)
 				{
-					promiseArray.push(new Promise((callback) => {
+					for(const address of statusAddress[type])
+					{
+						promiseArray.push(new Promise((callback) => {
 
-						this.KNXInterface._addRequest('status', address, (value) => {
+							this.KNXInterface._addRequest('status', address, (value) => {
 
-							if(value != null)
-							{
-								var state = this.KNXInterface.converter.getState(service, value);
-
-								if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
+								if(value != null)
 								{
-									this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+									var state = this.KNXInterface.converter.getState(service, value);
+
+									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
+									{
+										this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+									}
+
+									callback(state || {});
 								}
+								else
+								{
+									callback({});
+								}
+							});
 
-								callback(state || {});
-							}
-							else
-							{
-								callback({});
-							}
-						});
-
-						this.KNXInterface.readState(service, address);
-					}));
+							this.KNXInterface.readState(service, address);
+						}));
+					}
 				}
 
 				Promise.all(promiseArray).then((result) => resolve(result[0]));
@@ -322,13 +331,16 @@ module.exports = class DeviceManager
 
 			if(service.controlAddress != null)
 			{
-				var controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
+				var controlAddress = getAddresses(service.controlAddress);
 
-				for(const address of controlAddress)
+				for(const type in controlAddress)
 				{
-					//this.KNXInterface._addRequest('control', address, resolve);
+					for(const address of controlAddress[type])
+					{
+						//this.KNXInterface._addRequest('control', address, resolve);
 
-					this.KNXInterface.writeState(service, address, value);
+						this.KNXInterface.writeState(service, address, value);
+					}
 				}
 			}
 
@@ -361,4 +373,26 @@ module.exports = class DeviceManager
 			accessory[1].setConnectionState(online);
 		}
 	}
+}
+
+function getAddresses(addresses)
+{
+	if(Array.isArray(addresses))
+	{
+		addresses = { value : addresses };
+	}
+	else if(typeof addresses == 'string')
+	{
+		addresses = { value : [ addresses ] }
+	}
+
+	for(const type in addresses)
+	{
+		if(!Array.isArray(addresses[type]))
+		{
+			addresses[type] = [ addresses[type] ];
+		}
+	}
+
+	return addresses;
 }
