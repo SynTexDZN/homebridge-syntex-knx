@@ -9,7 +9,7 @@ class KNXInterface
 		this.connected = false;
 		this.firstConnect = true;
 
-		this.requests = { status : [], control : [] };
+		this.requests = { status : {}, control : {} };
 		this.dataPoints = { status : {}, control : {} };
 
 		this.DeviceManager = DeviceManager;
@@ -62,9 +62,7 @@ class KNXInterface
 
 							this.dataPoints.status[address].on('change', (oldValue, newValue) => {
 
-								var state = this.converter.getState(service, newValue);
-
-								this._clearRequests('status', address, state);
+								this._clearRequests('status', address, newValue);
 
 								this.EventManager.setOutputStream('updateState', { receiver : address }, newValue);
 							});
@@ -120,7 +118,7 @@ class KNXInterface
 
 	interfaceConfirmed(data)
 	{
-		var address = data.cemi.dest_addr, event = data.cemi.apdu.apci;
+		var event = data.cemi.apdu.apci/*, address = data.cemi.dest_addr*/;
 
 		if(!this.connected)
 		{
@@ -133,11 +131,11 @@ class KNXInterface
 
 		if(event == 'GroupValue_Read')
 		{
-			this._clearRequests('status', address);
+			//this._clearRequests('status', address);
 		}
 		else if(event == 'GroupValue_Write')
 		{
-			this._clearRequests('control', address);
+			//this._clearRequests('control', address);
 		}
 	}
 
@@ -161,16 +159,7 @@ class KNXInterface
 		{
 			this.dataPoints.status[address].read((src, value) => {
 
-				var state = this.converter.getState(service, value);
-
-				if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)))
-				{
-					this._clearRequests('status', address, state);
-				}
-				else
-				{
-					this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
-				}
+				this._clearRequests('status', address, value);
 			});
 		}
 	}
@@ -218,7 +207,7 @@ class KNXInterface
 		{
 			this.dataPoints.status[address].read((src, value) => {
 
-				this._clearRequests('status', address);
+				this._clearRequests('status', address, value);
 
 				this.EventManager.setOutputStream('updateState', { receiver : address }, value);
 			});
@@ -229,7 +218,12 @@ class KNXInterface
 	{
 		if(this.connected && address != null && callback != null)
 		{
-			this.requests[type].push({ address, callback });
+			if(this.requests[type][address] == null)
+			{
+				this.requests[type][address] = [];
+			}
+
+			this.requests[type][address].push(callback);
 
 			setTimeout(() => {
 
@@ -243,23 +237,23 @@ class KNXInterface
 		}
 	}
 
-	_clearRequests(type, address, state)
+	_clearRequests(type, address, value)
 	{
-		for(var i = this.requests[type].length - 1; i >= 0; i--)
+		if(this.requests[type] != null && this.requests[type][address] != null)
 		{
-			if(this.requests[type][i].address == address)
+			for(const callback of this.requests[type][address])
 			{
 				if(type == 'status')
 				{
-					this.requests[type][i].callback(state || {});
+					callback(value);
 				}
 				else
 				{
-					this.requests[type][i].callback(true);
+					callback(true);
 				}
-
-				this.requests[type].splice(i, 1);
 			}
+
+			delete this.requests[type][address];
 		}
 	}
 }
@@ -290,7 +284,24 @@ module.exports = class DeviceManager
 				{
 					promiseArray.push(new Promise((callback) => {
 
-						this.KNXInterface._addRequest('status', address, callback);
+						this.KNXInterface._addRequest('status', address, (value) => {
+
+							if(value != null)
+							{
+								var state = this.KNXInterface.converter.getState(service, value);
+
+								if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
+								{
+									this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+								}
+
+								callback(state || {});
+							}
+							else
+							{
+								callback({});
+							}
+						});
 
 						this.KNXInterface.readState(service, address);
 					}));
