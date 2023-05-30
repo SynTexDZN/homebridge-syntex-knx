@@ -7,31 +7,30 @@ module.exports = class Converter
 		this.TypeManager = DeviceManager.TypeManager;
 	}
 
-	getState(service, value)
+	getState(service, state = {})
 	{
-		var state = {}, type = this.TypeManager.letterToType(service.letters[0]);
+		var type = this.TypeManager.letterToType(service.letters[0]);
 
-		if(type == 'dimmer')
+		if(state.value != null)
 		{
-			state.value = value > 0;
-			state.brightness = value;
-		}
-		else if(type == 'rgb')
-		{
-			var converted = convert.rgb.hsv([value.red, value.green, value.blue]);
-
-			state.value = value.red > 0 || value.green > 0 || value.blue > 0;
-
-			if(converted != null)
+			if(type == 'dimmer')
 			{
-				state.hue = converted[0];
-				state.saturation = converted[1];
-				state.brightness = converted[2];
+				state.value = state.value > 0;
+				state.brightness = state.value;
 			}
-		}
-		else
-		{
-			state.value = value;
+			else if(type == 'rgb')
+			{
+				var converted = convert.rgb.hsv([state.value.red, state.value.green, state.value.blue]);
+
+				state.value = state.value.red > 0 || state.value.green > 0 || state.value.blue > 0;
+
+				if(converted != null)
+				{
+					state.hue = converted[0];
+					state.saturation = converted[1];
+					state.brightness = converted[2];
+				}
+			}
 		}
 
 		for(const x in state)

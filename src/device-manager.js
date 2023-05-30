@@ -64,21 +64,25 @@ class KNXInterface
 
 								this.dataPoints.status[address].on('change', (oldValue, newValue) => {
 
+									var state = {};
+
+									state[type] = newValue;
+
 									this._clearRequests('status', address, newValue);
 
-									this.EventManager.setOutputStream('updateState', { receiver : address }, newValue);
+									this.EventManager.setOutputStream('updateState', { receiver : address }, state);
 								});
 							}
 
-							this.EventManager.setInputStream('updateState', { source : service, destination : address }, (value) => {
+							this.EventManager.setInputStream('updateState', { source : service, destination : address }, (state) => {
 
 								if(this.dataPoints.status[address] != null)
 								{
-									var state = this.converter.getState(service, value);
+									state = this.converter.getState(service, state);
 
 									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
 									{
-										this.dataPoints.status[address].current_value = value;
+										this.dataPoints.status[address].current_value = state[type];
 
 										service.updateState(state);
 									}
@@ -292,31 +296,34 @@ module.exports = class DeviceManager
 					{
 						promiseArray.push(new Promise((callback) => {
 
-							this.KNXInterface._addRequest('status', address, (value) => {
-
-								if(value != null)
-								{
-									var state = this.KNXInterface.converter.getState(service, value);
-
-									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
-									{
-										this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
-									}
-
-									callback(state || {});
-								}
-								else
-								{
-									callback({});
-								}
-							});
+							this.KNXInterface._addRequest('status', address, (value) => callback({ type, value }));
 
 							this.KNXInterface.readState(service, address);
 						}));
 					}
 				}
 
-				Promise.all(promiseArray).then((result) => resolve(result[0]));
+				Promise.all(promiseArray).then((result) => {
+
+					var state = {};
+
+					for(const i in result)
+					{
+						if(result[i].type != null && result[i].value != null)
+						{
+							state[result[i].type] = result[i].value;
+						}
+					}
+
+					state = this.KNXInterface.converter.getState(service, state);
+
+					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
+					{
+						this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+					}
+
+					resolve(state || {});
+				});
 			}
 			else
 			{
