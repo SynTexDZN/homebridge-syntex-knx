@@ -155,24 +155,23 @@ class KNXInterface
 		this.logger.debug('GET [' + destination + '] --> [' + value[0] + ']');
 	}
 
-	readState(service)
+	readState(service, address)
 	{
-		if(this.connected && service.statusAddress != null)
+		if(this.connected && service != null && address != null && this.dataPoints.status[address] != null)
 		{
-			const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
+			this.dataPoints.status[address].read((src, value) => {
 
-			for(const i in statusAddress)
-			{
-				if(this.dataPoints.status[statusAddress[i]] != null)
+				var state = this.converter.getState(service, value);
+
+				if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)))
 				{
-					this.dataPoints.status[statusAddress[i]].read((src, value) => {
-
-						var state = this.converter.getState(service, value);
-
-						this._clearRequests('status', statusAddress[i], state);
-					});
+					this._clearRequests('status', address, state);
 				}
-			}
+				else
+				{
+					this.logger.log('error', service.id, service.letters, '[' + this.name + '] %update_error%! ( ' + service.id + ' )');
+				}
+			});
 		}
 	}
 
@@ -283,9 +282,26 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			this.KNXInterface._addRequest('status', service.statusAddress, resolve);
+			if(service.statusAddress != null)
+			{
+				var statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ], promiseArray = [];
 
-			this.KNXInterface.readState(service);
+				for(const address of statusAddress)
+				{
+					promiseArray.push(new Promise((callback) => {
+
+						this.KNXInterface._addRequest('status', address, callback);
+
+						this.KNXInterface.readState(service, address);
+					}));
+				}
+
+				Promise.all(promiseArray).then((result) => resolve(result[0]));
+			}
+			else
+			{
+				resolve({});
+			}
 		});
 	}
 
