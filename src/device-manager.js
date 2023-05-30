@@ -180,7 +180,7 @@ class KNXInterface
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected)
+			if(this.connected && service != null && address != null && value != null)
 			{
 				if(service.invertState)
 				{
@@ -293,13 +293,16 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
-
-			for(const address of controlAddress)
+			if(service.controlAddress != null)
 			{
-				//this.KNXInterface._addRequest('control', address, resolve);
+				const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
 
-				this.KNXInterface.writeState(service, address, value);
+				for(const address of controlAddress)
+				{
+					//this.KNXInterface._addRequest('control', address, resolve);
+
+					this.KNXInterface.writeState(service, address, value);
+				}
 			}
 
 			resolve(this.KNXInterface.connected);
