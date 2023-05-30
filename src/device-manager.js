@@ -176,15 +176,11 @@ class KNXInterface
 		}
 	}
 
-	writeState(service, value)
+	writeState(service, address, value)
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service.controlAddress != null)
-			{
-				const controlAddress = Array.isArray(service.controlAddress) ? service.controlAddress : [ service.controlAddress ];
-
-				for(const i in controlAddress)
+			if(this.connected)
 				{
 					if(service.invertState)
 					{
@@ -198,18 +194,17 @@ class KNXInterface
 						}
 					}
 
-					if(this.dataPoints.control[controlAddress[i]] != null)
+				if(this.dataPoints.control[address] != null)
 					{
-						this.dataPoints.control[controlAddress[i]].write(value);
+					this.dataPoints.control[address].write(value);
 					}
 
-					if(this.dataPoints.status[controlAddress[i]] != null)
+				if(this.dataPoints.status[address] != null)
 					{
-						this.dataPoints.status[controlAddress[i]].current_value = value;
+					this.dataPoints.status[address].current_value = value;
 					}
 
-					this.EventManager.setOutputStream('updateState', { sender : service, receiver : controlAddress[i] }, value);
-				}
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, value);
 			}
 			else
 			{
@@ -298,9 +293,14 @@ module.exports = class DeviceManager
 	{
 		return new Promise((resolve) => {
 
-			//this.KNXInterface._addRequest('control', service.controlAddress, resolve);
+			const statusAddress = Array.isArray(service.statusAddress) ? service.statusAddress : [ service.statusAddress ];
+
+			for(const address of statusAddress)
+			{
+				//this.KNXInterface._addRequest('control', address, resolve);
 			
-			this.KNXInterface.writeState(service, value);
+				this.KNXInterface.writeState(service, address, value);
+			}
 
 			resolve(this.KNXInterface.connected);
 		});
