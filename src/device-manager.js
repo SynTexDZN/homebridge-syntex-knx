@@ -176,15 +176,17 @@ class KNXInterface
 		}
 	}
 
-	writeState(service, address, value)
+	writeState(service, type, address, value)
 	{
 		return new Promise((resolve) => {
 
-			if(this.connected && service != null && address != null && value != null)
+			if(this.connected && service != null && type != null && address != null && value != null)
 			{
 				if(service.invertState)
 				{
-					if(service.dataPoint == '5.001')
+					var dataPoint = getDataPoints(service.dataPoint)[type];
+
+					if(dataPoint == '5.001')
 					{
 						value = 100 - value;
 					}
@@ -348,7 +350,7 @@ module.exports = class DeviceManager
 					{
 						//this.KNXInterface._addRequest('control', address, resolve);
 
-						this.KNXInterface.writeState(service, address, value);
+						this.KNXInterface.writeState(service, type, address, value);
 					}
 				}
 			}
