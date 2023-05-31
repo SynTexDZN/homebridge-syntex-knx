@@ -58,7 +58,7 @@ class KNXInterface
 						{
 							if(this.dataPoints.status[address] == null)
 							{
-								this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
+								this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint }, this.connection);
 
 								// TODO: Write Own Change Detection And Input Conversion
 
@@ -104,7 +104,7 @@ class KNXInterface
 					{
 						for(const address of controlAddress[type])
 						{
-							this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : service.dataPoint }, this.connection);
+							this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint }, this.connection);
 						}
 					}
 				}

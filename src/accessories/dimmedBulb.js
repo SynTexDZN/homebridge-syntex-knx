@@ -8,7 +8,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = serviceConfig.datapoint || 'DPT5.001';
+		this.dataPoint = serviceConfig.datapoint || '5.001';
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;

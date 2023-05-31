@@ -8,7 +8,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = serviceConfig.datapoint || 'DPT9.001';
+		this.dataPoint = serviceConfig.datapoint || { value : '9.001', target : '9.001', mode : '1.001' };
 
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
