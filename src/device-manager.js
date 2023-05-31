@@ -1,6 +1,6 @@
-let Converter = require('./converter');
-
 const knx = require('knx');
+
+const Converter = require('./converter');
 
 class KNXInterface
 {
@@ -18,8 +18,6 @@ class KNXInterface
 		
 		this.EventManager = DeviceManager.EventManager;
 		this.TypeManager = DeviceManager.TypeManager;
-
-		this.converter = new Converter(this);
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers : {
@@ -48,11 +46,11 @@ class KNXInterface
 
 			for(const service of services)
 			{
-				var dataPoints = getDataPoints(service.dataPoint);
+				var dataPoints = this.DeviceManager.getDataPoints(service.dataPoint);
 
 				if(service.statusAddress != null)
 				{
-					var statusAddress = getAddresses(service.statusAddress);
+					var statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
 
 					for(const type in statusAddress)
 					{
@@ -80,7 +78,7 @@ class KNXInterface
 
 								if(this.dataPoints.status[address] != null)
 								{
-									state = this.converter.getState(service, state);
+									state = this.DeviceManager.Converter.getState(service, state);
 
 									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
 									{
@@ -100,7 +98,7 @@ class KNXInterface
 
 				if(service.controlAddress != null)
 				{
-					var controlAddress = getAddresses(service.controlAddress);
+					var controlAddress = this.DeviceManager.getAddresses(service.controlAddress);
 
 					for(const type in controlAddress)
 					{
@@ -184,7 +182,7 @@ class KNXInterface
 			{
 				if(service.invertState)
 				{
-					var dataPoint = getDataPoints(service.dataPoint)[type];
+					var dataPoint = this.DeviceManager.getDataPoints(service.dataPoint)[type];
 
 					if(dataPoint == '5.001')
 					{
@@ -284,6 +282,8 @@ module.exports = class DeviceManager
 		this.EventManager = platform.EventManager;
 
 		this.KNXInterface = new KNXInterface(platform.gatewayIP, this);
+
+		this.Converter = new Converter(this);
 	}
 
 	getState(service)
@@ -292,7 +292,7 @@ module.exports = class DeviceManager
 
 			if(service.statusAddress != null)
 			{
-				var statusAddress = getAddresses(service.statusAddress), promiseArray = [];
+				var statusAddress = this.getAddresses(service.statusAddress), promiseArray = [];
 
 				for(const type in statusAddress)
 				{
@@ -319,7 +319,7 @@ module.exports = class DeviceManager
 						}
 					}
 
-					state = this.KNXInterface.converter.getState(service, state);
+					state = this.Converter.getState(service, state);
 
 					if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) == null)
 					{
@@ -342,7 +342,7 @@ module.exports = class DeviceManager
 
 			if(service.controlAddress != null)
 			{
-				var controlAddress = getAddresses(service.controlAddress);
+				var controlAddress = this.getAddresses(service.controlAddress);
 
 				for(const type in controlAddress)
 				{
@@ -384,36 +384,36 @@ module.exports = class DeviceManager
 			accessory[1].setConnectionState(online);
 		}
 	}
-}
 
-function getAddresses(addresses)
-{
-	if(Array.isArray(addresses))
+	getAddresses(addresses)
 	{
-		addresses = { value : addresses };
-	}
-	else if(typeof addresses == 'string')
-	{
-		addresses = { value : [ addresses ] }
-	}
-
-	for(const type in addresses)
-	{
-		if(!Array.isArray(addresses[type]))
+		if(Array.isArray(addresses))
 		{
-			addresses[type] = [ addresses[type] ];
+			addresses = { value : addresses };
 		}
+		else if(typeof addresses == 'string')
+		{
+			addresses = { value : [ addresses ] }
+		}
+
+		for(const type in addresses)
+		{
+			if(!Array.isArray(addresses[type]))
+			{
+				addresses[type] = [ addresses[type] ];
+			}
+		}
+
+		return addresses;
 	}
 
-	return addresses;
-}
-
-function getDataPoints(dataPoints)
-{
-	if(typeof dataPoints == 'string')
+	getDataPoints(dataPoints)
 	{
-		dataPoints = { value : dataPoints };
-	}
+		if(typeof dataPoints == 'string')
+		{
+			dataPoints = { value : dataPoints };
+		}
 
-	return dataPoints;
+		return dataPoints;
+	}
 }

@@ -4,12 +4,15 @@ module.exports = class Converter
 {
 	constructor(DeviceManager)
 	{
+		this.DeviceManager = DeviceManager;
+
 		this.TypeManager = DeviceManager.TypeManager;
 	}
 
 	getState(service, state = {})
 	{
-		var type = this.TypeManager.letterToType(service.letters[0]);
+		var type = this.TypeManager.letterToType(service.letters[0]),
+			dataPoints = this.DeviceManager.getDataPoints(service.dataPoint);
 
 		if(state.value != null)
 		{
@@ -36,6 +39,16 @@ module.exports = class Converter
 		for(const x in state)
 		{
 			var characteristic = this.TypeManager.getCharacteristic(x, { letters : service.letters });
+
+			if(dataPoints instanceof Object && dataPoints[x] != null)
+			{
+				var dataPoint = dataPoints[x];
+
+				if(dataPoint == '1.001' && typeof state[x] == 'number')
+				{
+					state[x] = state[x] > 0;
+				}
+			}
 
 			if(characteristic != null)
 			{
