@@ -91,6 +91,11 @@ module.exports = class Converter
 						state[x] = 0;
 					}
 				}
+
+				if(typeof state[x] == 'number' && characteristic.format == 'boolean')
+				{
+					state[x] = state[x] > 0;
+				}
 			}
 		}
 
