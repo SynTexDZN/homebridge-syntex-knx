@@ -48,6 +48,34 @@ module.exports = class Converter
 				{
 					state[x] = state[x] > 0;
 				}
+
+				if(service.invertState)
+				{
+					if(dataPoint.startsWith('1.')
+					|| dataPoint.startsWith('2.'))
+					{
+						state[x] = !state[x];
+					}
+
+					if(dataPoint == '5.001')
+					{
+						state[x] = 100 - state[x];
+					}
+					
+					if(dataPoint == '5.003')
+					{
+						state[x] = 360 - state[x];
+					}
+					
+					if(dataPoint == '5.004'
+					|| dataPoint == '5.005'
+					|| dataPoint == '5.006'
+					|| dataPoint == '5.010'
+					|| dataPoint == '5.100')
+					{
+						state[x] = 255 - state[x];
+					}
+				}
 			}
 
 			if(characteristic != null)
@@ -61,18 +89,6 @@ module.exports = class Converter
 					else if(state[x] == false)
 					{
 						state[x] = 0;
-					}
-				}
-
-				if(service.invertState)
-				{
-					if(typeof state[x] == 'boolean' && characteristic.format == 'boolean')
-					{
-						state[x] = !state[x];
-					}
-					else if(typeof state[x] == 'number' && characteristic.format == 'number')
-					{
-						state[x] = 100 - state[x];
 					}
 				}
 			}
