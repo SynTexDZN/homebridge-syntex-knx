@@ -184,13 +184,29 @@ class KNXInterface
 				{
 					var dataPoint = this.DeviceManager.getDataPoints(service.dataPoint)[type];
 
+					if(dataPoint.startsWith('1.')
+					|| dataPoint.startsWith('2.'))
+					{
+						value = !value;
+					}
+
 					if(dataPoint == '5.001')
 					{
 						value = 100 - value;
 					}
-					else
+					
+					if(dataPoint == '5.003')
 					{
-						value = !value;
+						value = 360 - value;
+					}
+					
+					if(dataPoint == '5.004'
+					|| dataPoint == '5.005'
+					|| dataPoint == '5.006'
+					|| dataPoint == '5.010'
+					|| dataPoint == '5.100')
+					{
+						value = 255 - value;
 					}
 				}
 
