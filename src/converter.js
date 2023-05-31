@@ -44,7 +44,7 @@ module.exports = class Converter
 			{
 				var dataPoint = dataPoints[x];
 
-				if(dataPoint == '1.001' && typeof state[x] == 'number')
+				if((dataPoint.startsWith('1.') || dataPoint.startsWith('2.')) && typeof state[x] == 'number')
 				{
 					state[x] = state[x] > 0;
 				}
