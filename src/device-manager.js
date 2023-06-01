@@ -404,15 +404,15 @@ module.exports = class DeviceManager
 			{
 				var controlAddress = this.getAddresses(service.controlAddress);
 
-				for(const x in state)
+				for(const type in state)
 				{
-					if(controlAddress[x] != null)
+					if(controlAddress[type] != null)
 					{
-						for(const address of controlAddress[x])
+						for(const address of controlAddress[type])
 						{
 							//this.KNXInterface._addRequest('control', address, resolve);
 
-							this.KNXInterface.writeState(service, x, address, state[x]);
+							this.KNXInterface.writeState(service, type, address, state[type]);
 						}
 					}
 				}
