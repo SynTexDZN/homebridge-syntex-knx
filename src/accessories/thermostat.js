@@ -80,7 +80,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 				this.target = target;
 
 				super.setTargetTemperature(target,
-					() => this.updateTarget(target), true);
+					() => this.updateTarget(), true);
 
 				callback();
 			
@@ -193,7 +193,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		
 		if(changed)
 		{
-			this.updateTarget(this.target);
+			this.updateTarget();
 
 			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )');
 		}
@@ -201,11 +201,11 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 	}
 
-	updateTarget(value)
+	updateTarget()
 	{
 		if(!(this.statusAddress instanceof Object) || this.statusAddress.state == null)
 		{
-			if(value > this.value)
+			if(this.target > this.value)
 			{
 				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.HEAT);
 			}
