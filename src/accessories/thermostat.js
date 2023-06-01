@@ -8,7 +8,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = serviceConfig.datapoint || { value : '9.001', target : '9.001', state : '1.001', mode : '1.001' };
+		this.dataPoint = serviceConfig.datapoint || { value : '9.001', target : '9.001', state : '1.011', mode : '1.100' };
 
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
@@ -46,13 +46,13 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	getTargetTemperature(callback)
 	{
-		super.getTargetTemperature((value) => {
+		super.getTargetTemperature((target) => {
 
 			if(super.hasState('target'))
 			{
-				this.target = value;
+				this.target = target;
 
-				callback(null, value);
+				callback(null, target);
 			}
 			else
 			{
@@ -95,13 +95,13 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	getCurrentHeatingCoolingState(callback)
 	{
-		super.getCurrentHeatingCoolingState((value) => {
+		super.getCurrentHeatingCoolingState((state) => {
 
 			if(super.hasState('state'))
 			{
-				this.state = value;
+				this.state = state;
 
-				callback(null, value);
+				callback(null, state);
 			}
 			else
 			{
@@ -144,13 +144,13 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	getTargetHeatingCoolingState(callback)
 	{
-		super.getTargetHeatingCoolingState((value) => {
+		super.getTargetHeatingCoolingState((mode) => {
 
 			if(super.hasState('mode'))
 			{
-				this.mode = value;
+				this.mode = mode;
 
-				callback(null, value);
+				callback(null, mode);
 			}
 			else
 			{
