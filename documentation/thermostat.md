@@ -1,6 +1,6 @@
 # Thermostat
 
-#### This Service is only available in the newest beta!
+#### This feature is only available in the newest beta!
 [![NPM Beta Version](https://img.shields.io/npm/v/homebridge-syntex-knx/beta?color=orange&label=beta&style=for-the-badge)](https://www.npmjs.com/package/homebridge-syntex-knx)
 
 ## Troubleshooting
