@@ -57,7 +57,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 	
 	setState(value, callback)
 	{
-		this.DeviceManager.setState(this, value).then((success) => {
+		this.DeviceManager.setState(this, { value }).then((success) => {
 
 			if(success)
 			{

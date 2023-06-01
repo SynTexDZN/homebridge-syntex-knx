@@ -71,16 +71,16 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		});
 	}
 
-	setTargetTemperature(value, callback)
+	setTargetTemperature(target, callback)
 	{
-		this.DeviceManager.setState(this, value).then((success) => {
+		this.DeviceManager.setState(this, { target }).then((success) => {
 
 			if(success)
 			{
-				this.target = value;
+				this.target = target;
 
-				super.setTargetTemperature(value,
-					() => this.updateTarget(value), true);
+				super.setTargetTemperature(target,
+					() => this.updateTarget(target), true);
 
 				callback();
 			

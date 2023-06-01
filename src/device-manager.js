@@ -391,21 +391,29 @@ module.exports = class DeviceManager
 		});
 	}
 
-	setState(service, value)
+	setState(service, state)
 	{
 		return new Promise((resolve) => {
+
+			if(typeof state == 'string')
+			{
+				state = { value : state };
+			}
 
 			if(service.controlAddress != null)
 			{
 				var controlAddress = this.getAddresses(service.controlAddress);
 
-				for(const type in controlAddress)
+				for(const x in state)
 				{
-					for(const address of controlAddress[type])
+					if(controlAddress[x] != null)
 					{
-						//this.KNXInterface._addRequest('control', address, resolve);
+						for(const address of controlAddress[x])
+						{
+							//this.KNXInterface._addRequest('control', address, resolve);
 
-						this.KNXInterface.writeState(service, type, address, value);
+							this.KNXInterface.writeState(service, x, address, state[x]);
+						}
 					}
 				}
 			}

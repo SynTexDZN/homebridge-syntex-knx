@@ -281,7 +281,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		/*
 		const setPower = (resolve) => {
 
-			this.DeviceManager.setState(this, this.tempState.value).then((success) => {
+			this.DeviceManager.setState(this, { value : this.tempState.value }).then((success) => {
 
 				if(success)
 				{
@@ -309,7 +309,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 			if(converted != null)
 			{
-				this.DeviceManager.setState(this, { red : converted[0], green : converted[1], blue : converted[2] }).then((success) => {
+				this.DeviceManager.setState(this, { value : { red : converted[0], green : converted[1], blue : converted[2] } }).then((success) => {
 
 					if(success)
 					{

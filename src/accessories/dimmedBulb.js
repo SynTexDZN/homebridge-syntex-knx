@@ -155,7 +155,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		/*
 		const setPower = (resolve) => {
 
-			this.DeviceManager.setState(this, this.tempState.value).then((success) => {
+			this.DeviceManager.setState(this, { value : this.tempState.value }).then((success) => {
 
 				if(success)
 				{
@@ -179,7 +179,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		*/
 		const setBrightness = (resolve) => {
 
-			this.DeviceManager.setState(this, this.tempState.value ? this.tempState.brightness : 0).then((success) => {
+			this.DeviceManager.setState(this, { value : this.tempState.value ? this.tempState.brightness : 0 }).then((success) => {
 
 				if(success)
 				{
