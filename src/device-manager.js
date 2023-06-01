@@ -9,6 +9,8 @@ class KNXInterface
 		this.connected = false;
 		this.firstConnect = true;
 
+		this.queue = [];
+
 		this.requests = { status : {}, control : {} };
 		this.dataPoints = { status : {}, control : {} };
 
@@ -18,6 +20,8 @@ class KNXInterface
 		
 		this.EventManager = DeviceManager.EventManager;
 		this.TypeManager = DeviceManager.TypeManager;
+		
+		this.rateLimit = DeviceManager.rateLimit;
 
 		this.connection = knx.Connection({ ipAddr : gatewayIP, ipPort : 3671, loglevel: 'info',
 			handlers : {
@@ -28,6 +32,32 @@ class KNXInterface
 				error : (e) => this.logger.err(e)
 			}
 		});
+
+		if(this.rateLimit > 0)
+		{
+			setInterval(() => {
+
+				var entry = this.queue[0];
+
+				if(entry != null)
+				{
+					if(this.dataPoints.control[entry.address] != null)
+					{
+						this.dataPoints.control[entry.address].write(entry.value);
+					}
+
+					if(this.dataPoints.status[entry.address] != null)
+					{
+						this.dataPoints.status[entry.address].current_value = entry.value;
+					}
+
+					this.EventManager.setOutputStream('updateState', { sender : entry.service, receiver : entry.address }, entry.value);
+
+					this.queue.splice(0, 1);
+				}
+
+			}, this.rateLimit);
+		}
 	}
 
 	interfaceConnected()
@@ -210,17 +240,24 @@ class KNXInterface
 					}
 				}
 
-				if(this.dataPoints.control[address] != null)
+				if(this.rateLimit == 0)
 				{
-					this.dataPoints.control[address].write(value);
-				}
+					if(this.dataPoints.control[address] != null)
+					{
+						this.dataPoints.control[address].write(value);
+					}
 
-				if(this.dataPoints.status[address] != null)
+					if(this.dataPoints.status[address] != null)
+					{
+						this.dataPoints.status[address].current_value = value;
+					}
+
+					this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, value);
+				}
+				else
 				{
-					this.dataPoints.status[address].current_value = value;
+					this.queue.push({ service, address, value });
 				}
-
-				this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, value);
 			}
 			else
 			{
@@ -296,6 +333,8 @@ module.exports = class DeviceManager
 
 		this.TypeManager = platform.TypeManager;
 		this.EventManager = platform.EventManager;
+
+		this.rateLimit = platform.rateLimit;
 
 		this.KNXInterface = new KNXInterface(platform.gatewayIP, this);
 

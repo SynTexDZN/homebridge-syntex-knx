@@ -18,6 +18,8 @@ class SynTexKNXPlatform extends DynamicPlatform
 
 		this.gatewayIP = config['ip'];
 
+		this.rateLimit = this.options['rateLimit'] || 0;
+
 		if(this.api != null && this.logger != null && this.files != null && this.gatewayIP != null)
 		{
 			this.api.on('didFinishLaunching', () => {
