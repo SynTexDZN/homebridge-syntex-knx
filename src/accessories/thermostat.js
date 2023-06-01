@@ -120,6 +120,28 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		});
 	}
 
+	setTargetHeatingCoolingState(mode, callback)
+	{
+		this.DeviceManager.setState(this, { mode : this.updateMode(mode) }).then((success) => {
+
+			if(success)
+			{
+				this.mode = mode;
+
+				super.setTargetHeatingCoolingState(mode,
+					() => this.updateTarget(), true);
+
+				callback();
+			
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+			}
+			else
+			{
+				callback(new Error('Not Connected'));
+			}
+		});
+	}
+
 	getTargetHeatingCoolingState(callback)
 	{
 		super.getTargetHeatingCoolingState((value) => {
@@ -205,7 +227,13 @@ module.exports = class SynTexThermostatService extends ThermostatService
 	{
 		if(!(this.statusAddress instanceof Object) || this.statusAddress.state == null)
 		{
-			if(this.target > this.value)
+			var mode = this.updateMode(this.mode);
+
+			if(mode == 0 && this.target < this.value)
+			{
+				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.COOL);
+			}
+			else if(mode == 1 && this.target > this.value)
 			{
 				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.HEAT);
 			}
@@ -214,5 +242,30 @@ module.exports = class SynTexThermostatService extends ThermostatService
 				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.OFF);
 			}
 		}
+	}
+
+	updateMode(mode)
+	{
+		if(mode == this.Characteristic.TargetHeatingCoolingState.COOL)
+		{
+			mode = 0;
+		}
+		else if(mode == this.Characteristic.TargetHeatingCoolingState.HEAT)
+		{
+			mode = 1;
+		}
+		else if(mode == this.Characteristic.TargetHeatingCoolingState.AUTO)
+		{
+			if(this.target <= this.value)
+			{
+				mode = 0;
+			}
+			else
+			{
+				mode = 1;
+			}
+		}
+
+		return mode;
 	}
 };
