@@ -279,14 +279,50 @@ class KNXInterface
 
 	updateStates()
 	{
-		for(const address in this.dataPoints.status)
+		var services = this.DeviceManager._getServices(), addresses = {};
+
+		for(const service of services)
 		{
-			this.dataPoints.status[address].read((src, value) => {
+			if(service.statusAddress != null)
+			{
+				var statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
 
-				this._clearRequests('status', address, value);
+				for(const type in statusAddress)
+				{
+					if(addresses[type] == null)
+					{
+						addresses[type] = [];
+					}
 
-				this.EventManager.setOutputStream('updateState', { receiver : address }, value);
-			});
+					for(const address of statusAddress[type])
+					{
+						if(!addresses[type].includes(address))
+						{
+							addresses[type].push(address);
+						}
+					}
+				}
+			}
+		}
+
+		for(const type in addresses)
+		{
+			for(const address of addresses[type])
+			{
+				if(this.dataPoints.status[type] != null && this.dataPoints.status[type][address] != null)
+				{
+					this.dataPoints.status[type][address].read((src, value) => {
+
+						var state = {};
+
+						state[type] = value;
+
+						this._clearRequests('status', address, value);
+		
+						this.EventManager.setOutputStream('updateState', { receiver : address }, state);
+					});
+				}
+			}
 		}
 	}
 
