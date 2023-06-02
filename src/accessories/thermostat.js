@@ -20,6 +20,18 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		{
 			this.useOffset = true;
 		}
+
+		this.changeHandler = (state) => {
+
+			this.setToCurrentState(state, (failed) => {
+
+				if(!failed)
+				{
+					this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target);
+					this.service.getCharacteristic(this.Characteristic.TargetHeatingCoolingState).updateValue(this.mode);
+				}
+			});
+		};
 	}
 
 	getState(callback)
@@ -400,7 +412,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		}
 		else if(callback != null)
 		{
-			callback(this.offline);
+			callback(false);
 		}
 	}
 };

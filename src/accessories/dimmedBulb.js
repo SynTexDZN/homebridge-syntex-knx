@@ -168,7 +168,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(callback != null)
 				{
-					callback(this.offline);
+					callback(!success);
 				}
 
 				resolve();
@@ -194,7 +194,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(callback != null)
 				{
-					callback(this.offline);
+					callback(!success);
 				}
 
 				resolve();
@@ -215,7 +215,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(callback != null)
 			{
-				callback(this.offline);
+				callback(false);
 			}
 
 			resolve();

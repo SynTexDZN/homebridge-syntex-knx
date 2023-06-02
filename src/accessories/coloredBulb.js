@@ -294,7 +294,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				if(callback != null)
 				{
-					callback(this.offline);
+					callback(!success);
 				}
 
 				resolve();
@@ -328,7 +328,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 					if(callback != null)
 					{
-						callback(this.offline);
+						callback(!success);
 					}
 
 					resolve();
@@ -340,7 +340,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				if(callback != null)
 				{
-					callback(this.offline);
+					callback(true);
 				}
 
 				resolve();
@@ -359,7 +359,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 			if(callback != null)
 			{
-				callback(this.offline);
+				callback(false);
 			}
 
 			resolve();
