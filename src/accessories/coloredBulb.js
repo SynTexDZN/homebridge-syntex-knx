@@ -58,9 +58,9 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
-				callback(null, value);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -70,8 +70,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 					{
 						this.value = state.value;
 
-						super.setState(state.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + state.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
+						super.setState(this.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -103,7 +103,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.hue = hue;
 
-				callback(null, hue);
+				callback(null, this.hue);
 			}
 			else
 			{
@@ -113,7 +113,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 					{
 						this.hue = state.hue;
 					
-						super.setHue(state.hue, () => {});
+						super.setHue(this.hue, () => {});
 					}
 					
 					callback(null, this.hue);
@@ -145,7 +145,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.saturation = saturation;
 
-				callback(null, saturation);
+				callback(null, this.saturation);
 			}
 			else
 			{
@@ -155,7 +155,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 					{
 						this.saturation = state.saturation;
 
-						super.setSaturation(state.saturation, () => {});
+						super.setSaturation(this.saturation, () => {});
 					}
 					
 					callback(null, this.saturation);
@@ -187,7 +187,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.brightness = brightness;
 
-				callback(null, brightness);
+				callback(null, this.brightness);
 			}
 			else
 			{
@@ -197,7 +197,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 					{
 						this.brightness = state.brightness;
 						
-						super.setBrightness(state.brightness, () => {});
+						super.setBrightness(this.brightness, () => {});
 					}
 					
 					callback(null, this.brightness);
@@ -231,8 +231,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.value = this.tempState.value = state.value;
 
-				super.setState(state.value, 
-					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
+				super.setState(this.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value));
 
 				changed = true;
 			}
@@ -241,8 +241,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.hue = this.tempState.hue = state.hue;
 
-				super.setHue(state.hue,
-					() => this.service.getCharacteristic(this.Characteristic.Hue).updateValue(state.hue));
+				super.setHue(this.hue,
+					() => this.service.getCharacteristic(this.Characteristic.Hue).updateValue(this.hue));
 
 				changed = true;
 			}
@@ -251,8 +251,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.saturation = this.tempState.saturation = state.saturation;
 
-				super.setSaturation(state.saturation,
-					() => this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(state.saturation));
+				super.setSaturation(this.saturation,
+					() => this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation));
 
 				changed = true;
 			}
@@ -261,8 +261,8 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			{
 				this.brightness = this.tempState.brightness = state.brightness;
 
-				super.setBrightness(state.brightness, 
-					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+				super.setBrightness(this.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness));
 
 				changed = true;
 			}

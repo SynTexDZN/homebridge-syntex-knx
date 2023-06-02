@@ -36,9 +36,9 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
 
-				callback(null, value);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -48,8 +48,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.value = state.value;
 
-						super.setState(state.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + state.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
+						super.setState(this.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -81,7 +81,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.brightness = brightness;
 
-				callback(null, brightness);
+				callback(null, this.brightness);
 			}
 			else
 			{
@@ -91,7 +91,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					{
 						this.brightness = state.brightness;
 						
-						super.setBrightness(state.brightness, () => {});
+						super.setBrightness(this.brightness, () => {});
 					}
 					
 					callback(null, this.brightness);
@@ -125,8 +125,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.value = this.tempState.value = state.value;
 
-				super.setState(state.value, 
-					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
+				super.setState(this.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value));
 
 				changed = true;
 			}
@@ -135,8 +135,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			{
 				this.brightness = this.tempState.brightness = state.brightness;
 
-				super.setBrightness(state.brightness, 
-					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness));
+				super.setBrightness(this.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness));
 
 				changed = true;
 			}

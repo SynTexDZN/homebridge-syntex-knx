@@ -33,9 +33,9 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 
-				callback(null, value);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -45,8 +45,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 					{
 						this.value = state.value;
 
-						super.setState(state.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )'));
+						super.setState(this.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -63,7 +63,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			{
 				this.value = value;
 
-				super.setState(value, () => callback(), true);
+				super.setState(this.value, () => callback(), true);
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
@@ -80,8 +80,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		{
 			this.value = state.value;
 
-			super.setState(state.value,
-				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), true);
+			super.setState(this.value,
+				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value), true);
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);

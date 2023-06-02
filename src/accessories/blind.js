@@ -35,9 +35,9 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = value;
 
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + value + '] ( ' + this.id + ' )');
+				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
 
-				callback(null, value);
+				callback(null, this.value);
 			}
 			else
 			{
@@ -47,8 +47,8 @@ module.exports = class SynTexBlindService extends BlindService
 					{
 						this.value = state.value;
 
-						super.setTargetPosition(state.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + state.value + '] ( ' + this.id + ' )'));
+						super.setTargetPosition(this.value,
+							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
 					}
 
 					callback(null, this.value);
@@ -65,8 +65,8 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = value;
 
-				super.setTargetPosition(value,
-					() => this.updateTarget(value), true);
+				super.setTargetPosition(this.value,
+					() => this.updateTarget(this.value), true);
 
 				callback();
 			
@@ -99,8 +99,8 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				this.value = state.value;
 
-				super.setTargetPosition(state.value,
-					() => this.updateTarget(state.value), true);
+				super.setTargetPosition(this.value,
+					() => this.updateTarget(this.value), true);
 			}
 		}
 
