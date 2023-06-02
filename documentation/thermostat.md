@@ -43,3 +43,34 @@
     ]
 }
 ```
+```json
+{
+    "id": "knx0",
+    "name": "KNX Thermostat Base Target Offset",
+    "services": [
+        {
+            "datapoint": {
+                "value": "9.001",
+                "target": "9.001",
+                "state": "1.011",
+                "mode": "1.100",
+                "offset": "6.010"
+            },
+            "address": {
+                "status": {
+                    "value": "1/1/1",
+                    "target": "1/0/1",
+                    "state": "1/3/1",
+                    "mode": "1/4/1",
+                    "offset": "1/5/1"
+                },
+                "control": {
+                    "mode": "1/4/1",
+                    "offset": "1/5/1"
+                }
+            },
+            "type": "thermostat"
+        }
+    ]
+}
+```
