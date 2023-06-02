@@ -90,13 +90,18 @@ class KNXInterface
 					{
 						for(const address of statusAddress[type])
 						{
-							if(this.dataPoints.status[address] == null)
+							if(this.dataPoints.status[type] == null)
 							{
-								this.dataPoints.status[address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
+								this.dataPoints.status[type] = {};
+							}
+
+							if(this.dataPoints.status[type][address] == null)
+							{
+								this.dataPoints.status[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
 
 								// TODO: Write Own Change Detection And Input Conversion
 
-								this.dataPoints.status[address].on('change', (oldValue, newValue) => {
+								this.dataPoints.status[type][address].on('change', (oldValue, newValue) => {
 
 									var state = {};
 
@@ -110,13 +115,13 @@ class KNXInterface
 
 							this.EventManager.setInputStream('updateState', { source : service, destination : address }, (state) => {
 
-								if(this.dataPoints.status[address] != null)
+								if(this.dataPoints.status[type][address] != null)
 								{
 									state = this.DeviceManager.Converter.getState(service, state);
 
 									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
 									{
-										this.dataPoints.status[address].current_value = state[type];
+										this.dataPoints.status[type][address].current_value = state[type];
 
 										service.updateState(state);
 									}
@@ -138,7 +143,12 @@ class KNXInterface
 					{
 						for(const address of controlAddress[type])
 						{
-							this.dataPoints.control[address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
+							if(this.dataPoints.control[type] == null)
+							{
+								this.dataPoints.control[type] = {};
+							}
+
+							this.dataPoints.control[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
 						}
 					}
 				}
@@ -197,11 +207,11 @@ class KNXInterface
 		this.logger.debug('GET [' + destination + '] --> [' + value[0] + ']');
 	}
 
-	readState(service, address)
+	readState(service, type, address)
 	{
-		if(this.connected && service != null && address != null && this.dataPoints.status[address] != null)
+		if(this.connected && service != null && address != null && this.dataPoints.status[type] != null && this.dataPoints.status[type][address] != null)
 		{
-			this.dataPoints.status[address].read((src, value) => {
+			this.dataPoints.status[type][address].read((src, value) => {
 
 				this._clearRequests('status', address, value);
 			});
@@ -248,14 +258,14 @@ class KNXInterface
 
 				state[type] = value;
 
-				if(this.dataPoints.control[address] != null)
+				if(this.dataPoints.control[type] != null && this.dataPoints.control[type][address] != null)
 				{
 					this.dataPoints.control[address].write(value);
 				}
 
-				if(this.dataPoints.status[address] != null)
+				if(this.dataPoints.status[type] != null && this.dataPoints.status[type][address] != null)
 				{
-					this.dataPoints.status[address].current_value = value;
+					this.dataPoints.status[type][address].current_value = value;
 				}
 
 				this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, state);
@@ -358,7 +368,7 @@ module.exports = class DeviceManager
 
 							this.KNXInterface._addRequest('status', address, (value) => callback({ type, value }));
 
-							this.KNXInterface.readState(service, address);
+							this.KNXInterface.readState(service, type, address);
 						}));
 					}
 				}
