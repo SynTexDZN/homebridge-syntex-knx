@@ -6,12 +6,20 @@ module.exports = class SynTexThermostatService extends ThermostatService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.base = super.getValue('base');
+		this.offset = super.getValue('offset');
+
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = serviceConfig.datapoint || { value : '9.001', target : '9.001', state : '1.011', mode : '1.100' };
+		this.dataPoint = serviceConfig.datapoint || { value : '9.001', target : '9.001', state : '1.011', mode : '1.100', offset : '6.010' };
 
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
+
+		if(this.statusAddress instanceof Object && this.statusAddress.offset != null)
+		{
+			this.useOffset = true;
+		}
 	}
 
 	getState(callback)
@@ -58,11 +66,25 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			{
 				this.DeviceManager.getState(this).then((state) => {
 
+					var changed = false;
+
 					if(state.target != null && !isNaN(state.target))
 					{
-						this.target = state.target;
+						this.target = this.updateBase(state.target);
 
-						super.setTargetTemperature(state.target, () => {});
+						changed = true;
+					}
+
+					if(state.offset != null && !isNaN(state.offset))
+					{
+						this.target = this.updateOffset(state.offset);
+
+						changed = true;
+					}
+
+					if(changed)
+					{
+						super.setTargetTemperature(this.target, () => this.updateTarget());
 					}
 
 					callback(null, this.target);
@@ -73,18 +95,11 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	setTargetTemperature(target, callback)
 	{
-		this.DeviceManager.setState(this, { target }).then((success) => {
+		this.setToCurrentState({ target }, (failed) => {
 
-			if(success)
+			if(!failed)
 			{
-				this.target = target;
-
-				super.setTargetTemperature(target,
-					() => this.updateTarget(), true);
-
 				callback();
-			
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 			}
 			else
 			{
@@ -122,18 +137,11 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	setTargetHeatingCoolingState(mode, callback)
 	{
-		this.DeviceManager.setState(this, { mode : this.updateMode(mode) }).then((success) => {
+		this.setToCurrentState({ mode }, (failed) => {
 
-			if(success)
+			if(!failed)
 			{
-				this.mode = mode;
-
-				super.setTargetHeatingCoolingState(mode,
-					() => this.updateTarget(), true);
-
 				callback();
-			
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 			}
 			else
 			{
@@ -183,12 +191,12 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			changed = true;
 		}
 
-		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
+		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || (this.useOffset ? this.base : this.target) != state.target))
 		{
-			this.target = state.target;
+			this.target = this.updateBase(state.target);
 
-			super.setTargetTemperature(state.target, 
-				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(state.target));
+			super.setTargetTemperature(this.target, 
+				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target));
 
 			changed = true;
 		}
@@ -212,6 +220,16 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 			changed = true;
 		}
+
+		if(state.offset != null && !isNaN(state.offset) && (!super.hasState('offset') || this.offset != state.offset))
+		{
+			this.target = this.updateOffset(state.offset);
+
+			super.setTargetTemperature(this.target, 
+				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target));
+
+			changed = true;
+		}
 		
 		if(changed)
 		{
@@ -221,6 +239,42 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+	}
+
+	convertOffset(target)
+	{
+		var state = { target };
+
+		if(this.controlAddress instanceof Object && this.controlAddress.offset != null && target != null)
+		{
+			state.offset = (target - this.base) / 0.5;
+		}
+
+		return state;
+	}
+
+	updateBase(base)
+	{
+		if(this.useOffset)
+		{
+			this.base = base;
+
+			super.setValue('base', base);
+		}
+
+		return base + (this.offset * 0.5);
+	}
+
+	updateOffset(offset)
+	{
+		if(this.useOffset)
+		{
+			this.offset = offset;
+
+			super.setValue('offset', offset);
+		}
+
+		return this.base + (offset * 0.5);
 	}
 
 	updateTarget()
@@ -267,5 +321,88 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		}
 
 		return mode;
+	}
+
+	setToCurrentState(state, callback)
+	{
+		const setTargetTemperature = () => {
+
+			return new Promise((resolve) => {
+
+				var converted = this.convertOffset(state.target);
+
+				this.DeviceManager.setState(this, converted).then((success) => {
+
+					if(success)
+					{
+						this.target = state.target;
+		
+						super.setTargetTemperature(this.target,
+							() => this.updateTarget());
+							
+						if(converted.offset != null)
+						{
+							this.offset = converted.offset;
+
+							super.setValue('offset', converted.offset);
+						}
+					}
+
+					resolve(success);
+
+					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+				});
+			});
+		};
+
+		const setTargetHeatingCoolingState = () => {
+
+			return new Promise((resolve) => {
+
+				this.DeviceManager.setState(this, { mode : this.updateMode(state.mode) }).then((success) => {
+
+					if(success)
+					{
+						this.mode = state.mode;
+		
+						super.setTargetHeatingCoolingState(state.mode,
+							() => this.updateTarget());
+					}
+
+					resolve(success);
+					
+					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+				});
+			});
+		};
+
+		var promiseArray = [];
+
+		if(state.target != null && (!super.hasState('target') || this.target != state.target))
+		{
+			promiseArray.push(setTargetTemperature());
+		}
+
+		if(state.mode != null && (!super.hasState('mode') || this.mode != state.mode))
+		{
+			promiseArray.push(setTargetHeatingCoolingState());
+		}
+
+		if(promiseArray.length > 0)
+		{
+			Promise.all(promiseArray).then((result) => {
+
+				if(callback != null)
+				{
+					callback(result.includes(false));
+				}
+
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )');
+			});
+		}
+		else if(callback != null)
+		{
+			callback(this.offline);
+		}
 	}
 };
