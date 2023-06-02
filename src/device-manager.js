@@ -260,7 +260,7 @@ class KNXInterface
 
 				if(this.dataPoints.control[type] != null && this.dataPoints.control[type][address] != null)
 				{
-					this.dataPoints.control[address].write(value);
+					this.dataPoints.control[type][address].write(value);
 				}
 
 				if(this.dataPoints.status[type] != null && this.dataPoints.status[type][address] != null)
