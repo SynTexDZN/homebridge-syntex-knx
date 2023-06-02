@@ -75,7 +75,7 @@ class KNXInterface
 		if(this.firstConnect)
 		{
 			this.firstConnect = false;
-			
+
 			var services = this.DeviceManager._getServices();
 
 			for(const service of services)
@@ -155,7 +155,7 @@ class KNXInterface
 			}
 		}
 
-		if(!this.platform.options.disablePreload)
+		if(!this.DeviceManager.platform.options.disablePreload)
 		{
 			this.updateStates();
 		}
@@ -374,6 +374,8 @@ module.exports = class DeviceManager
 {
 	constructor(platform)
 	{
+		this.platform = platform;
+
 		this.accessories = platform.accessories;
 		
 		this.logger = platform.logger;
