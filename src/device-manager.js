@@ -41,6 +41,10 @@ class KNXInterface
 
 				if(entry != null)
 				{
+					var state = {};
+
+					state[entry.type] = entry.value;
+
 					if(this.dataPoints.control[entry.address] != null)
 					{
 						this.dataPoints.control[entry.address].write(entry.value);
@@ -51,7 +55,7 @@ class KNXInterface
 						this.dataPoints.status[entry.address].current_value = entry.value;
 					}
 
-					this.EventManager.setOutputStream('updateState', { sender : entry.service, receiver : entry.address }, entry.value);
+					this.EventManager.setOutputStream('updateState', { sender : entry.service, receiver : entry.address }, state);
 
 					this.queue.splice(0, 1);
 				}
@@ -206,64 +210,61 @@ class KNXInterface
 
 	writeState(service, type, address, value)
 	{
-		return new Promise((resolve) => {
-
-			if(this.connected && service != null && type != null && address != null && value != null)
+		if(this.connected && service != null && type != null && address != null && value != null)
+		{
+			if(service.invertState)
 			{
-				if(service.invertState)
+				var dataPoint = this.DeviceManager.getDataPoints(service.dataPoint)[type];
+
+				if(dataPoint.startsWith('1.')
+				|| dataPoint.startsWith('2.'))
 				{
-					var dataPoint = this.DeviceManager.getDataPoints(service.dataPoint)[type];
-
-					if(dataPoint.startsWith('1.')
-					|| dataPoint.startsWith('2.'))
-					{
-						value = !value;
-					}
-
-					if(dataPoint == '5.001')
-					{
-						value = 100 - value;
-					}
-					
-					if(dataPoint == '5.003')
-					{
-						value = 360 - value;
-					}
-					
-					if(dataPoint == '5.004'
-					|| dataPoint == '5.005'
-					|| dataPoint == '5.006'
-					|| dataPoint == '5.010'
-					|| dataPoint == '5.100')
-					{
-						value = 255 - value;
-					}
+					value = !value;
 				}
 
-				if(this.rateLimit == 0)
+				if(dataPoint == '5.001')
 				{
-					if(this.dataPoints.control[address] != null)
-					{
-						this.dataPoints.control[address].write(value);
-					}
-
-					if(this.dataPoints.status[address] != null)
-					{
-						this.dataPoints.status[address].current_value = value;
-					}
-
-					this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, value);
+					value = 100 - value;
 				}
-				else
+				
+				if(dataPoint == '5.003')
 				{
-					this.queue.push({ service, address, value });
+					value = 360 - value;
 				}
+				
+				if(dataPoint == '5.004'
+				|| dataPoint == '5.005'
+				|| dataPoint == '5.006'
+				|| dataPoint == '5.010'
+				|| dataPoint == '5.100')
+				{
+					value = 255 - value;
+				}
+			}
+
+			if(this.rateLimit == 0)
+			{
+				var state = {};
+
+				state[type] = value;
+
+				if(this.dataPoints.control[address] != null)
+				{
+					this.dataPoints.control[address].write(value);
+				}
+
+				if(this.dataPoints.status[address] != null)
+				{
+					this.dataPoints.status[address].current_value = value;
+				}
+
+				this.EventManager.setOutputStream('updateState', { sender : service, receiver : address }, state);
 			}
 			else
 			{
-				resolve(false);
+				this.queue.push({ service, type, address, value });
 			}
-		});
+		}
 	}
 
 	updateStates()
