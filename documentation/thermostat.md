@@ -46,7 +46,7 @@
 ```json
 {
     "id": "knx0",
-    "name": "KNX Thermostat Base Target Offset",
+    "name": "KNX Thermostat Offset",
     "services": [
         {
             "datapoint": {
@@ -59,7 +59,7 @@
             "address": {
                 "status": {
                     "value": "1/1/1",
-                    "target": "1/0/1",
+                    "target": "1/2/1",
                     "state": "1/3/1",
                     "mode": "1/4/1",
                     "offset": "1/5/1"

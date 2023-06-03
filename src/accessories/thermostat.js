@@ -16,11 +16,6 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
 
-		if(this.statusAddress instanceof Object && this.statusAddress.offset != null)
-		{
-			this.useOffset = true;
-		}
-
 		this.changeHandler = (state) => {
 
 			this.setToCurrentState(state, (failed) => {
@@ -78,24 +73,10 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			{
 				this.DeviceManager.getState(this).then((state) => {
 
-					var changed = false;
-
 					if(state.target != null && !isNaN(state.target))
 					{
-						this.target = this.updateBase(state.target);
+						this.target = this.updateBase(state.target, state.offset);
 
-						changed = true;
-					}
-
-					if(state.offset != null && !isNaN(state.offset))
-					{
-						this.target = this.updateOffset(state.offset);
-
-						changed = true;
-					}
-
-					if(changed)
-					{
 						super.setTargetTemperature(this.target, () => this.updateTarget());
 					}
 
@@ -203,9 +184,9 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			changed = true;
 		}
 
-		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || (this.useOffset ? this.base : this.target) != state.target))
+		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
 		{
-			this.target = this.updateBase(state.target);
+			this.target = state.target;
 
 			super.setTargetTemperature(this.target, 
 				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target));
@@ -233,16 +214,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			changed = true;
 		}
 
-		if(state.offset != null && !isNaN(state.offset) && (!super.hasState('offset') || this.offset != state.offset))
-		{
-			this.target = this.updateOffset(state.offset);
+		this.updateBase(state.target || this.target, state.offset || this.offset);
 
-			super.setTargetTemperature(this.target, 
-				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target));
-
-			changed = true;
-		}
-		
 		if(changed)
 		{
 			this.updateTarget();
@@ -265,28 +238,18 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		return state;
 	}
 
-	updateBase(base)
+	updateBase(target, offset)
 	{
-		if(this.useOffset)
+		if(offset != null && !isNaN(offset))
 		{
-			this.base = base;
-
-			super.setValue('base', base);
-		}
-
-		return base + (this.offset * 0.5);
-	}
-
-	updateOffset(offset)
-	{
-		if(this.useOffset)
-		{
+			this.base = target - (offset * 0.5);
 			this.offset = offset;
 
-			super.setValue('offset', offset);
+			super.setValue('base', this.base);
+			super.setValue('offset', this.offset);
 		}
 
-		return this.base + (offset * 0.5);
+		return target;
 	}
 
 	updateTarget()
