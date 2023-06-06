@@ -63,16 +63,7 @@ class KNXInterface
 				{
 					if(this.dataPoints.status[statusEntry.type] != null && this.dataPoints.status[statusEntry.type][statusEntry.address] != null)
 					{
-						this.dataPoints.status[statusEntry.type][statusEntry.address].read((src, value) => {
-
-							var state = {};
-
-							state[statusEntry.type] = value;
-
-							this._clearRequests('status', statusEntry.address, value);
-			
-							this.EventManager.setOutputStream('updateState', { receiver : statusEntry.address }, state);
-						});
+						this.dataPoints.status[statusEntry.type][statusEntry.address].read();
 					}
 
 					this.queue.status.splice(0, 1);
@@ -297,48 +288,13 @@ class KNXInterface
 
 	updateStates()
 	{
-		var services = this.DeviceManager._getServices(), addresses = {};
-
-		for(const service of services)
+		for(const type in this.dataPoints.status)
 		{
-			if(service.statusAddress != null)
-			{
-				var statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
-
-				for(const type in statusAddress)
-				{
-					if(addresses[type] == null)
-					{
-						addresses[type] = [];
-					}
-
-					for(const address of statusAddress[type])
-					{
-						if(!addresses[type].includes(address))
-						{
-							addresses[type].push(address);
-						}
-					}
-				}
-			}
-		}
-
-		for(const type in addresses)
-		{
-			for(const address of addresses[type])
+			for(const address in this.dataPoints.status[type])
 			{
 				if(this.rateLimit == 0)
 				{
-					this.dataPoints.status[type][address].read((src, value) => {
-
-						var state = {};
-
-						state[type] = value;
-
-						this._clearRequests('status', address, value);
-		
-						this.EventManager.setOutputStream('updateState', { receiver : address }, state);
-					});
+					this.dataPoints.status[type][address].read();
 				}
 				else
 				{
