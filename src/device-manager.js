@@ -57,7 +57,7 @@ class KNXInterface
 					this.EventManager.setOutputStream('updateState', { sender : controlEntry.service, receiver : controlEntry.address }, state);
 
 					this.queue.control.splice(0, 1);
-					}
+				}
 
 				if(statusEntry != null)
 				{
@@ -422,14 +422,17 @@ module.exports = class DeviceManager
 
 				for(const type in statusAddress)
 				{
-					for(const address of statusAddress[type])
+					if(!service.hasState(type))
 					{
-						promiseArray.push(new Promise((callback) => {
+						for(const address of statusAddress[type])
+						{
+							promiseArray.push(new Promise((callback) => {
 
-							this.KNXInterface._addRequest('status', address, (value) => callback({ type, value }));
+								this.KNXInterface._addRequest('status', address, (value) => callback({ type, value }));
 
-							this.KNXInterface.readState(service, type, address);
-						}));
+								this.KNXInterface.readState(service, type, address);
+							}));
+						}
 					}
 				}
 
