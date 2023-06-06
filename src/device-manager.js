@@ -9,8 +9,7 @@ class KNXInterface
 		this.connected = false;
 		this.firstConnect = true;
 
-		this.queue = [];
-
+		this.queue = { status : {}, control : {} };
 		this.requests = { status : {}, control : {} };
 		this.dataPoints = { status : {}, control : {} };
 
@@ -37,27 +36,46 @@ class KNXInterface
 		{
 			setInterval(() => {
 
-				var entry = this.queue[0];
+				var controlEntry = this.queue.control[0], statusEntry = this.queue.status[0];
 
-				if(entry != null)
+				if(controlEntry != null)
 				{
 					var state = {};
 
-					state[entry.type] = entry.value;
+					state[controlEntry.type] = controlEntry.value;
 
-					if(this.dataPoints.control[entry.address] != null)
+					if(this.dataPoints.control[controlEntry.type] != null && this.dataPoints.control[controlEntry.type][controlEntry.address] != null)
 					{
-						this.dataPoints.control[entry.address].write(entry.value);
+						this.dataPoints.control[controlEntry.type][controlEntry.address].write(controlEntry.value);
 					}
 
-					if(this.dataPoints.status[entry.address] != null)
+					if(this.dataPoints.status[controlEntry.type] != null && this.dataPoints.status[controlEntry.type][controlEntry.address] != null)
 					{
-						this.dataPoints.status[entry.address].current_value = entry.value;
+						this.dataPoints.status[controlEntry.type][controlEntry.address].current_value = controlEntry.value;
 					}
 
-					this.EventManager.setOutputStream('updateState', { sender : entry.service, receiver : entry.address }, state);
+					this.EventManager.setOutputStream('updateState', { sender : controlEntry.service, receiver : controlEntry.address }, state);
 
-					this.queue.splice(0, 1);
+					this.queue.control.splice(0, 1);
+					}
+
+				if(statusEntry != null)
+				{
+					if(this.dataPoints.status[statusEntry.type] != null && this.dataPoints.status[statusEntry.type][statusEntry.address] != null)
+					{
+						this.dataPoints.status[statusEntry.type][statusEntry.address].read((src, value) => {
+
+							var state = {};
+
+							state[statusEntry.type] = value;
+
+							this._clearRequests('status', statusEntry.address, value);
+			
+							this.EventManager.setOutputStream('updateState', { receiver : statusEntry.address }, state);
+						});
+					}
+
+					this.queue.status.splice(0, 1);
 				}
 
 			}, this.rateLimit);
@@ -272,7 +290,7 @@ class KNXInterface
 			}
 			else
 			{
-				this.queue.push({ service, type, address, value });
+				this.queue.control.push({ service, type, address, value });
 			}
 		}
 	}
@@ -309,7 +327,7 @@ class KNXInterface
 		{
 			for(const address of addresses[type])
 			{
-				if(this.dataPoints.status[type] != null && this.dataPoints.status[type][address] != null)
+				if(this.rateLimit == 0)
 				{
 					this.dataPoints.status[type][address].read((src, value) => {
 
@@ -321,6 +339,10 @@ class KNXInterface
 		
 						this.EventManager.setOutputStream('updateState', { receiver : address }, state);
 					});
+				}
+				else
+				{
+					this.queue.status.push({ type, address });
 				}
 			}
 		}
