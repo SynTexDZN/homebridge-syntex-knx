@@ -9,7 +9,7 @@ class KNXInterface
 		this.connected = false;
 		this.firstConnect = true;
 
-		this.queue = { status : {}, control : {} };
+		this.queue = { status : [], control : [] };
 		this.requests = { status : {}, control : {} };
 		this.dataPoints = { status : {}, control : {} };
 
