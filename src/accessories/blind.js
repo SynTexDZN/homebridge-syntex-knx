@@ -79,9 +79,7 @@ module.exports = class SynTexBlindService extends BlindService
 		super.setPositionState(currentState,
 			() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), true);
 
-		this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
-
-		super.setPositionState(this.state, () => setTimeout(() => {
+		setTimeout(() => {
 
 			currentState = this.Characteristic.PositionState.STOPPED;
 
@@ -95,6 +93,6 @@ module.exports = class SynTexBlindService extends BlindService
 
 			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 
-		}, this.target > 0 ? this.timeDelayUp : this.timeDelayDown), true);
+		}, this.target > 0 ? this.timeDelayUp : this.timeDelayDown);
 	}
 };
