@@ -50,36 +50,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState((value) => {
-
-			if(super.hasState('value'))
-			{
-				this.value = value;
-
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-
-				callback(null, this.value);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.value != null && !isNaN(state.value))
-					{
-						this.value = state.value;
-
-						super.setState(this.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
-					}
-
-					callback(null, this.value);
-				});
-			}
-		});
-	}
-
 	setState(value, callback)
 	{
 		this.setToCurrentColor({ value }, (failed) => {
@@ -91,33 +61,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			else
 			{
 				callback(new Error('Failed'));
-			}
-		});
-	}
-
-	getHue(callback)
-	{
-		super.getHue((hue) => {
-
-			if(super.hasState('hue'))
-			{
-				this.hue = hue;
-
-				callback(null, this.hue);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.hue != null && !isNaN(state.hue))
-					{
-						this.hue = state.hue;
-					
-						super.setHue(this.hue, () => {});
-					}
-					
-					callback(null, this.hue);
-				});
 			}
 		});
 	}
@@ -137,33 +80,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 		});
 	}
 
-	getSaturation(callback)
-	{
-		super.getSaturation((saturation) => {
-
-			if(super.hasState('saturation'))
-			{
-				this.saturation = saturation;
-
-				callback(null, this.saturation);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.saturation != null && !isNaN(state.saturation))
-					{
-						this.saturation = state.saturation;
-
-						super.setSaturation(this.saturation, () => {});
-					}
-					
-					callback(null, this.saturation);
-				});
-			}
-		});
-	}
-
 	setSaturation(saturation, callback)
 	{
 		this.setToCurrentColor({ saturation }, (failed) => {
@@ -175,33 +91,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			else
 			{
 				callback(new Error('Failed'));
-			}
-		});
-	}
-
-	getBrightness(callback)
-	{
-		super.getBrightness((brightness) => {
-
-			if(super.hasState('brightness'))
-			{
-				this.brightness = brightness;
-
-				callback(null, this.brightness);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.brightness != null && !isNaN(state.brightness))
-					{
-						this.brightness = state.brightness;
-						
-						super.setBrightness(this.brightness, () => {});
-					}
-					
-					callback(null, this.brightness);
-				});
 			}
 		});
 	}
@@ -229,47 +118,47 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
-				this.value = this.tempState.value = state.value;
+				this.tempState.value = state.value;
 
-				super.setState(this.value, 
-					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value));
+				super.setState(state.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), false);
 
 				changed = true;
 			}
 
 			if(state.hue != null && !isNaN(state.hue) && (!super.hasState('hue') || this.hue != state.hue))
 			{
-				this.hue = this.tempState.hue = state.hue;
+				this.tempState.hue = state.hue;
 
-				super.setHue(this.hue,
-					() => this.service.getCharacteristic(this.Characteristic.Hue).updateValue(this.hue));
+				super.setHue(state.hue,
+					() => this.service.getCharacteristic(this.Characteristic.Hue).updateValue(state.hue), false);
 
 				changed = true;
 			}
 
 			if(state.saturation != null && !isNaN(state.saturation) && (!super.hasState('saturation') || this.saturation != state.saturation))
 			{
-				this.saturation = this.tempState.saturation = state.saturation;
+				this.tempState.saturation = state.saturation;
 
-				super.setSaturation(this.saturation,
-					() => this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation));
+				super.setSaturation(state.saturation,
+					() => this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(state.saturation), false);
 
 				changed = true;
 			}
 
 			if(state.brightness != null && !isNaN(state.brightness) && (!super.hasState('brightness') || this.brightness != state.brightness))
 			{
-				this.brightness = this.tempState.brightness = state.brightness;
+				this.tempState.brightness = state.brightness;
 
-				super.setBrightness(this.brightness, 
-					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness));
+				super.setBrightness(state.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness), false);
 
 				changed = true;
 			}
 			
 			if(changed)
 			{
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 			}
 
 			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
@@ -285,11 +174,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				if(success)
 				{
-					this.value = this.tempState.value;
-
-					super.setState(this.value, () => {});
-
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+					super.setState(this.tempState.value);
 				}
 
 				if(callback != null)
@@ -299,7 +184,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 				resolve();
 
-				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 			});
 		};
 		*/
@@ -318,12 +203,12 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 						this.saturation = this.tempState.saturation;
 						this.brightness = this.tempState.brightness;
 
-						super.setState(this.value, () => {});
-						super.setHue(this.hue, () => {});
-						super.setSaturation(this.saturation, () => {});
-						super.setBrightness(this.brightness, () => {});
+						super.setState(this.value, null, false);
+						super.setHue(this.hue, null, false);
+						super.setSaturation(this.saturation, null, false);
+						super.setBrightness(this.brightness, null, false);
 
-						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', hue: ' + this.hue +  ', saturation: ' + this.saturation + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 					}
 
 					if(callback != null)

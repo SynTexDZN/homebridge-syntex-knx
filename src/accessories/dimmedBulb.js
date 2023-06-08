@@ -28,36 +28,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState((value) => {
-
-			if(super.hasState('value'))
-			{
-				this.value = value;
-
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
-
-				callback(null, this.value);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.value != null && !isNaN(state.value))
-					{
-						this.value = state.value;
-
-						super.setState(this.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )'));
-					}
-
-					callback(null, this.value);
-				});
-			}
-		});
-	}
-
 	setState(value, callback)
 	{
 		this.setToCurrentBrightness({ value }, (failed) => {
@@ -69,33 +39,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			else
 			{
 				callback(new Error('Failed'));
-			}
-		});
-	}
-
-	getBrightness(callback)
-	{
-		super.getBrightness((brightness) => {
-
-			if(super.hasState('brightness'))
-			{
-				this.brightness = brightness;
-
-				callback(null, this.brightness);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.brightness != null && !isNaN(state.brightness))
-					{
-						this.brightness = state.brightness;
-						
-						super.setBrightness(this.brightness, () => {});
-					}
-					
-					callback(null, this.brightness);
-				});
 			}
 		});
 	}
@@ -123,27 +66,27 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
-				this.value = this.tempState.value = state.value;
+				this.tempState.value = state.value;
 
-				super.setState(this.value, 
-					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value));
+				super.setState(state.value, 
+					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), false);
 
 				changed = true;
 			}
 
 			if(state.brightness != null && !isNaN(state.brightness) && (!super.hasState('brightness') || this.brightness != state.brightness))
 			{
-				this.brightness = this.tempState.brightness = state.brightness;
+				this.tempState.brightness = state.brightness;
 
-				super.setBrightness(this.brightness, 
-					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness));
+				super.setBrightness(state.brightness, 
+					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness), false);
 
 				changed = true;
 			}
 			
 			if(changed)
 			{
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 			}
 
 			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
@@ -159,11 +102,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(success)
 				{
-					this.value = this.tempState.value;
-
-					super.setState(this.value, () => {});
-
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+					super.setState(this.tempState.value);
 				}
 
 				if(callback != null)
@@ -186,10 +125,10 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 					this.value = this.tempState.value;
 					this.brightness = this.tempState.brightness;
 
-					super.setState(this.value, () => {});
-					super.setBrightness(this.brightness, () => {});
+					super.setState(this.value, null, false);
+					super.setBrightness(this.brightness, null, false);
 
-					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', brightness: ' + this.brightness + '] ( ' + this.id + ' )');
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
 
 				if(callback != null)

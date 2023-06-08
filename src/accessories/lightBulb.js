@@ -25,36 +25,6 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState((value) => {
-
-			if(super.hasState('value'))
-			{
-				this.value = value;
-
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )');
-
-				callback(null, this.value);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.value != null && !isNaN(state.value))
-					{
-						this.value = state.value;
-
-						super.setState(this.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [' + this.value + '] ( ' + this.id + ' )'));
-					}
-
-					callback(null, this.value);
-				});
-			}
-		});
-	}
-	
 	setState(value, callback)
 	{
 		this.DeviceManager.setState(this, { value }).then((success) => {
@@ -63,7 +33,7 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 			{
 				this.value = value;
 
-				super.setState(this.value, () => callback(), true);
+				super.setState(this.value, () => callback());
 			
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value });
 			}
@@ -78,10 +48,8 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 	{
 		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
-			this.value = state.value;
-
-			super.setState(this.value,
-				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value), true);
+			super.setState(state.value, 
+				() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value));
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);

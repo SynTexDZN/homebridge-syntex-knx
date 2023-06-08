@@ -6,8 +6,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.base = super.getValue('base');
-		this.offset = super.getValue('offset');
+		this.base = super.getValue('base', false);
+		this.offset = super.getValue('offset', false);
 
 		this.DeviceManager = manager.DeviceManager;
 
@@ -29,63 +29,6 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		};
 	}
 
-	getState(callback)
-	{
-		super.getState((value) => {
-
-			if(super.hasState('value'))
-			{
-				this.value = value;
-
-				this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )');
-
-				callback(null, this.value);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.value != null && !isNaN(state.value))
-					{
-						this.value = state.value;
-
-						super.setState(this.value,
-							() => this.logger.log('read', this.id, this.letters, '%read_state[0]% [' + this.name + '] %read_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )'));
-					}
-
-					callback(null, this.value);
-				});
-			}
-		});
-	}
-
-	getTargetTemperature(callback)
-	{
-		super.getTargetTemperature((target) => {
-
-			if(super.hasState('target'))
-			{
-				this.target = target;
-
-				callback(null, this.target);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.target != null && !isNaN(state.target))
-					{
-						this.target = this.updateBase(state.target, state.offset);
-
-						super.setTargetTemperature(this.target, () => this.updateTarget());
-					}
-
-					callback(null, this.target);
-				});
-			}
-		});
-	}
-
 	setTargetTemperature(target, callback)
 	{
 		this.setToCurrentState({ target }, (failed) => {
@@ -97,33 +40,6 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			else
 			{
 				callback(new Error('Not Connected'));
-			}
-		});
-	}
-
-	getCurrentHeatingCoolingState(callback)
-	{
-		super.getCurrentHeatingCoolingState((state) => {
-
-			if(super.hasState('state'))
-			{
-				this.state = state;
-
-				callback(null, this.state);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.state != null && !isNaN(state.state))
-					{
-						this.state = this.updateTarget(state.state);
-
-						super.setCurrentHeatingCoolingState(this.state, () => {});
-					}
-
-					callback(null, this.state);
-				});
 			}
 		});
 	}
@@ -143,73 +59,40 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		});
 	}
 
-	getTargetHeatingCoolingState(callback)
-	{
-		super.getTargetHeatingCoolingState((mode) => {
-
-			if(super.hasState('mode'))
-			{
-				this.mode = mode;
-
-				callback(null, this.mode);
-			}
-			else
-			{
-				this.DeviceManager.getState(this).then((state) => {
-
-					if(state.mode != null && !isNaN(state.mode))
-					{
-						this.mode = state.mode;
-
-						super.setTargetHeatingCoolingState(this.mode, () => {});
-					}
-
-					callback(null, this.mode);
-				});
-			}
-		});
-	}
-
 	updateState(state)
 	{
 		var changed = false;
 
 		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
-			this.value = state.value;
-
-			super.setState(this.value, 
-				() => this.service.getCharacteristic(this.Characteristic.CurrentTemperature).updateValue(this.value));
+			super.setState(state.value, 
+				() => this.service.getCharacteristic(this.Characteristic.CurrentTemperature).updateValue(state.value), false);
 
 			changed = true;
 		}
 
 		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
 		{
-			this.target = state.target;
-
-			super.setTargetTemperature(this.target, 
-				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(this.target));
+			super.setTargetTemperature(state.target, 
+				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(state.target), false);
 
 			changed = true;
 		}
 
+		state.state = this.updateTarget(state.state, state.mode || this.mode);
+
 		if(state.state != null && !isNaN(state.state) && (!super.hasState('state') || this.state != state.state))
 		{
-			this.state = this.updateTarget(state.state);
-
-			super.setCurrentHeatingCoolingState(this.state, 
-				() => this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.state));
+			super.setCurrentHeatingCoolingState(state.state, 
+				() => this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(state.state), false);
 
 			changed = true;
 		}
 
 		if(state.mode != null && !isNaN(state.mode) && (!super.hasState('mode') || this.mode != state.mode))
 		{
-			this.mode = state.mode;
-
-			super.setTargetHeatingCoolingState(this.mode, 
-				() => this.service.getCharacteristic(this.Characteristic.TargetHeatingCoolingState).updateValue(this.mode));
+			super.setTargetHeatingCoolingState(state.mode, 
+				() => this.service.getCharacteristic(this.Characteristic.TargetHeatingCoolingState).updateValue(state.mode), false);
 
 			changed = true;
 		}
@@ -218,9 +101,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(changed)
 		{
-			this.updateTarget();
-
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )');
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
@@ -245,16 +126,16 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			this.base = target - (offset * 0.5);
 			this.offset = offset;
 
-			super.setValue('base', this.base);
-			super.setValue('offset', this.offset);
+			super.setValue('base', this.base, false);
+			super.setValue('offset', this.offset, false);
 		}
 
 		return target;
 	}
 
-	updateTarget(state)
+	updateTarget(state, mode)
 	{
-		var mode = this.updateMode(this.mode);
+		mode = this.updateMode(mode);
 
 		if(state == 1)
 		{
@@ -270,17 +151,21 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(!(this.statusAddress instanceof Object) || this.statusAddress.state == null)
 		{
+			var currentState = this.Characteristic.CurrentHeatingCoolingState.OFF;
+
 			if(mode == 0 && this.target < this.value)
 			{
-				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.COOL);
+				currentState = this.Characteristic.CurrentHeatingCoolingState.COOL;
 			}
 			else if(mode == 1 && this.target > this.value)
 			{
-				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.HEAT);
+				currentState = this.Characteristic.CurrentHeatingCoolingState.HEAT;
 			}
-			else
+
+			if(!super.hasState('state') || this.state != currentState)
 			{
-				this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(this.Characteristic.CurrentHeatingCoolingState.OFF);
+				super.setCurrentHeatingCoolingState(currentState,
+					() => this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(currentState));
 			}
 		}
 
@@ -326,13 +211,13 @@ module.exports = class SynTexThermostatService extends ThermostatService
 					{
 						this.target = state.target;
 		
-						super.setTargetTemperature(this.target, () => {});
+						super.setTargetTemperature(this.target);
 							
 						if(converted.offset != null)
 						{
 							this.offset = converted.offset;
 
-							super.setValue('offset', this.offset);
+							super.setValue('offset', this.offset, false);
 						}
 					}
 
@@ -351,7 +236,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 					{
 						this.mode = state.mode;
 		
-						super.setTargetHeatingCoolingState(this.mode, () => {});
+						super.setTargetHeatingCoolingState(this.mode);
 					}
 
 					resolve(success);
@@ -382,7 +267,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 				this.updateTarget();
 
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [value: ' + this.value + ', target: ' + this.target + ', state: ' + this.state + ', mode: ' + this.mode + '] ( ' + this.id + ' )');
+				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 			});
