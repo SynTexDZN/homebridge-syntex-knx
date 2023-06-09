@@ -199,82 +199,73 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 	setToCurrentState(state, callback)
 	{
-		const setTargetTemperature = () => {
+		const setTargetTemperature = (resolve) => {
 
-			return new Promise((resolve) => {
+			var converted = this.updateTarget(state.target);
 
-				var converted = this.updateTarget(state.target);
+			this.DeviceManager.setState(this, converted).then((success) => {
 
-				this.DeviceManager.setState(this, converted).then((success) => {
-
-					if(success)
+				if(success)
+				{
+					if(converted.offset != null)
 					{
-						this.target = state.target;
-		
-						super.setTargetTemperature(this.target);
-							
-						if(converted.offset != null)
-						{
-							this.offset = converted.offset;
+						this.offset = converted.offset;
 
-							super.setValue('offset', this.offset, false);
-						}
+						super.setValue('offset', this.offset, false);
 					}
 
-					resolve(success);
-				});
-			});
-		};
-
-		const setTargetHeatingCoolingState = () => {
-
-			return new Promise((resolve) => {
-
-				this.DeviceManager.setState(this, { mode : this.updateMode(state.mode) }).then((success) => {
-
-					if(success)
-					{
-						this.mode = state.mode;
-		
-						super.setTargetHeatingCoolingState(this.mode);
-					}
-
-					resolve(success);
-				});
-			});
-		};
-
-		var promiseArray = [];
-
-		if(state.target != null && (!super.hasState('target') || this.target != state.target))
-		{
-			promiseArray.push(setTargetTemperature());
-		}
-
-		if(state.mode != null && (!super.hasState('mode') || this.mode != state.mode))
-		{
-			promiseArray.push(setTargetHeatingCoolingState());
-		}
-
-		if(promiseArray.length > 0)
-		{
-			Promise.all(promiseArray).then((result) => {
+					super.setTargetTemperature(state.target,
+						() => this.updateCurrentState(this.state, this.mode), true);
+				}
 
 				if(callback != null)
 				{
-					callback(result.includes(false));
+					callback(!success);
 				}
 
-				this.updateCurrentState(this.state, this.mode);
-
-				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
+				resolve();
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 			});
-		}
-		else if(callback != null)
-		{
-			callback(false);
-		}
+		};
+
+		const setTargetHeatingCoolingState = (resolve) => {
+
+			this.DeviceManager.setState(this, { mode : this.updateMode(state.mode) }).then((success) => {
+
+				if(success)
+				{
+					super.setTargetHeatingCoolingState(state.mode,
+						() => this.updateCurrentState(this.state, this.mode), true);
+				}
+
+				if(callback != null)
+				{
+					callback(!success);
+				}
+
+				resolve();
+
+				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
+			});
+		};
+
+		super.setToCurrentState(state, (resolve) => {
+
+			setTargetTemperature(resolve);
+
+		}, (resolve) => {
+
+			setTargetHeatingCoolingState(resolve);
+
+		}, (resolve) => {
+
+			if(callback != null)
+			{
+				callback(false);
+			}
+
+			resolve();
+		});
 	}
 };
