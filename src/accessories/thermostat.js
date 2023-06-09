@@ -107,7 +107,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state, mode : this.mode });
 	}
 
-	convertOffset(target)
+	updateTarget(target)
 	{
 		var state = { target };
 
@@ -203,7 +203,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 			return new Promise((resolve) => {
 
-				var converted = this.convertOffset(state.target);
+				var converted = this.updateTarget(state.target);
 
 				this.DeviceManager.setState(this, converted).then((success) => {
 
