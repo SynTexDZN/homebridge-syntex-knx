@@ -122,11 +122,8 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 				if(success)
 				{
-					this.value = this.tempState.value;
-					this.brightness = this.tempState.brightness;
-
-					super.setState(this.value, null, false);
-					super.setBrightness(this.brightness, null, false);
+					super.setState(this.tempState.value, null, false);
+					super.setBrightness(this.tempState.brightness, null, false);
 
 					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 				}
