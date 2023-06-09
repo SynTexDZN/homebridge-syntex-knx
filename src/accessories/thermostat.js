@@ -79,7 +79,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			changed = true;
 		}
 
-		state.state = this.updateTarget(state.state, state.mode || this.mode);
+		state.state = this.updateCurrentState(state.state, state.mode || this.mode);
 
 		if(state.state != null && !isNaN(state.state) && (!super.hasState('state') || this.state != state.state))
 		{
@@ -133,7 +133,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		return target;
 	}
 
-	updateTarget(state, mode)
+	updateCurrentState(state, mode)
 	{
 		mode = this.updateMode(mode);
 
@@ -265,7 +265,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 					callback(result.includes(false));
 				}
 
-				this.updateTarget();
+				this.updateCurrentState(this.state, this.mode);
 
 				this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 
