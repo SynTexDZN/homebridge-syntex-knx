@@ -99,6 +99,21 @@ module.exports = class Converter
 			}
 		}
 
+		if(type == 'thermostat')
+		{
+			if(state.mode != null && dataPoints.mode == '1.100')
+			{
+				if(state.mode == 1)
+				{
+					state.mode = 1;
+				}
+				else if(state.mode == 0)
+				{
+					state.mode = 2;
+				}
+			}
+		}
+
 		return state;
 	}
 }
