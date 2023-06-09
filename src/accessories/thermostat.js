@@ -79,7 +79,10 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			changed = true;
 		}
 
-		state.state = this.updateCurrentState(state.state, state.mode || this.mode);
+		if(state.state != null && !isNaN(state.state))
+		{
+			state.state = this.updateCurrentState(state.state, state.mode || this.mode);
+		}
 
 		if(state.state != null && !isNaN(state.state) && (!super.hasState('state') || this.state != state.state))
 		{
