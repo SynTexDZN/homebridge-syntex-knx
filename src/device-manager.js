@@ -126,7 +126,7 @@ class KNXInterface
 
 								if(this.dataPoints.status[type][address] != null)
 								{
-									state = this.DeviceManager.Converter.getState(service, state);
+									state = this.DeviceManager.Converter.getState(service, { ...state });
 
 									if((state = this.TypeManager.validateUpdate(service.id, service.letters, state)) != null && service.updateState != null)
 									{
