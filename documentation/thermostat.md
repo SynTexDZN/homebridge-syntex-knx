@@ -17,6 +17,30 @@
 ```json
 {
     "id": "knx0",
+    "name": "KNX Thermostat Minimal",
+    "services": [
+        {
+            "datapoint": {
+                "value": "9.001",
+                "target": "9.001"
+            },
+            "address": {
+                "status": {
+                    "value": "1/1/1",
+                    "target": "1/2/1"
+                },
+                "control": {
+                    "target": "1/2/1"
+                }
+            },
+            "type": "thermostat"
+        }
+    ]
+}
+```
+```json
+{
+    "id": "knx0",
     "name": "KNX Thermostat",
     "services": [
         {
