@@ -198,11 +198,18 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 					if(success)
 					{
-						super.setState(this.tempState.value, null, false);
-						super.setHue(this.tempState.hue, null, false);
-						super.setSaturation(this.tempState.saturation, null, false);
-						super.setBrightness(this.tempState.brightness, null, false);
+						if(this.changedValue)
+						{
+							super.setState(this.tempState.value, null, false);
+						}
 
+						if(this.changedColor)
+						{
+							super.setHue(this.tempState.hue, null, false);
+							super.setSaturation(this.tempState.saturation, null, false);
+							super.setBrightness(this.tempState.brightness, null, false);
+						}
+						
 						this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 					}
 
