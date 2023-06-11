@@ -66,8 +66,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
-				this.tempState.value = state.value;
-
 				super.setState(state.value, 
 					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), false);
 
@@ -76,8 +74,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 			if(state.brightness != null && !isNaN(state.brightness) && (!super.hasState('brightness') || this.brightness != state.brightness))
 			{
-				this.tempState.brightness = state.brightness;
-
 				super.setBrightness(state.brightness, 
 					() => this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(state.brightness), false);
 
