@@ -18,8 +18,8 @@ module.exports = class Converter
 		{
 			if(type == 'dimmer')
 			{
-				state.value = state.value > 0;
 				state.brightness = state.value;
+				state.value = state.value > 0;
 			}
 			else if(type == 'rgb')
 			{
