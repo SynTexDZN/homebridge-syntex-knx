@@ -49,6 +49,19 @@ module.exports = class Converter
 					state[x] = state[x] > 0;
 				}
 
+				if(dataPoint.startsWith('5.') && typeof state[x] == 'boolean')
+				{
+					if(state[x] == true)
+					{
+						state[x] = 1;
+					}
+					
+					if(state[x] == false)
+					{
+						state[x] = 0;
+					}
+				}
+
 				if(service.invertState)
 				{
 					if(dataPoint.startsWith('1.')
