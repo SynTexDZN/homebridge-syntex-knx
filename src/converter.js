@@ -91,6 +91,14 @@ module.exports = class Converter
 			}
 		}
 
+		if(type == 'blind')
+		{
+			if(state.value != null)
+			{
+				state.value = 100 - state.value;
+			}
+		}
+
 		if(type == 'dimmer')
 		{
 			if(state.value != null && statusAddress.brightness == null)

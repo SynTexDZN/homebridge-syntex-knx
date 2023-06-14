@@ -51,17 +51,12 @@ module.exports = class SynTexBlindService extends BlindService
 	{
 		var changed = false;
 
-		if(state.value != null && !isNaN(state.value))
+		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
-			state.value = 100 - state.value;
+			super.setTargetPosition(state.value,
+				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.value));
 
-			if(!super.hasState('value') || this.value != state.value)
-			{
-				super.setTargetPosition(state.value,
-					() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.value));
-
-				changed = true;
-			}
+			changed = true;
 		}
 
 		if(changed)
