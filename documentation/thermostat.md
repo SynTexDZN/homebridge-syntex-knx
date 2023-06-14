@@ -39,7 +39,7 @@
         ]
     },
     {
-        "id": "knx0",
+        "id": "knx1",
         "name": "KNX Thermostat",
         "services": [
             {
@@ -66,7 +66,7 @@
         ]
     },
     {
-        "id": "knx0",
+        "id": "knx2",
         "name": "KNX Thermostat Offset",
         "services": [
             {
