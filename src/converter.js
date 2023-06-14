@@ -15,20 +15,6 @@ module.exports = class Converter
 			dataPoints = this.DeviceManager.getDataPoints(service.dataPoint),
 			statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
 
-		if(state.value != null && type == 'rgb')
-		{
-			var converted = convert.rgb.hsv([state.value.red, state.value.green, state.value.blue]);
-
-			state.value = state.value.red > 0 || state.value.green > 0 || state.value.blue > 0;
-
-			if(converted != null)
-			{
-				state.hue = converted[0];
-				state.saturation = converted[1];
-				state.brightness = converted[2];
-			}
-		}
-
 		for(const x in state)
 		{
 			var characteristic = this.TypeManager.getCharacteristic(x, { letters : service.letters });
@@ -138,6 +124,23 @@ module.exports = class Converter
 				else if(state.mode == 0)
 				{
 					state.mode = 2;
+				}
+			}
+		}
+
+		if(type == 'rgb')
+		{
+			if(state.value != null)
+			{
+				var converted = convert.rgb.hsv([state.value.red, state.value.green, state.value.blue]);
+
+				state.value = state.value.red > 0 || state.value.green > 0 || state.value.blue > 0;
+
+				if(converted != null)
+				{
+					state.hue = converted[0];
+					state.saturation = converted[1];
+					state.brightness = converted[2];
 				}
 			}
 		}
