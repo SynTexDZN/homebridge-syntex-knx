@@ -15,86 +15,84 @@
 
 ## Example Config
 ```json
-{
-    "id": "knx0",
-    "name": "KNX Thermostat Minimal",
-    "services": [
-        {
-            "datapoint": {
-                "value": "9.001",
-                "target": "9.001"
-            },
-            "address": {
-                "status": {
-                    "value": "1/1/1",
-                    "target": "1/2/1"
+[
+    {
+        "id": "knx0",
+        "name": "KNX Thermostat Minimal",
+        "services": [
+            {
+                "datapoint": {
+                    "value": "9.001",
+                    "target": "9.001"
                 },
-                "control": {
-                    "target": "1/2/1"
-                }
-            },
-            "type": "thermostat"
-        }
-    ]
-}
-```
-```json
-{
-    "id": "knx0",
-    "name": "KNX Thermostat",
-    "services": [
-        {
-            "datapoint": {
-                "value": "9.001",
-                "target": "9.001",
-                "state": "1.011",
-                "mode": "1.100"
-            },
-            "address": {
-                "status": {
-                    "value": "1/1/1",
-                    "target": "1/2/1",
-                    "state": "1/3/1",
-                    "mode": "1/4/1"
+                "address": {
+                    "status": {
+                        "value": "1/1/1",
+                        "target": "1/2/1"
+                    },
+                    "control": {
+                        "target": "1/2/1"
+                    }
                 },
-                "control": {
-                    "target": "1/2/1",
-                    "mode": "1/4/1"
-                }
-            },
-            "type": "thermostat"
-        }
-    ]
-}
-```
-```json
-{
-    "id": "knx0",
-    "name": "KNX Thermostat Offset",
-    "services": [
-        {
-            "datapoint": {
-                "value": "9.001",
-                "target": "9.001",
-                "state": "1.011",
-                "mode": "1.100",
-                "offset": "6.010"
-            },
-            "address": {
-                "status": {
-                    "value": "1/1/1",
-                    "target": "1/2/1",
-                    "state": "1/3/1",
-                    "mode": "1/4/1",
-                    "offset": "1/5/1"
+                "type": "thermostat"
+            }
+        ]
+    },
+    {
+        "id": "knx0",
+        "name": "KNX Thermostat",
+        "services": [
+            {
+                "datapoint": {
+                    "value": "9.001",
+                    "target": "9.001",
+                    "state": "1.011",
+                    "mode": "1.100"
                 },
-                "control": {
-                    "mode": "1/4/1",
-                    "offset": "1/5/1"
-                }
-            },
-            "type": "thermostat"
-        }
-    ]
-}
+                "address": {
+                    "status": {
+                        "value": "1/1/1",
+                        "target": "1/2/1",
+                        "state": "1/3/1",
+                        "mode": "1/4/1"
+                    },
+                    "control": {
+                        "target": "1/2/1",
+                        "mode": "1/4/1"
+                    }
+                },
+                "type": "thermostat"
+            }
+        ]
+    },
+    {
+        "id": "knx0",
+        "name": "KNX Thermostat Offset",
+        "services": [
+            {
+                "datapoint": {
+                    "value": "9.001",
+                    "target": "9.001",
+                    "state": "1.011",
+                    "mode": "1.100",
+                    "offset": "6.010"
+                },
+                "address": {
+                    "status": {
+                        "value": "1/1/1",
+                        "target": "1/2/1",
+                        "state": "1/3/1",
+                        "mode": "1/4/1",
+                        "offset": "1/5/1"
+                    },
+                    "control": {
+                        "mode": "1/4/1",
+                        "offset": "1/5/1"
+                    }
+                },
+                "type": "thermostat"
+            }
+        ]
+    }
+]
 ```
