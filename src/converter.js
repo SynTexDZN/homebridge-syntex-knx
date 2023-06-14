@@ -12,27 +12,20 @@ module.exports = class Converter
 	getState(service, state = {})
 	{
 		var type = this.TypeManager.letterToType(service.letters[0]),
-			dataPoints = this.DeviceManager.getDataPoints(service.dataPoint);
+			dataPoints = this.DeviceManager.getDataPoints(service.dataPoint),
+			statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
 
-		if(state.value != null)
+		if(state.value != null && type == 'rgb')
 		{
-			if(type == 'dimmer')
-			{
-				state.brightness = state.value;
-				state.value = state.value > 0;
-			}
-			else if(type == 'rgb')
-			{
-				var converted = convert.rgb.hsv([state.value.red, state.value.green, state.value.blue]);
+			var converted = convert.rgb.hsv([state.value.red, state.value.green, state.value.blue]);
 
-				state.value = state.value.red > 0 || state.value.green > 0 || state.value.blue > 0;
+			state.value = state.value.red > 0 || state.value.green > 0 || state.value.blue > 0;
 
-				if(converted != null)
-				{
-					state.hue = converted[0];
-					state.saturation = converted[1];
-					state.brightness = converted[2];
-				}
+			if(converted != null)
+			{
+				state.hue = converted[0];
+				state.saturation = converted[1];
+				state.brightness = converted[2];
 			}
 		}
 
@@ -109,6 +102,28 @@ module.exports = class Converter
 				{
 					state[x] = state[x] > 0;
 				}
+			}
+		}
+
+		if(type == 'dimmer')
+		{
+			if(state.value != null && statusAddress.brightness == null)
+			{
+				if(typeof state.value == 'boolean')
+				{
+					state.brightness = state.value ? 100 : 0;
+				}
+				
+				if(typeof state.value == 'number')
+				{
+					state.brightness = state.value;
+					state.value = state.brightness > 0;
+				}
+			}
+
+			if(state.brightness != null && statusAddress.value == null)
+			{
+				state.value = state.brightness > 0;
 			}
 		}
 
