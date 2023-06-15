@@ -509,4 +509,17 @@ module.exports = class DeviceManager
 
 		return dataPoints;
 	}
+
+	getDefaults(defaults, datapoints)
+	{
+		if(datapoints instanceof Object)
+		{
+			for(const x in datapoints)
+			{
+				defaults[x] = datapoints[x];
+			}
+		}
+
+		return defaults;
+	}
 }
