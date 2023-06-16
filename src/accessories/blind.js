@@ -36,7 +36,7 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				super.setTargetPosition(target, () => callback());
 
-				this.updateTarget();
+				this.updateTarget(this.target);
 
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 			}
@@ -53,8 +53,16 @@ module.exports = class SynTexBlindService extends BlindService
 
 		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
-			super.setTargetPosition(state.value,
-				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.value));
+			super.setState(state.value,
+				() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(state.value), false);
+
+			changed = true;
+		}
+
+		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
+		{
+			super.setTargetPosition(state.target,
+				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.target), false);
 
 			changed = true;
 		}
@@ -62,32 +70,70 @@ module.exports = class SynTexBlindService extends BlindService
 		if(changed)
 		{
 			this.updateTarget();
+
+			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
 		}
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 	}
 
-	updateTarget()
+	updateTarget(target)
 	{
-		var currentState = this.target > 0 ? this.Characteristic.PositionState.INCREASING : this.Characteristic.PositionState.DECREASING;
+		const hasAddress = (type) => {
 
-		super.setPositionState(currentState,
-			() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), true);
+			if(this.statusAddress instanceof Object && this.statusAddress[type] != null)
+			{
+				return true;
+			}
 
-		setTimeout(() => {
+			return false;
+		};
 
-			currentState = this.Characteristic.PositionState.STOPPED;
+		if(hasAddress('target') || target != null)
+		{
+			var currentState = this.Characteristic.PositionState.STOPPED;
 
-			super.setState(this.target,
-				() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
+			if(target == null)
+			{
+				target = this.target;
+			}
+
+			if(target > this.value)
+			{
+				currentState = this.Characteristic.PositionState.INCREASING;
+			}
+
+			if(target < this.value)
+			{
+				currentState = this.Characteristic.PositionState.DECREASING;
+			}
 
 			super.setPositionState(currentState,
-				() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), false);
+				() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState));
 
-			this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
+			if(!hasAddress('value') && currentState != this.Characteristic.STOPPED)
+			{
+				setTimeout(() => {
 
-			this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
-
-		}, this.target > 0 ? this.timeDelayUp : this.timeDelayDown);
+					currentState = this.Characteristic.PositionState.STOPPED;
+	
+					super.setState(this.target,
+						() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
+	
+					super.setPositionState(currentState,
+						() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), false);
+	
+					this.logger.log('update', this.id, this.letters, '%update_state[0]% [' + this.name + '] %update_state[1]% [' + this.getStateText() + '] ( ' + this.id + ' )');
+	
+					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
+	
+				}, target > this.value ? this.timeDelayUp : this.timeDelayDown);
+			}
+		}
+		else
+		{
+			super.setTargetPosition(this.target,
+				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(this.target), false);
+		}
 	}
 };

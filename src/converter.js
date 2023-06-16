@@ -97,6 +97,11 @@ module.exports = class Converter
 			{
 				state.value = 100 - state.value;
 			}
+
+			if(state.target != null)
+			{
+				state.target = 100 - state.target;
+			}
 		}
 
 		if(type == 'dimmer')
