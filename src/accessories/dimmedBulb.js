@@ -91,7 +91,6 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 	setToCurrentBrightness(state, callback)
 	{
-		/*
 		const setPower = (resolve) => {
 
 			this.DeviceManager.setState(this, { value : this.tempState.value }).then((success) => {
@@ -111,7 +110,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, brightness : this.brightness });
 			});
 		};
-		*/
+
 		const setBrightness = (resolve) => {
 
 			this.DeviceManager.setState(this, { value : this.tempState.value, brightness : this.tempState.brightness }).then((success) => {
@@ -144,7 +143,14 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 
 		super.setToCurrentBrightness(state, (resolve) => {
 
-			setBrightness(resolve);
+			if(this.tempState.value)
+			{
+				setBrightness(resolve);
+			}
+			else
+			{
+				setPower(resolve);
+			}
 
 		}, (resolve) => {
 
