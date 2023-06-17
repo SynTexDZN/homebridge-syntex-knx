@@ -117,7 +117,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 					currentState = this.Characteristic.PositionState.STOPPED;
 	
-					super.setState(this.target,
+					super.setState(target,
 						() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
 	
 					super.setPositionState(currentState,
@@ -132,8 +132,8 @@ module.exports = class SynTexBlindService extends BlindService
 		}
 		else
 		{
-			super.setTargetPosition(this.target,
-				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(this.target), false);
+			super.setTargetPosition(this.value,
+				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(this.value), false);
 		}
 	}
 };
