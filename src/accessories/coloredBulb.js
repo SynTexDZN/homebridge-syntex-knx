@@ -17,24 +17,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 		//this.invertState = serviceConfig.inverted || false;
 
-		setInterval(() => {
-
-			if(!this.running && (this.value != this.tempState.value || this.hue != this.tempState.hue || this.saturation != this.tempState.saturation || this.brightness != this.tempState.brightness))
-			{
-				this.setToCurrentColor({ ...this.tempState }, (failed) => {
-
-					if(!failed)
-					{
-						this.service.getCharacteristic(this.Characteristic.On).updateValue(this.value);
-						this.service.getCharacteristic(this.Characteristic.Hue).updateValue(this.hue);
-						this.service.getCharacteristic(this.Characteristic.Saturation).updateValue(this.saturation);
-						this.service.getCharacteristic(this.Characteristic.Brightness).updateValue(this.brightness);
-					}
-				});
-			}
-
-		}, 1000);
-
 		this.changeHandler = (state) => {
 
 			this.setToCurrentColor(state, (failed) => {
@@ -159,7 +141,6 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 	setToCurrentColor(state, callback)
 	{
-		/*
 		const setPower = (resolve) => {
 
 			this.DeviceManager.setState(this, { value : this.tempState.value }).then((success) => {
@@ -179,7 +160,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 				this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, hue : this.hue, saturation : this.saturation, brightness : this.brightness });
 			});
 		};
-		*/
+
 		const setColor = (resolve) => {
 
 			var converted = convert.hsv.rgb([this.tempState.hue, this.tempState.saturation, this.tempState.brightness]);
@@ -228,7 +209,14 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 		super.setToCurrentColor(state, (resolve) => {
 
-			setColor(resolve);
+			if(this.tempState.value)
+			{
+				setColor(resolve);
+			}
+			else
+			{
+				setPower(resolve);
+			}
 
 		}, (resolve) => {
 
