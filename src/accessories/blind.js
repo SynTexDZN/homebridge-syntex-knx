@@ -111,15 +111,15 @@ module.exports = class SynTexBlindService extends BlindService
 			super.setPositionState(currentState,
 				() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState));
 
-			if(!hasAddress('value') && currentState != this.Characteristic.STOPPED)
+			if(!hasAddress('value') && this.value != target)
 			{
 				setTimeout(() => {
 
 					currentState = this.Characteristic.PositionState.STOPPED;
-	
+
 					super.setState(target,
-						() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(this.target), false);
-	
+						() => this.service.getCharacteristic(this.Characteristic.CurrentPosition).updateValue(target), false);
+
 					super.setPositionState(currentState,
 						() => this.service.getCharacteristic(this.Characteristic.PositionState).updateValue(currentState), false);
 	
