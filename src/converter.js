@@ -106,23 +106,21 @@ module.exports = class Converter
 
 		if(type == 'dimmer')
 		{
-			if(state.value != null && statusAddress.brightness == null)
+			if(state.value != null && statusAddress.brightness == null && typeof state.value == 'number')
 			{
-				if(typeof state.value == 'boolean')
-				{
-					state.brightness = state.value ? 100 : 0;
-				}
+				state.brightness = state.value;
 				
-				if(typeof state.value == 'number')
-				{
-					state.brightness = state.value;
-					state.value = state.brightness > 0;
-				}
+				state.value = state.brightness > 0;
 			}
 
 			if(state.brightness != null && statusAddress.value == null)
 			{
 				state.value = state.brightness > 0;
+			}
+
+			if(state.brightness == 0)
+			{
+				delete state.brightness;
 			}
 		}
 
