@@ -91,11 +91,11 @@ class KNXInterface
 			{
 				if(service.statusAddress != null)
 				{
-					var statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
+					service.statusAddress = this.DeviceManager.convertAddress(service.statusAddress);
 
-					for(const type in statusAddress)
+					for(const type in service.statusAddress)
 					{
-						for(const address of statusAddress[type])
+						for(const address of service.statusAddress[type])
 						{
 							if(this.dataPoints.status[type] == null)
 							{
@@ -144,11 +144,11 @@ class KNXInterface
 
 				if(service.controlAddress != null)
 				{
-					var controlAddress = this.DeviceManager.getAddresses(service.controlAddress);
+					service.controlAddress = this.DeviceManager.convertAddress(service.controlAddress);
 
-					for(const type in controlAddress)
+					for(const type in service.controlAddress)
 					{
-						for(const address of controlAddress[type])
+						for(const address of service.controlAddress[type])
 						{
 							if(this.dataPoints.control[type] == null)
 							{
@@ -372,13 +372,13 @@ module.exports = class DeviceManager
 
 			if(service.statusAddress != null)
 			{
-				var statusAddress = this.getAddresses(service.statusAddress), promiseArray = [];
+				var promiseArray = [];
 
-				for(const type in statusAddress)
+				for(const type in service.statusAddress)
 				{
 					if(!service.hasState(type))
 					{
-						for(const address of statusAddress[type])
+						for(const address of service.statusAddress[type])
 						{
 							promiseArray.push(new Promise((callback) => {
 
@@ -430,13 +430,11 @@ module.exports = class DeviceManager
 
 			if(service.controlAddress != null)
 			{
-				var controlAddress = this.getAddresses(service.controlAddress);
-
 				for(const type in state)
 				{
-					if(controlAddress[type] != null)
+					if(service.controlAddress[type] != null)
 					{
-						for(const address of controlAddress[type])
+						for(const address of service.controlAddress[type])
 						{
 							//this.KNXInterface._addRequest('control', address, resolve);
 
@@ -476,7 +474,7 @@ module.exports = class DeviceManager
 		}
 	}
 
-	getAddresses(addresses)
+	convertAddress(addresses)
 	{
 		if(Array.isArray(addresses))
 		{
@@ -498,7 +496,7 @@ module.exports = class DeviceManager
 		return addresses;
 	}
 
-	getDefaults(defaults, datapoints)
+	convertDataPoint(defaults, datapoints)
 	{
 		var result = {
 			status : { ...defaults },

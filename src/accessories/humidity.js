@@ -8,7 +8,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.007' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '9.007' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 	}

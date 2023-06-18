@@ -11,7 +11,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.001', target : '9.001', state : '1.011', mode : '1.100', offset : '6.010' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '9.001', target : '9.001', state : '1.011', mode : '1.100', offset : '6.010' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;

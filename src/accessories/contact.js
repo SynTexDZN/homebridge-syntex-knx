@@ -8,7 +8,7 @@ module.exports = class SynTexContactService extends ContactService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '1.001' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '1.001' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 

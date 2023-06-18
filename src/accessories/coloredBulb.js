@@ -10,7 +10,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '232.600' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '232.600' }, serviceConfig.datapoint);
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;

@@ -8,7 +8,7 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.001' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '9.001' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 	}

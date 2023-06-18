@@ -8,7 +8,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.getDefaults({ value : '5.001', target : '5.001', state : '1.009' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '5.001', target : '5.001', state : '1.009' }, serviceConfig.datapoint);
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;

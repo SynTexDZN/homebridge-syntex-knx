@@ -11,9 +11,7 @@ module.exports = class Converter
 
 	getState(service, state = {})
 	{
-		var type = this.TypeManager.letterToType(service.letters[0]),
-			statusAddress = this.DeviceManager.getAddresses(service.statusAddress),
-			dataPoints = service.dataPoint.status;
+		var type = this.TypeManager.letterToType(service.letters[0]), dataPoints = service.dataPoint.status;
 
 		for(const x in state)
 		{
@@ -106,14 +104,14 @@ module.exports = class Converter
 
 		if(type == 'dimmer')
 		{
-			if(state.value != null && statusAddress.brightness == null && typeof state.value == 'number')
+			if(state.value != null && service.statusAddress.brightness == null && typeof state.value == 'number')
 			{
 				state.brightness = state.value;
 				
 				state.value = state.brightness > 0;
 			}
 
-			if(state.brightness != null && statusAddress.value == null)
+			if(state.brightness != null && service.statusAddress.value == null)
 			{
 				state.value = state.brightness > 0;
 			}
