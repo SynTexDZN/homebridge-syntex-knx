@@ -89,8 +89,6 @@ class KNXInterface
 
 			for(const service of services)
 			{
-				var dataPoints = service.dataPoint.status;
-
 				if(service.statusAddress != null)
 				{
 					var statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
@@ -106,7 +104,7 @@ class KNXInterface
 
 							if(this.dataPoints.status[type][address] == null)
 							{
-								this.dataPoints.status[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
+								this.dataPoints.status[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint.status[type] }, this.connection);
 
 								// TODO: Write Own Change Detection And Input Conversion
 
@@ -157,7 +155,7 @@ class KNXInterface
 								this.dataPoints.control[type] = {};
 							}
 
-							this.dataPoints.control[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + dataPoints[type] }, this.connection);
+							this.dataPoints.control[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint.control[type] }, this.connection);
 						}
 					}
 				}
