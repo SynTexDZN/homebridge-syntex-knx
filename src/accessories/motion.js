@@ -6,6 +6,8 @@ module.exports = class SynTexMotionService extends MotionService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.DeviceManager = manager.DeviceManager;
+
 		this.dataPoint = this.DeviceManager.getDefaults({ value : '1.001' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;

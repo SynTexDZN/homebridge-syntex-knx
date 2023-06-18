@@ -6,6 +6,8 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
+		this.DeviceManager = manager.DeviceManager;
+
 		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.001' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
