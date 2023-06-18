@@ -12,8 +12,8 @@ module.exports = class Converter
 	getState(service, state = {})
 	{
 		var type = this.TypeManager.letterToType(service.letters[0]),
-			dataPoints = this.DeviceManager.getDataPoints(service.dataPoint),
-			statusAddress = this.DeviceManager.getAddresses(service.statusAddress);
+			statusAddress = this.DeviceManager.getAddresses(service.statusAddress),
+			dataPoints = service.dataPoint.status;
 
 		for(const x in state)
 		{

@@ -89,7 +89,7 @@ class KNXInterface
 
 			for(const service of services)
 			{
-				var dataPoints = this.DeviceManager.getDataPoints(service.dataPoint);
+				var dataPoints = service.dataPoint.status;
 
 				if(service.statusAddress != null)
 				{
@@ -233,7 +233,7 @@ class KNXInterface
 		{
 			if(service.invertState)
 			{
-				var dataPoint = this.DeviceManager.getDataPoints(service.dataPoint)[type];
+				var dataPoint = service.dataPoint.control[type];
 
 				if(dataPoint.startsWith('1.')
 				|| dataPoint.startsWith('2.'))
@@ -500,26 +500,54 @@ module.exports = class DeviceManager
 		return addresses;
 	}
 
-	getDataPoints(dataPoints)
-	{
-		if(typeof dataPoints == 'string')
-		{
-			dataPoints = { value : dataPoints };
-		}
-
-		return dataPoints;
-	}
-
 	getDefaults(defaults, datapoints)
 	{
+		var result = {
+			status : { ...defaults },
+			control : { ...defaults }
+		};
+
 		if(datapoints instanceof Object)
 		{
-			for(const x in datapoints)
+			if(datapoints.status != null || datapoints.control != null)
 			{
-				defaults[x] = datapoints[x];
+				if(datapoints.status != null)
+				{
+					for(const x in datapoints.status)
+					{
+						result.status[x] = datapoints.status[x];
+					}
+				}
+
+				if(datapoints.control != null)
+				{
+					for(const x in datapoints.control)
+					{
+						result.control[x] = datapoints.control[x];
+					}
+				}
+			}
+			else
+			{
+				for(const x in datapoints)
+				{
+					result.status[x] = result.control[x] = datapoints[x];
+				}
+			}
+		}
+		else
+		{
+			for(const x in result.status)
+			{
+				result.status[x] = datapoints;
+			}
+
+			for(const x in result.control)
+			{
+				result.control[x] = datapoints;
 			}
 		}
 
-		return defaults;
+		return result;
 	}
 }
