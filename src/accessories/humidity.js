@@ -6,7 +6,7 @@ module.exports = class SynTexHumidityService extends HumidityService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = serviceConfig.datapoint || '9.007';
+		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.007' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 	}

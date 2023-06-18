@@ -6,7 +6,7 @@ module.exports = class SynTexLightService extends LightService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = serviceConfig.datapoint || '9.004';
+		this.dataPoint = this.DeviceManager.getDefaults({ value : '9.004' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 	}

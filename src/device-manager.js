@@ -533,7 +533,7 @@ module.exports = class DeviceManager
 				}
 			}
 		}
-		else
+		else if(typeof datapoints == 'string')
 		{
 			for(const x in result.status)
 			{

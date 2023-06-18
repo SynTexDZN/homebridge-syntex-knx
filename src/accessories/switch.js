@@ -8,7 +8,7 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = serviceConfig.datapoint || '1.001';
+		this.dataPoint = this.DeviceManager.getDefaults({ value : '1.001' }, serviceConfig.datapoint);
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;

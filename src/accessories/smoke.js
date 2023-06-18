@@ -6,7 +6,7 @@ module.exports = class SynTexSmokeService extends SmokeService
 	{
 		super(homebridgeAccessory, deviceConfig, serviceConfig, manager);
 
-		this.dataPoint = serviceConfig.datapoint || '1.001';
+		this.dataPoint = this.DeviceManager.getDefaults({ value : '1.001' }, serviceConfig.datapoint);
 
 		this.statusAddress = serviceConfig.address.status;
 
