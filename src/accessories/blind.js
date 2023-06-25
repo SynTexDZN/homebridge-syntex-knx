@@ -125,6 +125,8 @@ module.exports = class SynTexBlindService extends BlindService
 
 			if(!hasAddress('value') && this.value != target)
 			{
+				var delay = (target > this.value ? this.timeDelayUp : this.timeDelayDown) * Math.abs(this.value - target) / 100;
+
 				setTimeout(() => {
 
 					currentState = this.Characteristic.PositionState.STOPPED;
@@ -139,7 +141,7 @@ module.exports = class SynTexBlindService extends BlindService
 	
 					this.AutomationSystem.LogikEngine.runAutomation(this, { value : this.value, target : this.target, state : this.state });
 	
-				}, target > this.value ? this.timeDelayUp : this.timeDelayDown);
+				}, delay);
 			}
 		}
 		else
