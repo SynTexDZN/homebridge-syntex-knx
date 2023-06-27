@@ -30,21 +30,26 @@ module.exports = class SynTexBlindService extends BlindService
 
 	setTargetPosition(target, callback)
 	{
-		const convertTarget = (target) => {
+		const convertTarget = (value, target) => {
+
+			var state = {};
 
 			if(this.dataPoint.control.target == '1.008')
 			{
-				target = target < this.value;
+				if(target != value)
+				{
+					state.target = target < value;
+				}
 			}
 			else
 			{
-				target = (100 - target);
+				state.target = (100 - target);
 			}
 
-			return target;
+			return state;
 		};
 
-		this.DeviceManager.setState(this, { target : convertTarget(target) }).then((success) => {
+		this.DeviceManager.setState(this, convertTarget(this.value, target)).then((success) => {
 
 			if(success)
 			{
