@@ -522,6 +522,8 @@ The letters are split into two parts *( characters )*
 - E : Rain
 - F : Light
 - G : Blind
+- H : Thermostat
+- I : Fan
 
 **2. Duplicate Counter**
 - If there are more services of the same type the counter indicates which is which
