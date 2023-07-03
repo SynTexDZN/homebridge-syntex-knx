@@ -25,4 +25,4 @@ module.exports = class SynTexMotionService extends MotionService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

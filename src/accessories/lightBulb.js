@@ -54,4 +54,4 @@ module.exports = class SynTexLightBulbService extends LightBulbService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

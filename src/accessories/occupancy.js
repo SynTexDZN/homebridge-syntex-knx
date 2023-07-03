@@ -25,4 +25,4 @@ module.exports = class SynTexOccupancyService extends OccupancyService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

@@ -38,7 +38,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}
@@ -53,7 +53,7 @@ module.exports = class SynTexDimmedBulbService extends DimmedBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}

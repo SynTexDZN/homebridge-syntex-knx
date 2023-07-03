@@ -54,4 +54,4 @@ module.exports = class SynTexSwitchService extends SwitchService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

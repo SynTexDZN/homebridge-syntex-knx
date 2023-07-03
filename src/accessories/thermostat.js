@@ -271,4 +271,4 @@ module.exports = class SynTexThermostatService extends ThermostatService
 			resolve();
 		});
 	}
-};
+}

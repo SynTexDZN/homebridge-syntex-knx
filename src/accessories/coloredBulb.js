@@ -42,7 +42,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}
@@ -57,7 +57,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}
@@ -72,7 +72,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}
@@ -87,7 +87,7 @@ module.exports = class SynTexColoredBulbService extends ColoredBulbService
 			}
 			else
 			{
-				callback(new Error('Failed'));
+				callback(new Error('Not Connected'));
 			}
 		});
 	}

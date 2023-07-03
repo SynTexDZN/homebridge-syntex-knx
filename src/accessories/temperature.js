@@ -23,4 +23,4 @@ module.exports = class SynTexTemperatureService extends TemperatureService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

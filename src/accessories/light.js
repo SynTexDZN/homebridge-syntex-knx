@@ -23,4 +23,4 @@ module.exports = class SynTexLightService extends LightService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

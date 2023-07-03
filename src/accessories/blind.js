@@ -157,4 +157,4 @@ module.exports = class SynTexBlindService extends BlindService
 				() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(this.value), false);
 		}
 	}
-};
+}

@@ -54,4 +54,4 @@ module.exports = class SynTexOutletService extends OutletService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

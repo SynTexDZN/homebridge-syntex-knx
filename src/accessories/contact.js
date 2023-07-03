@@ -25,4 +25,4 @@ module.exports = class SynTexContactService extends ContactService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

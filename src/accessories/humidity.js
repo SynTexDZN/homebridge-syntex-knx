@@ -23,4 +23,4 @@ module.exports = class SynTexHumidityService extends HumidityService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}

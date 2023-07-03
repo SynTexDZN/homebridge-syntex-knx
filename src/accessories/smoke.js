@@ -25,4 +25,4 @@ module.exports = class SynTexSmokeService extends SmokeService
 
 		this.AutomationSystem.LogikEngine.runAutomation(this, state);
 	}
-};
+}
