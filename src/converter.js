@@ -122,6 +122,26 @@ module.exports = class Converter
 			}
 		}
 
+		if(type == 'fan')
+		{
+			if(state.value != null && service.statusAddress.speed == null && typeof state.value == 'number')
+			{
+				state.speed = state.value;
+				
+				state.value = state.speed > 0;
+			}
+
+			if(state.speed != null && service.statusAddress.value == null)
+			{
+				state.value = state.speed > 0;
+			}
+
+			if(state.speed == 0)
+			{
+				delete state.speed;
+			}
+		}
+
 		if(type == 'thermostat')
 		{
 			if(state.mode != null && dataPoints.mode == '1.100')
