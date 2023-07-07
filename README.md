@@ -296,7 +296,7 @@ It connects to a KNX IP Gateway and offers some special tweaks.
 - `name` could be anything.
 - `services` The services of your accessory.<br><br>
     - `name` could be anything.
-    - `type` Define the service type *( `blind`, `contact`, `dimmer`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `switch`, `temperature` )*
+    - `type` Define the service type *( `blind`, `contact`, `dimmer`, `fan`, `humidity`, `leak`, `led`, `light`, `motion`, `occupancy`, `outlet`, `rain`, `relais`, `rgb`, `smoke`, `switch`, `temperature`, `thermostat` )*
     - `address` can include your `status` and probably `control` group address from your knx system.
     - You can customize group address datapoints by adding `datapoint` *( [KNX datapoint types](https://www.promotic.eu/en/pmdoc/Subsystems/Comm/PmDrivers/KNXDTypes.htm) )*
     - For Boolean and Percentage Devices you can add `inverted` *( inverts the state from `false` -> `true` / `0` -> `100` )*
@@ -318,11 +318,16 @@ https://github.com/SynTexDZN/homebridge-syntex
 1. Open `http://`  **Bridge IP**  `/devices?id=`  **Device ID**  `&value=`  **New Value**
 2. Insert the `Bridge IP` and `Device ID`
 3. For the `New Value` you can type this pattern:
-- For boolean devices: `true` / `false` *( dimmer, led, outlet, rgb, switch )*
-- For numeric devices: `10` / `12.4` *( blind )*
+- For boolean devices: `true` / `false` *( dimmer, fan, led, outlet, rgb, switch )*
+- For numeric devices: `10` / `12.4` *( blind, thermostat )*
 - For dimmable lights add `&brightness=`  **New Brightness** *( has to be a number )*
 - For colored lights add `&hue=`  **New Hue** *( has to be a number )*
 - For colored lights add `&saturation=`  **New Saturation** *( has to be a number )*
+- For thermostats add `&target=`  **New Target Temperature** *( has to be a number )*
+- For thermostats add `&state=`  **New Current Heating Cooling State** *( has to be a number )*
+- For thermostats add `&mode=`  **New Target Heating Cooling State** *( has to be a number )*
+- For fans add `&direction=`  **New Rotation Direction** *( has to be a number )*
+- For fans add `&speed=`  **New Rotation Speed** *( has to be a number )*
 - For accessories with multiple service types add `&type=`  **SERVICETYPE**
 - For accessories with multiple services with more than one of the same service type add `&counter=`  **SERVICENUMBER**\
 *( First of that type = 0, second = 1 .. )*
@@ -553,3 +558,4 @@ The letters are split into two parts *( characters )*
 - Switch / Relais / Outlet
 - LED Lights / Dimmable Lights / RGB Lights
 - Blinds / Shutters / Window Coverings
+- Thermostats / Fans
