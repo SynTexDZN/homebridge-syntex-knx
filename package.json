@@ -1,6 +1,6 @@
 {
 	"name": "homebridge-syntex-knx",
-	"version": "1.0.4-b47",
+	"version": "1.0.4-b48",
 	"description": "A KNX interface for an ip gateway",
 	"main": "index.js",
 	"author": {
