@@ -9,6 +9,9 @@ module.exports = class SynTexThermostatService extends ThermostatService
 		this.base = super.getValue('base', false);
 		this.offset = super.getValue('offset', false);
 
+		super.updateProperties('target', { minValue : 4, maxValue : 36 });
+		super.updateProperties('mode', { validValues : [ 1, 2, 3 ]});
+
 		this.DeviceManager = manager.DeviceManager;
 
 		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '9.001', target : '9.001', state : '1.011', mode : '1.100', offset : '6.010' }, serviceConfig.datapoint);
