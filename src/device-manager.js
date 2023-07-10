@@ -102,7 +102,7 @@ class KNXInterface
 								this.dataPoints.status[type] = {};
 							}
 
-							if(this.dataPoints.status[type][address] == null)
+							if(this.dataPoints.status[type][address] == null && service.dataPoint.status[type] != null)
 							{
 								this.dataPoints.status[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint.status[type] }, this.connection);
 
@@ -155,7 +155,10 @@ class KNXInterface
 								this.dataPoints.control[type] = {};
 							}
 
-							this.dataPoints.control[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint.control[type] }, this.connection);
+							if(this.dataPoints.control[type][address] == null && service.dataPoint.control[type] != null)
+							{
+								this.dataPoints.control[type][address] = new knx.Datapoint({ ga : address, dpt : 'DPT' + service.dataPoint.control[type] }, this.connection);
+							}
 						}
 					}
 				}
