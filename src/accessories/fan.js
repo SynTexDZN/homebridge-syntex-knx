@@ -82,6 +82,8 @@ module.exports = class SynTexFanService extends FanService
 
 			if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 			{
+				this.tempState.value = state.value;
+
 				super.setState(state.value, 
 					() => this.service.getCharacteristic(this.Characteristic.On).updateValue(state.value), false);
 
@@ -90,6 +92,8 @@ module.exports = class SynTexFanService extends FanService
 
 			if(state.speed != null && !isNaN(state.speed) && (!super.hasState('speed') || this.speed != state.speed))
 			{
+				this.tempState.speed = state.speed;
+
 				super.setRotationSpeed(state.speed, 
 					() => this.service.getCharacteristic(this.Characteristic.RotationSpeed).updateValue(state.speed), false);
 
@@ -98,6 +102,8 @@ module.exports = class SynTexFanService extends FanService
 
 			if(state.direction != null && !isNaN(state.direction) && (!super.hasState('direction') || this.direction != state.direction))
 			{
+				this.tempState.direction = state.direction;
+
 				super.setRotationDirection(state.direction, 
 					() => this.service.getCharacteristic(this.Characteristic.RotationDirection).updateValue(state.direction), false);
 

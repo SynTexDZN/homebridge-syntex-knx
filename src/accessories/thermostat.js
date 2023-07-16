@@ -68,6 +68,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(state.value != null && !isNaN(state.value) && (!super.hasState('value') || this.value != state.value))
 		{
+			this.tempState.value = state.value;
+
 			super.setState(state.value, 
 				() => this.service.getCharacteristic(this.Characteristic.CurrentTemperature).updateValue(state.value), false);
 
@@ -76,6 +78,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(state.target != null && !isNaN(state.target) && (!super.hasState('target') || this.target != state.target))
 		{
+			this.tempState.target = state.target;
+
 			super.setTargetTemperature(state.target, 
 				() => this.service.getCharacteristic(this.Characteristic.TargetTemperature).updateValue(state.target), false);
 
@@ -89,6 +93,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(state.state != null && !isNaN(state.state) && (!super.hasState('state') || this.state != state.state))
 		{
+			this.tempState.state = state.state;
+
 			super.setCurrentHeatingCoolingState(state.state, 
 				() => this.service.getCharacteristic(this.Characteristic.CurrentHeatingCoolingState).updateValue(state.state), false);
 
@@ -97,6 +103,8 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		if(state.mode != null && !isNaN(state.mode) && (!super.hasState('mode') || this.mode != state.mode))
 		{
+			this.tempState.mode = state.mode;
+
 			super.setTargetHeatingCoolingState(state.mode, 
 				() => this.service.getCharacteristic(this.Characteristic.TargetHeatingCoolingState).updateValue(state.mode), false);
 
