@@ -48,7 +48,7 @@ module.exports = class SynTexBlindService extends BlindService
 
 			if(this.dataPoint.control.target == '1.008')
 			{
-				if(target == 50)
+				if(target > 0 || target < 100)
 				{
 					delete state.target;
 
