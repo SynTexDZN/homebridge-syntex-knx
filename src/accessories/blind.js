@@ -8,10 +8,22 @@ module.exports = class SynTexBlindService extends BlindService
 
 		this.DeviceManager = manager.DeviceManager;
 
-		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '5.001', target : '5.001', state : '1.009' }, serviceConfig.datapoint);
+		this.dataPoint = this.DeviceManager.convertDataPoint({ value : '5.001', target : '5.001', state : '1.009', stop : '1.010' }, serviceConfig.datapoint);
 		
 		this.statusAddress = serviceConfig.address.status;
 		this.controlAddress = serviceConfig.address.control;
+
+		if(this.dataPoint.control.target == '1.008')
+		{
+			if(this.controlAddress instanceof Object && this.controlAddress.stop != null)
+			{
+				super.updateProperties('target', { minStep : 50 });
+			}
+			else
+			{
+				super.updateProperties('target', { minStep : 100 });
+			}
+		}
 
 		this.invertState = serviceConfig.inverted || false;
 
@@ -30,15 +42,21 @@ module.exports = class SynTexBlindService extends BlindService
 
 	setTargetPosition(target, callback)
 	{
-		const convertTarget = (value, target) => {
+		const convertTarget = (target) => {
 
 			var state = {};
 
 			if(this.dataPoint.control.target == '1.008')
 			{
-				if(target != value)
+				if(target == 50)
 				{
-					state.target = target < value;
+					delete state.target;
+
+					state.stop = true;
+				}
+				else
+				{
+					state.target = target == 0;
 				}
 			}
 			else
@@ -49,7 +67,7 @@ module.exports = class SynTexBlindService extends BlindService
 			return state;
 		};
 
-		this.DeviceManager.setState(this, convertTarget(this.value, target)).then((success) => {
+		this.DeviceManager.setState(this, convertTarget(target)).then((success) => {
 
 			if(success)
 			{
