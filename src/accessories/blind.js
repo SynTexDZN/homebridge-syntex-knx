@@ -48,10 +48,8 @@ module.exports = class SynTexBlindService extends BlindService
 
 			if(this.dataPoint.control.target == '1.008')
 			{
-				if(target > 0 || target < 100)
+				if(target > 0 && target < 100)
 				{
-					delete state.target;
-
 					state.stop = true;
 				}
 				else
@@ -152,7 +150,9 @@ module.exports = class SynTexBlindService extends BlindService
 			{
 				var delay = (target > this.value ? this.timeDelayUp : this.timeDelayDown) * Math.abs(this.value - target) / 100;
 
-				setTimeout(() => {
+				clearTimeout(this.delayTimeout);
+
+				this.delayTimeout = setTimeout(() => {
 
 					currentState = this.Characteristic.PositionState.STOPPED;
 
