@@ -155,6 +155,11 @@ module.exports = class Converter
 					state.mode = 2;
 				}
 			}
+
+			if(state.state != null)
+			{
+				state.state = state.state > 0 ? 1 : 0;
+			}
 		}
 
 		if(type == 'rgb')

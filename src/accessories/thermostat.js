@@ -245,7 +245,7 @@ module.exports = class SynTexThermostatService extends ThermostatService
 
 		const setTargetHeatingCoolingState = (resolve) => {
 
-			this.DeviceManager.setState(this, { mode : this.updateMode(this.tempState.mode) }).then((success) => {
+			this.DeviceManager.setState(this, { mode : this.tempState.mode }).then((success) => {
 
 				if(success)
 				{
