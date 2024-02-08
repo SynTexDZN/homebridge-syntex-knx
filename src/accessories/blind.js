@@ -38,6 +38,11 @@ module.exports = class SynTexBlindService extends BlindService
 					() => this.service.getCharacteristic(this.Characteristic.TargetPosition).updateValue(state.value));
 			}
 		};
+
+		if(super.hasState('value'))
+		{
+			this.updateState({ value : this.target });
+		}
 	}
 
 	setTargetPosition(target, callback)
