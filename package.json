@@ -12,7 +12,7 @@
 	},
 	"dependencies": {
 		"color-convert": "^1.5.0",
-		"homebridge-syntex-dynamic-platform": "1.0.8-b79",
+		"homebridge-syntex-dynamic-platform": "1.0.8-b80",
 		"knx": "^2.4.1"
 	},
 	"keywords": [
