@@ -45,5 +45,7 @@ class SynTexKNXPlatform extends DynamicPlatform
 
 			this.addAccessory(new SynTexUniversalAccessory(homebridgeAccessory, device, { platform : this, DeviceManager : this.DeviceManager }));
 		}
+
+		super.loadAccessories();
 	}
 }
