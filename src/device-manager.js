@@ -33,44 +33,36 @@ class KNXInterface
 		});
 
 		if(this.rateLimit > 0)
-		{
-			setInterval(() => {
+	{
+		setInterval(() => {
 
-				var controlEntry = this.queue.control[0], statusEntry = this.queue.status[0];
+			var entry = this.queue[0];
 
-				if(controlEntry != null)
+			if(entry != null)
+			{
+				var state = {};
+
+				state[entry.type] = entry.value;
+
+				// write to control datapoint if present
+				if(this.dataPoints.control[entry.type] != null && this.dataPoints.control[entry.type][entry.address] != null)
 				{
-					var state = {};
-
-					state[controlEntry.type] = controlEntry.value;
-
-					if(this.dataPoints.control[controlEntry.type] != null && this.dataPoints.control[controlEntry.type][controlEntry.address] != null)
-					{
-						this.dataPoints.control[controlEntry.type][controlEntry.address].write(controlEntry.value);
-					}
-
-					if(this.dataPoints.status[controlEntry.type] != null && this.dataPoints.status[controlEntry.type][controlEntry.address] != null)
-					{
-						this.dataPoints.status[controlEntry.type][controlEntry.address].current_value = controlEntry.value;
-					}
-
-					this.EventManager.setOutputStream('updateState', { sender : controlEntry.service, receiver : controlEntry.address }, state);
-
-					this.queue.control.splice(0, 1);
+					this.dataPoints.control[entry.type][entry.address].write(entry.value);
 				}
 
-				if(statusEntry != null)
+				// update cached status datapoint value if present
+				if(this.dataPoints.status[entry.type] != null && this.dataPoints.status[entry.type][entry.address] != null)
 				{
-					if(this.dataPoints.status[statusEntry.type] != null && this.dataPoints.status[statusEntry.type][statusEntry.address] != null)
-					{
-						this.dataPoints.status[statusEntry.type][statusEntry.address].read();
-					}
-
-					this.queue.status.splice(0, 1);
+					this.dataPoints.status[entry.type][entry.address].current_value = entry.value;
 				}
 
-			}, this.rateLimit);
-		}
+				this.EventManager.setOutputStream('updateState', { sender : entry.service, receiver : entry.address }, state);
+
+				this.queue.splice(0, 1);
+			}
+
+		}, this.rateLimit);
+	}
 	}
 
 	interfaceConnected()
